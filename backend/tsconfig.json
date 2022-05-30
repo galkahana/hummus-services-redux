@@ -1,9 +1,56 @@
 {
-    "extends": "@tsconfig/node16/tsconfig.json",
-    "include": ["src"],
-    "exclude": ["node_modules"],
-    "compilerOptions": {
-      "outDir": "dist",
-      "esModuleInterop": true,
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "include": [
+    "src",
+    "config"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "typeRoots": [
+      "./"
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@setup/*": [
+        "./src/setup/*"
+      ],
+      "@setup": [
+        "./src/setup"
+      ],
+      "@controllers/*": [
+        "./src/controllers/*"
+      ],
+      "@controllers": [
+        "./src/controllers"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@lib": [
+        "./src/lib"
+      ],
+      "@middlewares/*": [
+        "./src/middlewares/*"
+      ],
+      "@middlewares": [
+        "./src/middlewares"
+      ],
+      "@models/*": [
+        "./src/models/*"
+      ],
+      "@models": [
+        "./src/models"
+      ],
+      "@routes/*": [
+        "./src/routes/*"
+      ],
+      "@routes": [
+        "./src/routes"
+      ]
     }
+  }
 }
