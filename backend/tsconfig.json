@@ -1,17 +1,19 @@
 {
   "extends": "@tsconfig/node16/tsconfig.json",
   "include": [
-    "src",
-    "config"
+    "./src",
+    "./config",
+    "./typings"
   ],
   "exclude": [
     "node_modules"
   ],
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "./dist",
     "esModuleInterop": true,
+    "sourceMap": true,
     "typeRoots": [
-      "./"
+      "./typings"
     ],
     "baseUrl": "./",
     "paths": {

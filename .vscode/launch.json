@@ -5,16 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug main.ts",
             "type": "node",
             "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/backend/src/main.ts",
+            "preLaunchTask": "tsc: build - backend/tsconfig.json",
             "cwd": "${workspaceRoot}/backend",
-            "runtimeArgs": [
-                "-r",
-                "ts-node/register"
-            ],
-            "args": [
-                "${workspaceRoot}/backend/src/main.ts"
+            "outFiles": [
+                "${workspaceFolder}/backend/dist/**/*.js"
             ],
             "outputCapture": "std"
         }
