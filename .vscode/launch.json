@@ -11,7 +11,8 @@
             "cwd": "${workspaceRoot}/backend",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
-                "start",
+                "run",
+                "dev"
             ],
             "outputCapture": "std"
         }

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "backned for hummus services",
   "scripts": {
-    "start": "npx ts-node --files src/main.ts",
+    "dev": "npx tsc && npx ts-node --files src/main.ts",
+    "start": "node ./dist/src/main",
     "lint": "npx eslint . --fix",
     "build": "npx tsc",
     "clean": "rm -rf dist"
@@ -32,11 +33,11 @@
     "typescript": "^4.7.2"
   },
   "_moduleAliases": {
-    "@setup": "./src/setup",
-    "@controllers": "./src/controllers",
-    "@lib": "./src/lib",
-    "@middlewares": "./src/middlewares",
-    "@models": "./src/models",
-    "@routes": "./src/routes"
+    "@setup": "./dist/src/setup",
+    "@controllers": "./dist/controllers",
+    "@lib": "./dist/src/lib",
+    "@middlewares": "./dist/src/middlewares",
+    "@models": "./dist/src/models",
+    "@routes": "./dist/src/routes"
   }
 }

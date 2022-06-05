@@ -9,9 +9,9 @@
     "node_modules"
   ],
   "compilerOptions": {
-    "outDir": "./dist",
     "esModuleInterop": true,
     "sourceMap": true,
+    "outDir": "./dist",
     "typeRoots": [
       "./typings"
     ],

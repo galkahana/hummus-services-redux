@@ -1,4 +1,9 @@
-export default {
+/**
+ * You will notice that module.exports are used. this is to comply with node-config quirk that so far i hadn't had a better solution to -
+ * it doesn't like the resultant build exports.default = {...} and so im not getting configs on a built command. to avoid that im using module.exports
+ * which gets translateed as is.
+ */
+module.exports = {
     logOutput: process.env.LOG_OUTPUT || '',
     isDebug: false,
     defaultPort: process.env.PORT || 8080, 
