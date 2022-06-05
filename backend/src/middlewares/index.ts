@@ -67,7 +67,8 @@ const _configureResponses = async (app: Express) => {
     const responsesDirName = path.resolve(__dirname, './responses')
     const dirFiles = await fs.readdir(responsesDirName)
     for (const filename of dirFiles) {
-        if (path.extname(filename) == '.ts') {
+        const extension = path.extname(filename)
+        if (extension == '.ts' || extension == '.js') {
             const module = await import(`${responsesDirName}/${filename}`)
             app.use(module.default)
         }

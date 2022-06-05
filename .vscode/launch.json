@@ -5,14 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Backend",
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/backend/src/main.ts",
-            "preLaunchTask": "tsc: build - backend/tsconfig.json",
             "cwd": "${workspaceRoot}/backend",
-            "outFiles": [
-                "${workspaceFolder}/backend/dist/**/*.js"
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "start",
             ],
             "outputCapture": "std"
         }
