@@ -1,4 +1,16 @@
+import { Provider } from '@middlewares/authentication-providers'
+import { IUser } from '@models/types'
 import 'winston'
+
+declare module 'passport-local' {
+  interface IVerifyOptions {
+    provider: Provider
+  }
+}
+
+interface ReqInfo {
+  provider: Provider
+}
 
 /**
  * Type extensions
@@ -15,8 +27,15 @@ declare module 'express-serve-static-core' {
 
         errStatus?: number
     }
+
+    interface Request {
+      info?: ReqInfo | ReqInfo[]
+      user?: IUser
+    }
 }
 
 declare module 'winston' {
-  export function errorEx(err: Error, prefix: string) : void
+  export function errorEx(err: Error, prefix?: string) : void
 }
+
+

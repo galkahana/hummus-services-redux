@@ -1,23 +1,20 @@
-import express, { Request, Response } from 'express'
+import * as authenticationController from '@controllers/authentication'
+import * as root from '@controllers/root'
+import * as authenticate from '@middlewares/authenticate'
+import express from 'express'
+
 
 const router = express.Router()
 
 
+router.route('/authenticate/sign-in')
+    .post(authenticate.login, authenticationController.signIn)
 
-// health check(s)
-function health(_req: Request, res: Response) {
-    res.status(200).send('hello world. I am Hummus Services and I approve this message.')
-}
-router.route('/').get((req, res) => {
-    health(req, res)
-})
-router.route('/health').get((req, res) => {
-    health(req, res)
-})
 
-// fallback
-router.get('/*', function(req, res) {
-    res.notFound('API call not found')
-})
+
+router.route('/').get(root.health)
+router.route('/health').get(root.health)
+router.route('/ready').get(root.ready)
+router.get('/*', root.notFound)
 
 export default router

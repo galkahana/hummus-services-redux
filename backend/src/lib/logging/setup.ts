@@ -2,7 +2,7 @@ import config from 'config'
 import winston, { format } from 'winston'
 const { combine, json, printf, timestamp } = format
 
-export function init() {
+export function setup() {
     winston.errorEx = (err: Error, prefix = '') => {
         let pureErrMessage = err.stack || err.message || err
         if (prefix) {

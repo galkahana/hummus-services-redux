@@ -7,6 +7,9 @@ module.exports = {
     logOutput: process.env.LOG_OUTPUT || '',
     isDebug: false,
     defaultPort: process.env.PORT || 8080, 
+    service: {
+        name: process.env.SERVICE_NAME || 'hummus'
+    },
     db: {
         connectionString: process.env.MONGODB_URI,
         connectRetryTimeGap: 5000
@@ -22,5 +25,10 @@ module.exports = {
     recaptcha: {
         key: process.env.RECAPTCHA_KEY,
         secret: process.env.RECAPTCHA_SECRET
-    }
+    },
+    jwtToken: {
+        secret: process.env.JWT_KEY,
+        maxAgeSeconds: 300, // 5 mts
+        maxAgeSecondsRefresh: 3600 * 24 * 365 // 1 year
+    },    
 }

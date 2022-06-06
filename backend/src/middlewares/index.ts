@@ -8,7 +8,7 @@ import { logRequest, logResponse } from './log-request'
 
 const fs = _fs.promises
 
-export async function configure(app: Express) {
+export async function setup(app: Express) {
     // body parsing
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
@@ -33,7 +33,7 @@ export async function configure(app: Express) {
     await _configureResponses(app)
 }
 
-export function configureGeneralErrorHandler(app: Express) {
+export function generalErrorHandlerSetup(app: Express) {
     // general purposes exception catcher middleware
     // eslint-disable-next-line no-unused-vars
     app.use(_generalErrorHandler)

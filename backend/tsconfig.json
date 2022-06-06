@@ -3,7 +3,7 @@
   "include": [
     "./src",
     "./config",
-    "./typings"
+    "./typings",
   ],
   "exclude": [
     "node_modules"
@@ -52,6 +52,12 @@
       ],
       "@routes": [
         "./src/routes"
+      ],
+      "@services/*": [
+        "./src/services/*"
+      ],
+      "@services": [
+        "./src/services"
       ]
     }
   }
