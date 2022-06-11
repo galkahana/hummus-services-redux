@@ -1,4 +1,4 @@
-import { IUserInput } from '@models/types'
+import { IUserInput } from '@models/users/types'
 import Model from '@models/users'
 
 export const findByUsername = (username: string) => Model.findOne({username})

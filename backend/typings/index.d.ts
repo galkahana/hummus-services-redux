@@ -1,5 +1,5 @@
 import { Provider } from '@middlewares/authentication-providers'
-import { IUser } from '@models/types'
+import { IUser } from '@models/users/types'
 import 'winston'
 
 declare module 'passport-local' {
