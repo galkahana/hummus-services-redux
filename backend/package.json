@@ -8,7 +8,7 @@
     "lint": "npx eslint . --fix",
     "build": "npx tsc",
     "clean": "rm -rf dist",
-    "dummy": "npx tsc && npx ts-node --files ./scripts/dummy_user.ts"
+    "dummy": "npx tsc && npx ts-node --files ./scripts/dummy-user.ts"
   },
   "author": "",
   "license": "ISC",
