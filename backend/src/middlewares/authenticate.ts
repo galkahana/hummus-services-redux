@@ -33,6 +33,20 @@ function _authenticateWithProviders(...rest: Providers[]) {
 export const login = [
     body('username').escape(),
     _authenticateWithProviders(
-        Providers.USER_PASSWORD_LOGIN_PROVIDER
+        Providers.UserPasswordLoginProvider
     )
 ]
+
+export const authenticate = _authenticateWithProviders(
+    Providers.JwtProvider
+)
+
+export const ensureAuthentication = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+        return res.unauthenticated('Unauthenitcated request')
+    }
+    
+    return next()
+}
+
+export const authenticateOrDie = [authenticate, ensureAuthentication]

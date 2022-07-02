@@ -1,11 +1,14 @@
 import passport from 'passport'
-import * as passportLocal from 'passport-local'
+import PassportLocal from 'passport-local'
+import  BearerStrategy from 'passport-http-bearer'
 import { loginStrategyVerify } from './login-strategy'
+import { bearerStrategyVerify} from './bearer-strategy'
 import { Providers } from './types'
 
 
-const LocalStrategy = passportLocal.Strategy
-
 export function setup() {
-    passport.use(Providers.USER_PASSWORD_LOGIN_PROVIDER, new LocalStrategy(loginStrategyVerify))
+    passport.use(Providers.UserPasswordLoginProvider, new PassportLocal.Strategy(loginStrategyVerify))
+    passport.use(
+        Providers.JwtProvider, new BearerStrategy.Strategy(bearerStrategyVerify)
+    )
 }

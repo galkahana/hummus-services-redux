@@ -13,7 +13,7 @@ export const loginStrategyVerify : VerifyFunction = async (username, password, d
             iterations: user.iterations || 1
             
         },password)) {
-            return done(null, user, {provider: Providers.USER_PASSWORD_LOGIN_PROVIDER, message: 'login success'})
+            return done(null, user, {provider: Providers.UserPasswordLoginProvider, message: 'login success'})
         } else {
             return done(null, null)
         }

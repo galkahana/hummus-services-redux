@@ -1,5 +1,6 @@
 import { Provider } from '@middlewares/authentication-providers'
 import { IUser } from '@models/users/types'
+import { JwtPayload } from 'jsonwebtoken'
 import 'winston'
 
 declare module 'passport-local' {
@@ -8,8 +9,19 @@ declare module 'passport-local' {
   }
 }
 
+declare module 'passport-http-bearer' {
+  interface IVerifyOptions {
+    provider: Provider
+    jwtDecoded: JwtPayload
+    role: string
+    scope?: string | Array[string] // overriding, making it optional to allow using "role" which is what i want
+  }
+}
+
 interface ReqInfo {
   provider: Provider
+  jwtDecoded?: JwtPayload
+  role?: string
 }
 
 /**

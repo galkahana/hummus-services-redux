@@ -1,6 +1,8 @@
 import { createJwt, jwtTimeIn } from '@lib/jwt'
 import config from 'config'
 import { Request, Response } from 'express'
+import { EnhancedRequest } from '@lib/enhanced-request'
+import { Roles } from '@lib/authorization/rbac'
 
 /*
     im faking some wait time to throw of potential hackers a bit.
@@ -24,28 +26,29 @@ function _waitGoodRandomSeconds() {
     return _sleep(_randomSeconds(1,3))
 }
 
-function _createAccessJwt(sub: string) {
-    return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSeconds')))
+type createJwtDataParam = Parameters<typeof createJwt>[2]
+
+function _createAccessJwt(sub: string, data: createJwtDataParam) {
+    return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSeconds')), data)
 }
 
-function _createRefreshJwt(sub: string) {
-    return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSecondsRefresh')), {trole: 'ref'})
+function _createRefreshJwt(sub: string , data: createJwtDataParam) {
+    return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSecondsRefresh')), {...data, trole: 'ref'})
 }
 
 export async function signIn(req: Request, res: Response) {
     const user = req.user
-    const info = req.info
     
     if (!user) {
         await _waitBadRandomSeconds()
         return res.unauthenticated('Unauthenticated request')
     }
 
-    const firstInfo = info && (Array.isArray(info) ?  (info.length > 0 ? info[0] : undefined) : info)
+    const firstInfo = new EnhancedRequest(req).firstInfo()
 
     // otherwise generate the token and send back
     await _waitGoodRandomSeconds()
-    const access_token = _createAccessJwt(user.uid)
-    const refresh_token = _createRefreshJwt(user.uid)
+    const access_token = _createAccessJwt(user.uid, {role: Roles.SiteUser})
+    const refresh_token = _createRefreshJwt(user.uid, {role: Roles.SiteUser})
     return res.status(200).json({ access_token, refresh_token, ...firstInfo })
 }
