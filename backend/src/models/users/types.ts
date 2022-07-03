@@ -1,3 +1,5 @@
+import { ObjectId } from 'bson'
+
 export enum UserStatus {
     Trial = 'trial',
     Full =  'full'
@@ -5,7 +7,8 @@ export enum UserStatus {
 
 
 export interface IUser {
-    uid: string
+    _id: ObjectId // internal id
+    uid: string // public id
     username: string
     email: string
     name?: string
@@ -17,4 +20,4 @@ export interface IUser {
     updateedAt: Date
   }
 
-export type IUserInput = Omit<IUser, 'uid'|'createdAt'|'updateedAt'>;
+export type IUserInput = Omit<IUser, 'uid'|'createdAt'|'updateedAt'|'_id'>;

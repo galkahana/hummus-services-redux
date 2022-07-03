@@ -2,6 +2,7 @@ import { createJwt, jwtTimeIn } from '@lib/jwt'
 import config from 'config'
 import { Request, Response } from 'express'
 import { enhanceRequest } from '@lib/enhanced-request'
+import {sleep} from '@lib/async'
 import { Roles } from '@lib/authorization/rbac'
 
 /*
@@ -10,20 +11,16 @@ import { Roles } from '@lib/authorization/rbac'
     but mainly for the first reason
 */
 
-function _sleep(miliseconds: number) {
-    return new Promise((resolve)=> setTimeout(resolve, miliseconds))
-}
-
 function _randomSeconds(min: number, max: number) {
     return (min + (max - min)*Math.random())*1000
 }
 
 function _waitBadRandomSeconds() {
-    return _sleep(_randomSeconds(3,10))
+    return sleep(_randomSeconds(3,10))
 }
 
 function _waitGoodRandomSeconds() {
-    return _sleep(_randomSeconds(1,3))
+    return sleep(_randomSeconds(1,3))
 }
 
 type createJwtDataParam = Parameters<typeof createJwt>[2]
