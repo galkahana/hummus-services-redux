@@ -1,7 +1,7 @@
 import { createJwt, jwtTimeIn } from '@lib/jwt'
 import config from 'config'
 import { Request, Response } from 'express'
-import { EnhancedRequest } from '@lib/enhanced-request'
+import { enhanceRequest } from '@lib/enhanced-request'
 import { Roles } from '@lib/authorization/rbac'
 
 /*
@@ -44,7 +44,7 @@ export async function signIn(req: Request, res: Response) {
         return res.unauthenticated('Unauthenticated request')
     }
 
-    const firstInfo = new EnhancedRequest(req).firstInfo()
+    const firstInfo = enhanceRequest(req).firstInfo()
 
     // otherwise generate the token and send back
     await _waitGoodRandomSeconds()

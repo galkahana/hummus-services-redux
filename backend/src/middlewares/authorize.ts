@@ -1,10 +1,10 @@
 import { Actions, Resources, accesscontrol } from '@lib/authorization/rbac'
-import { EnhancedRequest } from '@lib/enhanced-request'
+import { enhanceRequest } from '@lib/enhanced-request'
 import { NextFunction, Request, Response } from 'express'
 
 export const authorizeOwn = (resource: Resources, action: Actions) => {
     return function(req: Request, res: Response, next: NextFunction) {
-        const firstInfo = new EnhancedRequest(req).firstInfo()
+        const firstInfo = enhanceRequest(req).firstInfo()
         if (!firstInfo || !firstInfo.role)
             return res.forbidden()
 
