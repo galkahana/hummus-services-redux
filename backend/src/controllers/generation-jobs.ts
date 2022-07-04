@@ -1,5 +1,5 @@
 import moment  from 'moment'
-import winston from 'winston'
+import winston, { loggers } from 'winston'
 import { enhanceRequest } from '@lib/enhanced-request'
 import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
@@ -54,7 +54,8 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayloa
 
     // in what should probably be some other mode of async job running, im not awaiting here but
     // rather thenning, so that we can return immediately, while still run the job
-    job_promise.then(async ()=> {
+    job_promise.then(async ([outputPath, outputTitle])=> {
+        winston.info(`Generated pdf with title ${outputTitle}. pdf file in ${outputPath}`)
         
         //TODO:  upload pdf
 

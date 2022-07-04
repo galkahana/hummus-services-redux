@@ -1,14 +1,16 @@
 import winston from 'winston'
 import { File } from 'temporary'
-import fs from 'fs'
-import { map } from 'lodash'
+import _fs from 'fs'
+import { map, flatten } from 'lodash'
 import axios from 'axios'
+
+const fs = _fs.promises
 
 async function _downloadFile(source: string, targetPath: string): Promise<string> {
     if(source.substring(0,5) != 'https')
         throw new Error(`external urls should have https prefix. failing url - ${source}`)
 
-    const file = fs.createWriteStream(targetPath)
+    const file = _fs.createWriteStream(targetPath)
     const {data} = await axios.get(source, {
         responseType: 'stream'
     })
@@ -50,5 +52,10 @@ export class ExternalFiles {
             this.externalsMap[key] = value
         })
 
+    }
+
+    async removeFiles() {
+        const allFiles = flatten<string>(Object.values(this.externalsMap))
+        await Promise.all(map(allFiles, (value) => fs.unlink(value)))
     }
 }
