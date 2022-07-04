@@ -1,5 +1,6 @@
-import { sleep } from '@lib/async'
 import { Ticket } from './types'
+import {ExternalFiles} from './external-files'
+import winston from 'winston'
 
 export class JobPipeline  {
     ticket: Ticket
@@ -10,6 +11,14 @@ export class JobPipeline  {
     }
 
     async run() {
-        await sleep(10000)
+        const externalFiles = new ExternalFiles()
+        await externalFiles.downloadExternals(this.ticket.externals)
+        winston.info('done with download', {downloads: externalFiles.externalsMap})
+        //const ticketDocument = computeDocument(await getDocument(externalFiles.externalsMap))
+        //const pdfOutputPath = await generatePDF(ticketDocument, externalFiles.externalsMap)
+        //await cleanup(externalFiles.externalsMap, pdfOutputPath)
+
+        //return {outputPath: pdfOutputPath, outputTitle: this.ticket.title}
+        
     }
 }

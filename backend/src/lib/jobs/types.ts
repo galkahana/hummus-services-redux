@@ -1,6 +1,8 @@
 export interface Ticket {
+    externals: {[key:string]: string|string[]}
+    title: string
     meta?: {
-        label?: string,
+        label?: string
         deleteFileAfter?: number
     }
 }
