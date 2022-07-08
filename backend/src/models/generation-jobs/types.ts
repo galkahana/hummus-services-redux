@@ -14,7 +14,6 @@ export interface IGenerationJob {
     user: ObjectId
     label?: string
     ticket: Ticket
-    deleteFileAfter?: number
     deleteFileAt?: Date
     createdAt: Date
     updateedAt: Date

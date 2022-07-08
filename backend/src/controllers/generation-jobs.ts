@@ -1,5 +1,5 @@
 import moment  from 'moment'
-import winston, { loggers } from 'winston'
+import winston from 'winston'
 import { enhanceRequest } from '@lib/enhanced-request'
 import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
@@ -8,6 +8,7 @@ import { Request, Response } from 'express'
 import { JwtPayload } from 'jsonwebtoken'
 import { JobStatus } from '@models/generation-jobs/types'
 import { JobPipeline } from '@lib/jobs/job-pipeline'
+import { uploadFileToDefaultBucket } from '@lib/storage'
 
 
 
@@ -45,7 +46,6 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayloa
         label:(ticket.meta && ticket.meta.label) ? ticket.meta.label:undefined,
         ticket:ticket,
         user:user._id,
-        deleteFileAfter: (ticket.meta && ticket.meta.deleteFileAfter) ? ticket.meta.deleteFileAfter:undefined
     })
 
     const pipeline = new JobPipeline(ticket)
@@ -57,27 +57,43 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayloa
     job_promise.then(async ([outputPath, outputTitle])=> {
         winston.info(`Generated pdf with title ${outputTitle}. pdf file in ${outputPath}`)
         
-        //TODO:  upload pdf
+        try {
+            const uploadFileData = await _uploadFileForUser(outputPath, user)
 
-        //TODO:  create file entry (and update job with reference)
+            // TODO: temporary print so i now it worked
+            winston.info('Upload succesful with data', uploadFileData)
 
-        //TODO:  ? crete public url?!?
+            // on success, finally set the job status to done
+            winston.info('Job succeeded, finished OK',job._id)
+            job.status = JobStatus.JobDone
 
-        // update job status
+            // add killer date for file when done, if required
+            if(ticket.meta && ticket.meta.deleteFileAfter) {
+                job.deleteFileAt = moment().add({ms:ticket.meta.deleteFileAfter}).toDate()
+            }
+            await updateJobById(job._id,job)
 
-        // on success, finally set the job status to done
-        winston.info('Job succeeded, finished OK',job._id)
-        job.status = JobStatus.JobDone
+            //TODO:  upload pdf
 
-        // add killer date for file when done, if required
-        if(job.deleteFileAfter) {
-            job.deleteFileAt = moment().add({ms:job.deleteFileAfter}).toDate()
+            //TODO:  create file entry (and update job with reference)
+
+            //TODO:  ? crete public url?!?
+
+            // update job status
+
+            // how about cleaning the tmp file?!
+
+            // TODO: accounting.logJobRanAccountingEvent(job,token,generationResult.outputPath)
+        } catch(ex) {
+            // set job status to failure
+            job.status = JobStatus.JobFailed
+            await updateJobById(job._id,job)
+
+            winston.info(`Failed post job activities with job ${job._id}. ex=${ex}`)
+
+            // TODO: handle clenup for error
+            throw ex
         }
-
-        await updateJobById(job._id,job)
-
-        // TODO: accounting.logJobRanAccountingEvent(job,token,generationResult.outputPath)
-
 
     }).catch(async (error: Error)=> {
         // failed, update job entry
@@ -95,4 +111,8 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayloa
 
     return job
 
+}
+
+function _uploadFileForUser(filePath: string, user: IUser) {
+    return uploadFileToDefaultBucket(filePath, user.uid)
 }

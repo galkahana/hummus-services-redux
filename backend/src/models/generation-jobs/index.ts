@@ -28,7 +28,6 @@ const generationJobSchema = new Schema<IGenerationJob>({
         type: Schema.Types.ObjectId,
         ref: 'GeneratedFile'
     }, 
-    deleteFileAfter: Number,
     deleteFileAt: Date
 },    
 {

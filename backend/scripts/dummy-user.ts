@@ -5,7 +5,7 @@ import winston from 'winston'
 import { setup as logSetup } from '../src/lib/logging/setup'
 import { generateHashPassword } from '../src/lib/passwords'
 import { createUser, removeUserByUsername } from '../src/lib/users'
-import { UserStatus } from '../src/models/types'
+import { UserStatus } from '../src/models/users/types'
 import database from '../src/setup/database'
 
 
@@ -29,7 +29,7 @@ async function createDummyUser() {
     }
     catch(err: unknown) {
         if( err instanceof Error)
-            console.log(`error: ${err}`)
+            winston.info(`error: ${err}`)
     }
 
     await database.disconnect()
@@ -44,7 +44,7 @@ async function removeDummyUser() {
     }
     catch(err: unknown) {
         if( err instanceof Error)
-            console.log(`error: ${err}`)
+            winston.info(`error: ${err}`)
     }
 
     await database.disconnect()
