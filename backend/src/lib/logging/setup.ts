@@ -3,8 +3,8 @@ import winston, { format } from 'winston'
 const { combine, json, printf, timestamp } = format
 
 export function setup() {
-    winston.errorEx = (err: Error, prefix = '') => {
-        let pureErrMessage = err.stack || err.message || err
+    winston.errorEx = (err: Error|unknown, prefix = '') => {
+        let pureErrMessage = (err instanceof Error)  ? (err.stack || err.message || err): err
         if (prefix) {
             pureErrMessage = prefix + pureErrMessage
         }

@@ -47,7 +47,7 @@ declare module 'express-serve-static-core' {
 }
 
 declare module 'winston' {
-  export function errorEx(err: Error, prefix?: string) : void
+  export function errorEx(err: Error|unknown, prefix?: string) : void
 }
 
 
