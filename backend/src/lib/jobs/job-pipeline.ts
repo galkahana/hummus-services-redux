@@ -4,6 +4,7 @@ import _fs from 'fs'
 import { File } from 'temporary'
 import { PDFWStreamForFile } from 'hummus'
 import { PDFEngine , ExternalsMap, PDFEngineDocument} from 'hummus-reports'
+import uuid from 'node-uuid'
 
 import {ExternalFiles } from './external-files'
 import { ExternalsMapDriver } from './externals-map-driver'
@@ -22,7 +23,7 @@ export class JobPipeline  {
 
     }
 
-    async run() {
+    async run(): Promise<[outpufPath: string, outputTitle: string]> {
         const externalFiles = new ExternalFiles()
         try {
             await externalFiles.downloadExternals(this.ticket.externals)
@@ -30,7 +31,7 @@ export class JobPipeline  {
             const ticketDocument = this._computeDocument(await this._getDocument(externalFiles.externalsMap))
             const pdfOutputPath = await this._generatePDF(ticketDocument, externalFiles.externalsMap)
             externalFiles.removeFiles() // cleanup, don't wait
-            return [pdfOutputPath, this.ticket.title]
+            return [pdfOutputPath, this.ticket.title || uuid.v1()]
         }
         catch(ex) {
             externalFiles.removeFiles() // cleanup, don't wait

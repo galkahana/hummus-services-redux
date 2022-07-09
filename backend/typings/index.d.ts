@@ -12,7 +12,8 @@ declare module 'passport-local' {
 declare module 'passport-http-bearer' {
   interface IVerifyOptions {
     provider: Provider
-    jwtDecoded: JwtPayload
+    tokenData: JwtPayload
+    token: string
     role: string
     scope?: string | Array[string] // overriding, making it optional to allow using "role" which is what i want
   }
@@ -20,7 +21,8 @@ declare module 'passport-http-bearer' {
 
 interface ReqInfo {
   provider: Provider
-  jwtDecoded?: JwtPayload
+  tokenData?: JwtPayload
+  token?: string
   role?: string
 }
 

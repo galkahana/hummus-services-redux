@@ -17,7 +17,7 @@ export interface IGenerationJob {
     deleteFileAt?: Date
     createdAt: Date
     updateedAt: Date
-    generatedFile: ObjectId
+    generatedFile?: ObjectId
   }
 
 export type IGenerationJobInput = Omit<IGenerationJob, 'uid'|'createdAt'|'updateedAt'|'deleteFileAt'|'generatedFile'|'_id'>;

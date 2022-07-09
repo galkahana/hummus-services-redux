@@ -1,4 +1,5 @@
 import { createJwt, jwtTimeIn } from '@lib/jwt'
+import uuid from 'node-uuid'
 import config from 'config'
 import { Request, Response } from 'express'
 import { enhanceRequest } from '@lib/enhanced-request'
@@ -45,7 +46,7 @@ export async function signIn(req: Request, res: Response) {
 
     // otherwise generate the token and send back
     await _waitGoodRandomSeconds()
-    const access_token = _createAccessJwt(user.uid, {role: Roles.SiteUser})
-    const refresh_token = _createRefreshJwt(user.uid, {role: Roles.SiteUser})
+    const access_token = _createAccessJwt(user.uid, {jti: uuid.v1(), role: Roles.SiteUser})
+    const refresh_token = _createRefreshJwt(user.uid, {jti: uuid.v1(), role: Roles.SiteUser})
     return res.status(200).json({ access_token, refresh_token, ...firstInfo })
 }

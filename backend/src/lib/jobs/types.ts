@@ -6,6 +6,7 @@ export interface Ticket {
     title: string
     meta?: {
         label?: string
+        private?: boolean
         deleteFileAfter?: number
     }
     document: {

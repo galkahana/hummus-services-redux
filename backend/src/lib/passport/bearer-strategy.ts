@@ -5,18 +5,18 @@ import { Providers } from './types'
 import { findByUID } from '@lib/users'
 
 
-export const bearerStrategyVerify: VerifyFunction = async (accessToken, done) => {
+export const bearerStrategyVerify: VerifyFunction = async (token, done) => {
     try {
-        const jwtDecoded: JwtPayload = verifyJwt(accessToken) as JwtPayload
+        const tokenData: JwtPayload = verifyJwt(token) as JwtPayload
 
-        if (!jwtDecoded.sub) {
+        if (!tokenData.sub) {
             return done(null, false)
         }
 
-        const user = await findByUID(jwtDecoded.sub)
+        const user = await findByUID(tokenData.sub)
         // For now im running with roles and rbac. maybe will change my mind later if i get to providing the user
         // with granular control. at this point i prefer roles, which better hide what can be done with them from an attacker
-        return done(null, user, {provider: Providers.JwtProvider, message: 'auth success', jwtDecoded, role: jwtDecoded.role || ''}) 
+        return done(null, user, {provider: Providers.JwtProvider, message: 'auth success', tokenData, token, role: tokenData.role || ''}) 
     } catch (err) {
         return done(null, false)
     }

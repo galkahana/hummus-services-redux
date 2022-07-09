@@ -1,23 +1,29 @@
+import * as crypto from 'crypto'
 import moment  from 'moment'
 import winston from 'winston'
 import { Request, Response } from 'express'
-import { JwtPayload } from 'jsonwebtoken'
 import _fs from 'fs'
+
 import { enhanceRequest } from '@lib/enhanced-request'
 import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
 import {createJob, updateJobById} from '@lib/generation-jobs'
+import { createFile } from '@lib/generated-files'
 import { JobStatus } from '@models/generation-jobs/types'
 import { JobPipeline } from '@lib/jobs/job-pipeline'
 import { uploadFileToDefaultBucket } from '@lib/storage'
+import { UploadedFileData } from '@models/generated-files/types'
+import { logJobRanAccountingEvent } from '@lib/accounting'
+import { JwtPayload } from 'jsonwebtoken'
 
 const fs = _fs.promises
 
 export async function create(req: Request, res: Response) {
-    const ticket = req.body,
-        user = req.user,
-        token = enhanceRequest(req).firstInfo()?.jwtDecoded
-
+    const ticket: Ticket = req.body // TODO: ticket should probably go through some sort of sanitation...especially the document part
+    const user = req.user
+    const requestInfo = enhanceRequest(req).firstInfo()
+    const token = requestInfo?.token
+    const tokenData = requestInfo?.tokenData
 
 
     if (!ticket) {
@@ -26,13 +32,13 @@ export async function create(req: Request, res: Response) {
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose job it is')
     }
-    if (!token) {
+    if (!token || !tokenData) {
         return res.badRequest('Missing token. cant bill job. no billing, no job')
     }
 
     let job
     try {
-        job = await _startGenerationJob(ticket, user, token)
+        job = await _startGenerationJob(ticket, user, token, tokenData)
     } catch(err) {
         return res.unprocessable(String(err))
     }
@@ -40,7 +46,21 @@ export async function create(req: Request, res: Response) {
     res.status(201).json(job) 
 }
 
-async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayload) {
+/**
+ * This method has all the job process defined in it. I might want to do a better job in making it properly async job if there'
+ * such a thing. sometime in the future move this to another service so this service is free for handling the incoming API.
+ * Also...there's a jobpipeline instance for running the job till file creation and then code here to complement it with uploading
+ * and recording job result. not sure why the split is important. probably used to be cause the file creation was part of the project
+ * code...but now it's now anyways...so what's the point. and maybe also desribe it as a true pipeline with activities as "mws". so the code
+ * might be clearer.
+ * @param ticket 
+ * @param user 
+ * @param token 
+ * @param tokenData 
+ * @returns 
+ */
+
+async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, tokenData: JwtPayload) {
     // create job entry
     const job = await createJob({
         status:JobStatus.JobInProgress,
@@ -53,35 +73,35 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayloa
 
     const job_promise = pipeline.run()
 
-    // in what should probably be some other mode of async job running, im not awaiting here but
-    // rather thenning, so that we can return immediately, while still run the job
+    // trigger files creation job and on it's async finish complete with activities till job can be marked as done
     job_promise.then(async ([outputPath, outputTitle])=> {
         winston.info(`Generated pdf with title ${outputTitle}. pdf file in ${outputPath}`)
         
         try {
+            // Upoad file
             const uploadFileData = await _uploadFileForUser(outputPath, user)
 
-            // TODO: temporary print so i now it worked
-            winston.info('Upload succesful with data', uploadFileData)
+            // Create uploaded file record
+            const generatedFile = await _createGeneratedFile(uploadFileData, outputTitle, user, !ticket.meta || !ticket.meta.private, token)
 
-            //TODO:  create file entry (and update job with reference)
-
-            //TODO:  ? crete public url?!?
-
-            // on success, finally set the job status to done
-            winston.info('Job succeeded, finished OK',job._id)
+            
+            // Job data updates
+            job.generatedFile = generatedFile._id
             job.status = JobStatus.JobDone
-
-            // add killer date for file when done, if required
             if(ticket.meta && ticket.meta.deleteFileAfter) {
+                // setting job delete time from when job is actually finished...which is now
                 job.deleteFileAt = moment().add({ms:ticket.meta.deleteFileAfter}).toDate()
             }
             await updateJobById(job._id,job)
 
-            // cleanup temp file
+            winston.info('Job succeeded, finished OK',job._id)
+
+            // accounting
+            await logJobRanAccountingEvent(job, token, tokenData, outputPath)
+
+            // cleanup temp file (after accounting record! so can read the file size!)
             await fs.unlink(outputPath)
 
-            // TODO: accounting.logJobRanAccountingEvent(job,token,generationResult.outputPath)
         } catch(ex: unknown) {
             winston.info(`Failed post job activities with job ${job._id}`)
             winston.errorEx(ex)
@@ -89,6 +109,9 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayloa
             // set job status to failure
             job.status = JobStatus.JobFailed
             await updateJobById(job._id,job)
+
+            // accounting
+            await logJobRanAccountingEvent(job, token, tokenData)
 
             // cleanup temp file
             await fs.unlink(outputPath)
@@ -99,10 +122,12 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayloa
         winston.error('Job failed in file creation stage',job._id)
         winston.errorEx(error)
         
+        // set job status to failure
         job.status = JobStatus.JobFailed
         await updateJobById(job._id,job)
         
-        //TODO: accounting.logJobRanAccountingEvent(job,token);
+        // accounting
+        await logJobRanAccountingEvent(job, token, tokenData)
     })
 
     return job
@@ -110,4 +135,26 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: JwtPayloa
 
 function _uploadFileForUser(filePath: string, user: IUser) {
     return uploadFileToDefaultBucket(filePath, user.uid)
+}
+
+async function _createGeneratedFile(uploadFileData: UploadedFileData, outputTitle: string, user: IUser, shouldCreatePublicId: boolean, creatorToken: string) {
+    const generatedFile = await createFile({
+        downloadTitle: outputTitle,
+        remoteSource: uploadFileData,
+        user: user._id
+    })
+
+    if(shouldCreatePublicId) {
+        const publicDownloadId = _hashMe(generatedFile._id.toString()) + 
+                                _hashMe(moment().format()) + 
+                                _hashMe(creatorToken)
+        generatedFile.publicDownloadId = publicDownloadId
+        await generatedFile.save()
+    }
+
+    return generatedFile
+}
+
+function _hashMe(value: string) {
+    return crypto.createHash('sha256').update(value).digest('base64')
 }
