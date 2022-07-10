@@ -8,7 +8,6 @@ import Model from '@models/generation-jobs'
 import { removeFiles } from '@lib/storage'
 
 export const createJob = (data: IGenerationJobInput) => Model.create(data)
-export const updateJobById = (id: ObjectId, data: IGenerationJob) => Model.updateOne({ _id: id }, data)
 export const findByUID = (uid: string ,limitingQuery?: FilterQuery<IGenerationJob>, populate?: boolean) => {
     const query = Model.findOne({
         uid,

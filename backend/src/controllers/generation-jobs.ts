@@ -9,7 +9,7 @@ import { ObjectId } from 'bson'
 import { enhanceRequest } from '@lib/enhanced-request'
 import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
-import { createJob, updateJobById, findAllDesc, findAllUIDsIn, findAll, deleteAllWithFiles, deleteFilesForJobs, findByUID } from '@lib/generation-jobs'
+import { createJob, findAllDesc, findAllUIDsIn, findAll, deleteAllWithFiles, deleteFilesForJobs, findByUID } from '@lib/generation-jobs'
 import { createFile } from '@lib/generated-files'
 import { JobStatus } from '@models/generation-jobs/types'
 import { JobPipeline } from '@lib/jobs/job-pipeline'
@@ -216,7 +216,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
                 // setting job delete time from when job is actually finished...which is now
                 job.deleteFileAt = moment().add({ ms:ticket.meta.deleteFileAfter }).toDate()
             }
-            await updateJobById(job._id,job)
+            job.save()
 
             winston.info('Job succeeded, finished OK',job._id)
 
@@ -232,7 +232,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
 
             // set job status to failure
             job.status = JobStatus.JobFailed
-            await updateJobById(job._id,job)
+            job.save()
 
             // accounting
             await logJobRanAccountingEvent(job, token, tokenData)
@@ -248,7 +248,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
         
         // set job status to failure
         job.status = JobStatus.JobFailed
-        await updateJobById(job._id,job)
+        job.save()
         
         // accounting
         await logJobRanAccountingEvent(job, token, tokenData)
