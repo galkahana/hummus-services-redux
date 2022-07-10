@@ -4,11 +4,12 @@ import winston from 'winston'
 import { Request, Response } from 'express'
 import _fs from 'fs'
 import { JwtPayload } from 'jsonwebtoken'
+import { ObjectId } from 'bson'
 
 import { enhanceRequest } from '@lib/enhanced-request'
 import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
-import {createJob, updateJobById, findAllDesc} from '@lib/generation-jobs'
+import {createJob, updateJobById, findAllDesc, findAllUIDsIn, findAll, deleteAllWithFiles, deleteFilesForJobs, findByUID} from '@lib/generation-jobs'
 import { createFile } from '@lib/generated-files'
 import { JobStatus } from '@models/generation-jobs/types'
 import { JobPipeline } from '@lib/jobs/job-pipeline'
@@ -126,6 +127,49 @@ export async function list(req: Request, res: Response) {
     res.status(200).json(results)
 }
 
+export async function show(req: Request, res: Response) {
+    if (!req.params.id) {
+        return res.badRequest('Missing job id')
+    }
+
+    if (!req.user) {
+        return res.badRequest('Missing user. should have user for identifying whose job it is')
+    }
+
+    const job = await findByUID(req.params.id, {user: req.user._id}, Boolean(req.query.full))
+    res.status(200).json(job)
+}
+
+export async function actions(req: Request, res: Response) {
+    const user = req.user
+    if (!user) {
+        return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
+    }
+    
+    const type = req.body.type
+    if(!type) {
+        return res.badRequest('Missing type. should be deleteAll or deleteFiles')
+    }
+    
+    switch(type) {
+        case 'deleteAll': {
+            await deleteAllWithFiles(await _limitToUserJobs(user._id, req.body.items))
+            res.status(200).json({ok:true})
+            break
+        }
+        case 'deleteFiles': {
+            await deleteFilesForJobs(await _limitToUserJobs(user._id, req.body.items))
+            res.status(200).json({ok:true})
+            break
+            
+        }
+        default: {
+            res.badRequest('Unknown type. should be deleteAll')
+        }
+    }
+    
+}
+
 /**
  * This method has all the job process defined in it. I might want to do a better job in making it properly async job if there'
  * such a thing. sometime in the future move this to another service so this service is free for handling the incoming API.
@@ -240,3 +284,7 @@ function _hashMe(value: string) {
 }
 
 
+async function _limitToUserJobs(userId: ObjectId, items?: string[]) {
+    const results = await (items ? findAllUIDsIn(items, {user: userId}): findAll({user: userId}))
+    return results.map(job => job._id)
+}
