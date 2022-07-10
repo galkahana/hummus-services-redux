@@ -3,18 +3,18 @@ import moment  from 'moment'
 import winston from 'winston'
 import { Request, Response } from 'express'
 import _fs from 'fs'
+import { JwtPayload } from 'jsonwebtoken'
 
 import { enhanceRequest } from '@lib/enhanced-request'
 import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
-import {createJob, updateJobById} from '@lib/generation-jobs'
+import {createJob, updateJobById, findAllDesc} from '@lib/generation-jobs'
 import { createFile } from '@lib/generated-files'
 import { JobStatus } from '@models/generation-jobs/types'
 import { JobPipeline } from '@lib/jobs/job-pipeline'
 import { uploadFileToDefaultBucket } from '@lib/storage'
 import { UploadedFileData } from '@models/generated-files/types'
 import { logJobRanAccountingEvent } from '@lib/accounting'
-import { JwtPayload } from 'jsonwebtoken'
 
 const fs = _fs.promises
 
@@ -44,6 +44,86 @@ export async function create(req: Request, res: Response) {
     }
 
     res.status(201).json(job) 
+}
+
+export async function list(req: Request, res: Response) {
+    const user = req.user
+
+    if (!user) {
+        return res.badRequest('Missing user. should have user for identifying whose jobs are being queried')
+    }
+
+    // query by user
+    const queryParams: {[key:string]: unknown} = {
+        user:user._id
+    }
+
+    // add search term for title
+    if(req.query.searchTerm !== undefined) {
+        queryParams.label =  {$regex: `.*${req.query.searchTerm}.*`,$options:'i'}
+    }
+
+    if(req.query.dateRangeFrom !== undefined ||
+        req.query.dateRangeTo !== undefined) {
+        const from = req.query.dateRangeFrom ? moment(req.query.dateRangeFrom as string).toDate():null
+        const to = req.query.dateRangeTo ? moment(req.query.dateRangeTo as string).toDate():null
+        
+        if(to) {
+            if(from) {
+                // both
+                queryParams.$or = [
+                    {
+                        $and: [
+                            {createdAt: {$gte: from}},
+                            {createdAt: {$lte: to}}
+                        ]
+                    },
+                    {
+                        $and: [
+                            {updatedAt: { $ne : null }},
+                            {updatedAt: {$gte: from}},
+                            {updatedAt: {$lte: to}}
+                        ]
+                    }  
+                ]                    
+            }  
+            else {
+                // only to
+                queryParams.$or = [
+                    {
+                        createdAt: {$lte: to}
+                    },
+                    {
+                        $and: [
+                            {updatedAt: { $ne : null }},
+                            {updatedAt: {$lte: to}}
+                        ]
+                    }  
+                ]                       
+            }
+        } else if(from) {
+            // only from
+            queryParams.$or = [
+                {
+                    createdAt: {$gte: from}
+                },
+                {
+                    $and: [
+                        {updatedAt: { $ne : null }},
+                        {updatedAt: {$gte: from}}
+                    ]
+                }  
+            ]                 
+        }
+    }
+
+    // add specific ids        
+    if(req.query.in !== undefined) {
+        queryParams._id = {$in:req.query.in}            
+    }
+
+    const results = await findAllDesc(queryParams)
+    res.status(200).json(results)
 }
 
 /**
@@ -158,3 +238,5 @@ async function _createGeneratedFile(uploadFileData: UploadedFileData, outputTitl
 function _hashMe(value: string) {
     return crypto.createHash('sha256').update(value).digest('base64')
 }
+
+

@@ -16,7 +16,8 @@ router.route('/authenticate/sign-in')
 
 router.route('/generation-jobs')
     .post(authenticate.authenticateOrDie,authorizeOwn(Resources.Job, Actions.Create),generationJobsController.create)
-/*    .get(authenticate.authenticateOrDie,authorize(permissions.manageJobs),generationJobsController.list)
+    .get(authenticate.authenticateOrDie,authorizeOwn(Resources.Job, Actions.Read),generationJobsController.list)
+/*    
 router.route('/generation-jobs/actions')
     .post(authenticate.authenticateOrDie,authorize(permissions.manageJobs),generationJobsController.actions)
 router.route('/generation-jobs/:id')
