@@ -52,7 +52,7 @@ generatedFileSchema.index({ publicDownloadId: 1 })
 generatedFileSchema.index({ 'remoteSource.sourceType': 1 })
 
 
-const GENERATED_FILE_PRIVATE_FIELDS = [ 'user','remoteSource' ]
+const GENERATED_FILE_PRIVATE_FIELDS = [ 'user','remoteSource', '_id', '__v' ]
 generatedFileSchema.set('toJSON', { 
     transform: function (doc, ret) {
         GENERATED_FILE_PRIVATE_FIELDS.forEach(function(fn) {

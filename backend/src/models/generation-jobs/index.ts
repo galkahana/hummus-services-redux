@@ -40,7 +40,7 @@ generationJobSchema.index({ user: 1 })
 generationJobSchema.index({ generatedFile: 1 })
 generationJobSchema.index({ deleteFileAt: -1 })
 
-const GENERATION_JOB_PRIVATE_FIELDS = [ 'user' ]
+const GENERATION_JOB_PRIVATE_FIELDS = [ 'user', '_id', '__v' ]
 generationJobSchema.set('toJSON', { 
     transform: (_doc, ret) => {
         GENERATION_JOB_PRIVATE_FIELDS.forEach(function(fn) {
