@@ -5,10 +5,10 @@ import winston from 'winston'
 import { IGenerationJob, IGenerationJobInput } from '@models/generation-jobs/types'
 import * as generatedFilesService from '@lib/generated-files'
 import Model from '@models/generation-jobs'
-import {removeFiles} from '@lib/storage'
+import { removeFiles } from '@lib/storage'
 
 export const createJob = (data: IGenerationJobInput) => Model.create(data)
-export const updateJobById = (id: ObjectId, data: IGenerationJob) => Model.updateOne({_id: id}, data)
+export const updateJobById = (id: ObjectId, data: IGenerationJob) => Model.updateOne({ _id: id }, data)
 export const findByUID = (uid: string ,limitingQuery?: FilterQuery<IGenerationJob>, populate?: boolean) => {
     const query = Model.findOne({
         uid,
@@ -22,14 +22,14 @@ export const findByUID = (uid: string ,limitingQuery?: FilterQuery<IGenerationJo
     return query
 }
 export const findAllUIDsIn = (items: string[] ,query?: FilterQuery<IGenerationJob>) => Model.find({
-    uid: {$in:items},
+    uid: { $in:items },
     ...query
 })
 export const findAll = (query: FilterQuery<IGenerationJob>) => Model.find(query)
-export const findAllDesc = (query: FilterQuery<IGenerationJob>) => Model.find(query).sort({createdAt:-1})
-export const findAllIn = (ids: ObjectId[]) => Model.find({_id: {$in:ids}})
-export const destroyIn = (ids: ObjectId[]) => Model.deleteMany({_id: {$in:ids}})
-export const patchIn = (ids: ObjectId[], patch: AnyObject) => Model.updateMany({_id: {$in:ids}}, {$set: patch})
+export const findAllDesc = (query: FilterQuery<IGenerationJob>) => Model.find(query).sort({ createdAt:-1 })
+export const findAllIn = (ids: ObjectId[]) => Model.find({ _id: { $in:ids } })
+export const destroyIn = (ids: ObjectId[]) => Model.deleteMany({ _id: { $in:ids } })
+export const patchIn = (ids: ObjectId[], patch: AnyObject) => Model.updateMany({ _id: { $in:ids } }, { $set: patch })
 
 export async function deleteAllWithFiles(items: ObjectId[]) {
     winston.info('Deleting jobs')
@@ -42,7 +42,7 @@ export async function deleteAllWithFiles(items: ObjectId[]) {
 export async function deleteFilesForJobs(items: ObjectId[]) {
     winston.info('Deleting files for jobs')
     await _deleteFilesForJobIDsNoUpdate(items)
-    await patchIn(items, {generatedFile: null})
+    await patchIn(items, { generatedFile: null })
 
     winston.info('Succeeded Deleting files for jobs')
 }

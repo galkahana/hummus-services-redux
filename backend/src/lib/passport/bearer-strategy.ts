@@ -16,7 +16,7 @@ export const bearerStrategyVerify: VerifyFunction = async (token, done) => {
         const user = await findByUID(tokenData.sub)
         // For now im running with roles and rbac. maybe will change my mind later if i get to providing the user
         // with granular control. at this point i prefer roles, which better hide what can be done with them from an attacker
-        return done(null, user, {provider: Providers.JwtProvider, message: 'auth success', tokenData, token, role: tokenData.role || ''}) 
+        return done(null, user, { provider: Providers.JwtProvider, message: 'auth success', tokenData, token, role: tokenData.role || '' }) 
     } catch (err) {
         return done(null, false)
     }

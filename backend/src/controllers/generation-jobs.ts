@@ -9,7 +9,7 @@ import { ObjectId } from 'bson'
 import { enhanceRequest } from '@lib/enhanced-request'
 import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
-import {createJob, updateJobById, findAllDesc, findAllUIDsIn, findAll, deleteAllWithFiles, deleteFilesForJobs, findByUID} from '@lib/generation-jobs'
+import { createJob, updateJobById, findAllDesc, findAllUIDsIn, findAll, deleteAllWithFiles, deleteFilesForJobs, findByUID } from '@lib/generation-jobs'
 import { createFile } from '@lib/generated-files'
 import { JobStatus } from '@models/generation-jobs/types'
 import { JobPipeline } from '@lib/jobs/job-pipeline'
@@ -61,7 +61,7 @@ export async function list(req: Request, res: Response) {
 
     // add search term for title
     if(req.query.searchTerm !== undefined) {
-        queryParams.label =  {$regex: `.*${req.query.searchTerm}.*`,$options:'i'}
+        queryParams.label =  { $regex: `.*${req.query.searchTerm}.*`,$options:'i' }
     }
 
     if(req.query.dateRangeFrom !== undefined ||
@@ -75,15 +75,15 @@ export async function list(req: Request, res: Response) {
                 queryParams.$or = [
                     {
                         $and: [
-                            {createdAt: {$gte: from}},
-                            {createdAt: {$lte: to}}
+                            { createdAt: { $gte: from } },
+                            { createdAt: { $lte: to } }
                         ]
                     },
                     {
                         $and: [
-                            {updatedAt: { $ne : null }},
-                            {updatedAt: {$gte: from}},
-                            {updatedAt: {$lte: to}}
+                            { updatedAt: { $ne : null } },
+                            { updatedAt: { $gte: from } },
+                            { updatedAt: { $lte: to } }
                         ]
                     }  
                 ]                    
@@ -92,12 +92,12 @@ export async function list(req: Request, res: Response) {
                 // only to
                 queryParams.$or = [
                     {
-                        createdAt: {$lte: to}
+                        createdAt: { $lte: to }
                     },
                     {
                         $and: [
-                            {updatedAt: { $ne : null }},
-                            {updatedAt: {$lte: to}}
+                            { updatedAt: { $ne : null } },
+                            { updatedAt: { $lte: to } }
                         ]
                     }  
                 ]                       
@@ -106,12 +106,12 @@ export async function list(req: Request, res: Response) {
             // only from
             queryParams.$or = [
                 {
-                    createdAt: {$gte: from}
+                    createdAt: { $gte: from }
                 },
                 {
                     $and: [
-                        {updatedAt: { $ne : null }},
-                        {updatedAt: {$gte: from}}
+                        { updatedAt: { $ne : null } },
+                        { updatedAt: { $gte: from } }
                     ]
                 }  
             ]                 
@@ -120,7 +120,7 @@ export async function list(req: Request, res: Response) {
 
     // add specific ids        
     if(req.query.in !== undefined) {
-        queryParams._id = {$in:req.query.in}            
+        queryParams._id = { $in:req.query.in }            
     }
 
     const results = await findAllDesc(queryParams)
@@ -136,7 +136,7 @@ export async function show(req: Request, res: Response) {
         return res.badRequest('Missing user. should have user for identifying whose job it is')
     }
 
-    const job = await findByUID(req.params.id, {user: req.user._id}, Boolean(req.query.full))
+    const job = await findByUID(req.params.id, { user: req.user._id }, Boolean(req.query.full))
     res.status(200).json(job)
 }
 
@@ -154,12 +154,12 @@ export async function actions(req: Request, res: Response) {
     switch(type) {
         case 'deleteAll': {
             await deleteAllWithFiles(await _limitToUserJobs(user._id, req.body.items))
-            res.status(200).json({ok:true})
+            res.status(200).json({ ok:true })
             break
         }
         case 'deleteFiles': {
             await deleteFilesForJobs(await _limitToUserJobs(user._id, req.body.items))
-            res.status(200).json({ok:true})
+            res.status(200).json({ ok:true })
             break
             
         }
@@ -198,7 +198,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
     const job_promise = pipeline.run()
 
     // trigger files creation job and on it's async finish complete with activities till job can be marked as done
-    job_promise.then(async ([outputPath, outputTitle])=> {
+    job_promise.then(async ([ outputPath, outputTitle ])=> {
         winston.info(`Generated pdf with title ${outputTitle}. pdf file in ${outputPath}`)
         
         try {
@@ -214,7 +214,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
             job.status = JobStatus.JobDone
             if(ticket.meta && ticket.meta.deleteFileAfter) {
                 // setting job delete time from when job is actually finished...which is now
-                job.deleteFileAt = moment().add({ms:ticket.meta.deleteFileAfter}).toDate()
+                job.deleteFileAt = moment().add({ ms:ticket.meta.deleteFileAfter }).toDate()
             }
             await updateJobById(job._id,job)
 
@@ -285,6 +285,6 @@ function _hashMe(value: string) {
 
 
 async function _limitToUserJobs(userId: ObjectId, items?: string[]) {
-    const results = await (items ? findAllUIDsIn(items, {user: userId}): findAll({user: userId}))
+    const results = await (items ? findAllUIDsIn(items, { user: userId }): findAll({ user: userId }))
     return results.map(job => job._id)
 }

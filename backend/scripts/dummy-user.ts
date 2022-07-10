@@ -13,7 +13,7 @@ async function createDummyUser() {
     logSetup()
     await database.connectTillSuccess()
 
-    const {salt, hash, iterations}= await generateHashPassword('test')
+    const { salt, hash, iterations }= await generateHashPassword('test')
 
     try {
         await createUser({

@@ -19,7 +19,7 @@ function _sanitizeURI(uri?: string) {
         if (subParts.length === 2) {
             subParts[1] = '********:********'
         }
-        sanitizedURI = [subParts.join('//'), parts[1]].join('@')
+        sanitizedURI = [ subParts.join('//'), parts[1] ].join('@')
     }
     return sanitizedURI
 }    

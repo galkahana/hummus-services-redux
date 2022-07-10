@@ -46,6 +46,6 @@ const jobRanAccountingEventSchema = new Schema<IJobRanAccountingEvent>({
 })
 
 
-jobRanAccountingEventSchema.index({user: 1})
+jobRanAccountingEventSchema.index({ user: 1 })
 
 export default model<IJobRanAccountingEvent>('JobRanAccountingEvent', jobRanAccountingEventSchema)

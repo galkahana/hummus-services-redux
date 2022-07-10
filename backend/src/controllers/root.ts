@@ -1,6 +1,7 @@
-import readyStatus, { Status } from '@setup/ready'
 import config from 'config'
 import { Request, Response } from 'express'
+
+import readyStatus, { Status } from '@setup/ready'
 
 export function health(_req: Request, res: Response) {
     res.status(200).send('hello world. I am Hummus Services and I approve this message.')
@@ -9,7 +10,7 @@ export function health(_req: Request, res: Response) {
 export function ready(_req: Request, res: Response) {
     const statusCheck = readyStatus()
 
-    res.status(statusCheck.status == Status.pass ? 200: 503).json({[config.get<string>('service.name')]: statusCheck})
+    res.status(statusCheck.status == Status.pass ? 200: 503).json({ [config.get<string>('service.name')]: statusCheck })
 
 }
 

@@ -9,7 +9,7 @@ function _authenticateWithProviders(...rest: Providers[]) {
     return (req: Request, res: Response, next: NextFunction) => {
         // The array provided here holds 1 or more possible providers.
         // Where makes sense.
-        passport.authenticate([...rest], { session: false }, function(
+        passport.authenticate([ ...rest ], { session: false }, function(
             err,
             user,
             info
@@ -49,4 +49,4 @@ export const ensureAuthentication = (req: Request, res: Response, next: NextFunc
     return next()
 }
 
-export const authenticateOrDie = [authenticate, ensureAuthentication]
+export const authenticateOrDie = [ authenticate, ensureAuthentication ]

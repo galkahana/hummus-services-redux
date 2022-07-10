@@ -22,7 +22,7 @@ export async function uploadFileToDefaultBucket(filePath: string, bucketPrefix: 
             Key: fileKey,
             Body: fileStream,
         }))
-        winston.info('Upload succeeded', {uploadData: data})
+        winston.info('Upload succeeded', { uploadData: data })
         return {
             sourceType: StorageSource.S3,
             data: {
@@ -43,10 +43,10 @@ export async function removeFiles(files: UploadedFileData[]) {
         const data = await s3Client.send(new DeleteObjectsCommand({
             Bucket: defaultUploadBucketName,
             Delete: {
-                Objects: keysForDelete.map(key => ({Key:key}))
+                Objects: keysForDelete.map(key => ({ Key:key }))
             }
         }))
-        winston.info('Delete succeeded', {deleteData: data})
+        winston.info('Delete succeeded', { deleteData: data })
 
     } catch (ex) {
         winston.info('Delete failed', ex)

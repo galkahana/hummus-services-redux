@@ -22,6 +22,6 @@ export function setup() {
                 ):
                 json()
         ),
-        transports: [new winston.transports.Console()]
+        transports: [ new winston.transports.Console() ]
     })
 }

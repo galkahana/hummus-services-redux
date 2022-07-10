@@ -39,20 +39,20 @@ generatedFileSchema.pre('remove', async function(next) {
 
     // When removing, automatically remove reference from generation job
     try {
-        await generationJobsModel.updateOne({generatedFile:thisID}, {$set: {generatedFile: null}})
+        await generationJobsModel.updateOne({ generatedFile:thisID }, { $set: { generatedFile: null } })
         next()
     } catch(ex: unknown) {
         next(ex as CallbackError)
     }
 })
 
-generatedFileSchema.index({uid: 1})
-generatedFileSchema.index({user: 1})
-generatedFileSchema.index({publicDownloadId: 1})
-generatedFileSchema.index({'remoteSource.sourceType': 1})
+generatedFileSchema.index({ uid: 1 })
+generatedFileSchema.index({ user: 1 })
+generatedFileSchema.index({ publicDownloadId: 1 })
+generatedFileSchema.index({ 'remoteSource.sourceType': 1 })
 
 
-const GENERATED_FILE_PRIVATE_FIELDS = ['user','remoteSource']
+const GENERATED_FILE_PRIVATE_FIELDS = [ 'user','remoteSource' ]
 generatedFileSchema.set('toJSON', { 
     transform: function (doc, ret) {
         GENERATED_FILE_PRIVATE_FIELDS.forEach(function(fn) {

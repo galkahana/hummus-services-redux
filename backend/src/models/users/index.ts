@@ -43,9 +43,9 @@ const userSchema = new Schema<IUser>({
 
 
 userSchema.index({ username: 1 })
-userSchema.index({email: 1})
+userSchema.index({ email: 1 })
 
-const USER_PRIVATE_FIELDS = ['hash', 'salt', 'iterations']
+const USER_PRIVATE_FIELDS = [ 'hash', 'salt', 'iterations' ]
 userSchema.set('toJSON', { 
     transform: (_doc, ret) => {
         USER_PRIVATE_FIELDS.forEach(function(fn) {
