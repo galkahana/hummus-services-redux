@@ -11,7 +11,7 @@ import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
 import { createJob, findAllDesc, findAllUIDsIn, findAll, deleteAllWithFiles, deleteFilesForJobs, findByUID } from '@lib/generation-jobs'
 import { createFile } from '@lib/generated-files'
-import { JobStatus } from '@models/generation-jobs/types'
+import { JobStatus, IGenerationJob } from '@models/generation-jobs/types'
 import { JobPipeline } from '@lib/jobs/job-pipeline'
 import { uploadFileToDefaultBucket } from '@lib/storage'
 import { UploadedFileData } from '@models/generated-files/types'
@@ -19,8 +19,8 @@ import { logJobRanAccountingEvent } from '@lib/accounting'
 
 const fs = _fs.promises
 
-export async function create(req: Request, res: Response) {
-    const ticket: Ticket = req.body // TODO: ticket should probably go through some sort of sanitation...especially the document part
+export async function create(req: Request<Record<string,never>, IGenerationJob, Ticket>, res: Response<IGenerationJob>) {
+    const ticket = req.body // TODO: ticket should probably go through some sort of sanitation...especially the document part
     const user = req.user
     const requestInfo = enhanceRequest(req).firstInfo()
     const token = requestInfo?.token
@@ -47,7 +47,14 @@ export async function create(req: Request, res: Response) {
     res.status(201).json(job) 
 }
 
-export async function list(req: Request, res: Response) {
+type ListQuery = {
+    searchTerm?: string
+    dateRangeFrom?: string
+    dateRangeTo?: string
+    in?: string[]
+}
+
+export async function list(req: Request<Record<string,never>, IGenerationJob[],null,ListQuery>, res: Response<IGenerationJob[]>) {
     const user = req.user
 
     if (!user) {
@@ -66,8 +73,8 @@ export async function list(req: Request, res: Response) {
 
     if(req.query.dateRangeFrom !== undefined ||
         req.query.dateRangeTo !== undefined) {
-        const from = req.query.dateRangeFrom ? moment(req.query.dateRangeFrom as string).toDate():null
-        const to = req.query.dateRangeTo ? moment(req.query.dateRangeTo as string).toDate():null
+        const from = req.query.dateRangeFrom ? moment(req.query.dateRangeFrom).toDate():null
+        const to = req.query.dateRangeTo ? moment(req.query.dateRangeTo).toDate():null
         
         if(to) {
             if(from) {
@@ -120,14 +127,14 @@ export async function list(req: Request, res: Response) {
 
     // add specific ids        
     if(req.query.in !== undefined) {
-        queryParams._id = { $in:req.query.in }            
+        queryParams.uid = { $in:req.query.in }            
     }
 
     const results = await findAllDesc(queryParams)
     res.status(200).json(results)
 }
 
-export async function show(req: Request, res: Response) {
+export async function show(req: Request<{id: string}, IGenerationJob|null,null,{full: boolean}>, res: Response<IGenerationJob|null>) {
     if (!req.params.id) {
         return res.badRequest('Missing job id')
     }
@@ -140,7 +147,21 @@ export async function show(req: Request, res: Response) {
     res.status(200).json(job)
 }
 
-export async function actions(req: Request, res: Response) {
+enum Actions {
+    DeleteAll = 'deleteAll',
+    DeleteFiles = 'deleteFiles'
+}
+
+type ActionsBody = {
+    type: Actions,
+    items?: string[]
+}
+
+type ActionsResponse = {
+    ok: boolean
+}
+
+export async function actions(req: Request<Record<string,never>, ActionsResponse,ActionsBody>, res: Response<ActionsResponse>) {
     const user = req.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
@@ -152,12 +173,12 @@ export async function actions(req: Request, res: Response) {
     }
     
     switch(type) {
-        case 'deleteAll': {
+        case Actions.DeleteAll: {
             await deleteAllWithFiles(await _limitToUserJobs(user._id, req.body.items))
             res.status(200).json({ ok:true })
             break
         }
-        case 'deleteFiles': {
+        case Actions.DeleteFiles: {
             await deleteFilesForJobs(await _limitToUserJobs(user._id, req.body.items))
             res.status(200).json({ ok:true })
             break
