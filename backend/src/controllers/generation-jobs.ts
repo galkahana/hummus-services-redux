@@ -134,7 +134,11 @@ export async function list(req: Request<Record<string,never>, IGenerationJob[],n
     res.status(200).json(results)
 }
 
-export async function show(req: Request<{id: string}, IGenerationJob|null,null,{full: boolean}>, res: Response<IGenerationJob|null>) {
+type ShowQuery = {
+    full?: boolean
+}
+
+export async function show(req: Request<{id: string}, IGenerationJob|null,null,ShowQuery>, res: Response<IGenerationJob|null>) {
     if (!req.params.id) {
         return res.badRequest('Missing job id')
     }
