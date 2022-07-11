@@ -3,7 +3,9 @@ import { JwtPayload } from 'jsonwebtoken'
 
 import { IGenerationJob } from '@models/generation-jobs/types'
 import JobRanAccountingEventModel from '@models/job-ran-accounting-events'
+import FileDownloadedAccountingEventModel from '@models/file-downloaded-accounting-events'
 import winston from 'winston'
+import { IGeneratedFile } from '@models/generated-files/types'
 
 const fs = _fs.promises
 
@@ -30,4 +32,15 @@ export async function logJobRanAccountingEvent(job: IGenerationJob, token: strin
         resultFile: job.generatedFile,
         resultFileSize
     })
+}
+
+export function logFileDownloadedAccountingEvent(file: IGeneratedFile, token: string, tokenData: JwtPayload, fileSize: Nullable<number>) {
+    return FileDownloadedAccountingEventModel.create({
+        user: file.user,
+        tokenId: tokenData.jti,
+        tokenString: token,
+        tokenType: tokenData.role,
+        downloadedFile: file._id,
+        downloadedFileSize: fileSize,
+    })    
 }

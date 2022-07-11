@@ -7,7 +7,7 @@ import axios from 'axios'
 const fs = _fs.promises
 
 async function _downloadFile(source: string, targetPath: string): Promise<string> {
-    if(source.substring(0,5) != 'https')
+    if(source.substring(0, 5) != 'https')
         throw new Error(`external urls should have https prefix. failing url - ${source}`)
 
     const file = _fs.createWriteStream(targetPath)
@@ -23,12 +23,12 @@ async function _downloadFile(source: string, targetPath: string): Promise<string
 async function _downloadExternalEntry(externalKey: string, externalValue: string|string[]): Promise<[string, string|string[]]> {
     if(typeof externalValue == 'string') {
         const downloadedPath = await _downloadFile(externalValue, new File().path)
-        winston.info('downloaded',externalKey,'from',externalValue)
+        winston.info('downloaded', externalKey, 'from', externalValue)
         return [ externalKey, downloadedPath ]
     }
     else if (Array.isArray(externalValue)) {
         const downloadedPaths = await Promise.all(map(externalValue, (value) => _downloadFile(value, new File().path)))
-        winston.info('downloaded',externalKey,'from',externalValue)
+        winston.info('downloaded', externalKey, 'from', externalValue)
         return [ externalKey, downloadedPaths ]
     }
     else {

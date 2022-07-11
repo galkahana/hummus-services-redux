@@ -25,9 +25,10 @@ export const accesscontrol = new AccessControl()
 // Site User access
 accesscontrol.grant(Roles.SiteUser)
     .createOwn(Resources.Job)
-    .deleteOwn(Resources.Job)
     .readOwn(Resources.Job)
+    .deleteOwn(Resources.Job)
     .readOwn(Resources.File)
+    .deleteOwn(Resources.File)
     .readOwn(Resources.User)
     .updateOwn(Resources.User)
     .createOwn(Resources.Token)
@@ -37,8 +38,8 @@ accesscontrol.grant(Roles.SiteUser)
 // Job Manager access
 accesscontrol.grant(Roles.JobManager)
     .createOwn(Resources.Job)
-    .deleteOwn(Resources.Job)
     .readOwn(Resources.Job)
+    .deleteOwn(Resources.Job)
     .readOwn(Resources.File)
 
 

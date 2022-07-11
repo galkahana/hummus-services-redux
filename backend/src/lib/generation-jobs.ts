@@ -8,7 +8,7 @@ import Model from '@models/generation-jobs'
 import { removeFiles } from '@lib/storage'
 
 export const createJob = (data: IGenerationJobInput) => Model.create(data)
-export const findByUID = (uid: string ,limitingQuery?: FilterQuery<IGenerationJob>, populate?: boolean) => {
+export const findByUID = (uid: string, limitingQuery?: FilterQuery<IGenerationJob>, populate?: boolean) => {
     const query = Model.findOne({
         uid,
         ...limitingQuery
@@ -20,7 +20,7 @@ export const findByUID = (uid: string ,limitingQuery?: FilterQuery<IGenerationJo
 
     return query
 }
-export const findAllUIDsIn = (items: string[] ,query?: FilterQuery<IGenerationJob>) => Model.find({
+export const findAllUIDsIn = (items: string[], query?: FilterQuery<IGenerationJob>) => Model.find({
     uid: { $in:items },
     ...query
 })
@@ -50,11 +50,13 @@ async function _deleteFilesForJobIDsNoUpdate(items: ObjectId[]) {
     winston.info('Fetching job items for IDs for their file records')
     const jobs = await findAllIn(items)
     winston.info('Deleting files')
-    await _deleteFilesForGeneratedFileIDs(jobs.map(jobs => jobs.generatedFile).filter((value): value is ObjectId => value !== undefined))
+    await _deleteFilesForGeneratedFileIDs(jobs.map(jobs => jobs.generatedFile).filter((value): value is ObjectId => Boolean(value)))
     winston.info('Succeeded Deleting files')
 }
 
 async function _deleteFilesForGeneratedFileIDs(generatedFilesIDs: ObjectId[]) {
+    if(generatedFilesIDs.length == 0)
+        return
     /*
         Important! this one does not null geneerated file entries
     */

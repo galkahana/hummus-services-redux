@@ -1,9 +1,10 @@
 import config from 'config'
 import winston from 'winston'
 import uuid from 'node-uuid'
-import { S3Client, PutObjectCommand, DeleteObjectsCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, DeleteObjectsCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import fs from 'fs'
 import { StorageSource, UploadedFileData } from '@models/generated-files/types'
+import { Response } from 'express'
 
 
 // credentials are expected to be loadeddirectly using env vars
@@ -38,12 +39,11 @@ export async function uploadFileToDefaultBucket(filePath: string, bucketPrefix: 
 
 export async function removeFiles(files: UploadedFileData[]) {
 
-    const keysForDelete = files.map(file => file.data.remoteKey)
     try {
         const data = await s3Client.send(new DeleteObjectsCommand({
             Bucket: defaultUploadBucketName,
             Delete: {
-                Objects: keysForDelete.map(key => ({ Key:key }))
+                Objects: files.map(file => ({ Key: file.data.remoteKey }))
             }
         }))
         winston.info('Delete succeeded', { deleteData: data })
@@ -52,4 +52,34 @@ export async function removeFiles(files: UploadedFileData[]) {
         winston.info('Delete failed', ex)
         throw ex
     }           
+}
+
+export async function removeFile(file: UploadedFileData) {
+    try {
+        const data = await s3Client.send(new DeleteObjectCommand({
+            Bucket: defaultUploadBucketName,
+            Key: file.data.remoteKey
+        }))
+        winston.info('Delete succeeded', { deleteData: data })
+
+    } catch (ex) {
+        winston.info('Delete failed', ex)
+        throw ex
+    }        
+}
+
+export async function downloadFileToStream(file: UploadedFileData, res: Response) {
+    try {
+        const command = new GetObjectCommand({
+            Bucket: defaultUploadBucketName,
+            Key: file.data.remoteKey
+        })
+        const s3Item = await s3Client.send(command)
+        s3Item.Body.pipe(res)
+        return s3Item.ContentLength
+
+    } catch (ex) {
+        winston.info('Download failed', ex)
+        throw ex
+    }               
 }

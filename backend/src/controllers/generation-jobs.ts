@@ -19,7 +19,7 @@ import { logJobRanAccountingEvent } from '@lib/accounting'
 
 const fs = _fs.promises
 
-export async function create(req: Request<Record<string,never>, IGenerationJob, Ticket>, res: Response<IGenerationJob>) {
+export async function create(req: Request<Record<string, never>, IGenerationJob, Ticket>, res: Response<IGenerationJob>) {
     const ticket = req.body // TODO: ticket should probably go through some sort of sanitation...especially the document part
     const user = req.user
     const requestInfo = enhanceRequest(req).firstInfo()
@@ -54,7 +54,7 @@ type ListQuery = {
     in?: string[]
 }
 
-export async function list(req: Request<Record<string,never>, IGenerationJob[],null,ListQuery>, res: Response<IGenerationJob[]>) {
+export async function list(req: Request<Record<string, never>, IGenerationJob[], null, ListQuery>, res: Response<IGenerationJob[]>) {
     const user = req.user
 
     if (!user) {
@@ -68,7 +68,7 @@ export async function list(req: Request<Record<string,never>, IGenerationJob[],n
 
     // add search term for title
     if(req.query.searchTerm !== undefined) {
-        queryParams.label =  { $regex: `.*${req.query.searchTerm}.*`,$options:'i' }
+        queryParams.label =  { $regex: `.*${req.query.searchTerm}.*`, $options:'i' }
     }
 
     if(req.query.dateRangeFrom !== undefined ||
@@ -138,7 +138,7 @@ type ShowQuery = {
     full?: boolean
 }
 
-export async function show(req: Request<{id: string}, IGenerationJob|null,null,ShowQuery>, res: Response<IGenerationJob|null>) {
+export async function show(req: Request<{id: string}, IGenerationJob|null, null, ShowQuery>, res: Response<IGenerationJob|null>) {
     if (!req.params.id) {
         return res.badRequest('Missing job id')
     }
@@ -165,7 +165,7 @@ type ActionsResponse = {
     ok: boolean
 }
 
-export async function actions(req: Request<Record<string,never>, ActionsResponse,ActionsBody>, res: Response<ActionsResponse>) {
+export async function actions(req: Request<Record<string, never>, ActionsResponse, ActionsBody>, res: Response<ActionsResponse>) {
     const user = req.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
@@ -243,7 +243,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
             }
             job.save()
 
-            winston.info('Job succeeded, finished OK',job._id)
+            winston.info('Job succeeded, finished OK', job._id)
 
             // accounting
             await logJobRanAccountingEvent(job, token, tokenData, outputPath)
@@ -268,7 +268,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
 
     }).catch(async (error: Error)=> {
         // failed, update job entry
-        winston.error('Job failed in file creation stage',job._id)
+        winston.error('Job failed in file creation stage', job._id)
         winston.errorEx(error)
         
         // set job status to failure

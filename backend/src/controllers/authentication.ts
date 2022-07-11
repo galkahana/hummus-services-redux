@@ -17,11 +17,11 @@ function _randomSeconds(min: number, max: number) {
 }
 
 function _waitBadRandomSeconds() {
-    return sleep(_randomSeconds(3,10))
+    return sleep(_randomSeconds(3, 10))
 }
 
 function _waitGoodRandomSeconds() {
-    return sleep(_randomSeconds(1,3))
+    return sleep(_randomSeconds(1, 3))
 }
 
 type createJwtDataParam = Parameters<typeof createJwt>[2]
@@ -30,7 +30,7 @@ function _createAccessJwt(sub: string, data: createJwtDataParam) {
     return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSeconds')), data)
 }
 
-function _createRefreshJwt(sub: string , data: createJwtDataParam) {
+function _createRefreshJwt(sub: string, data: createJwtDataParam) {
     return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSecondsRefresh')), { ...data, trole: 'ref' })
 }
 

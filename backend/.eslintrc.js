@@ -22,6 +22,7 @@ module.exports = {
         'import/prefer-default-export': 'off',
         '@typescript-eslint/no-unused-vars': 'warn',
         'object-curly-spacing': [ 'error', 'always' ],
-        'array-bracket-spacing': [ 'error', 'always' ]
+        'array-bracket-spacing': [ 'error', 'always' ],
+        'comma-spacing': [ 'error', { 'before': false, 'after': true } ]
     },
 }

@@ -3,7 +3,7 @@ import mustache from 'mustache'
 import _fs from 'fs'
 import { File } from 'temporary'
 import { PDFWStreamForFile } from 'hummus'
-import { PDFEngine , ExternalsMap, PDFEngineDocument } from 'hummus-reports'
+import { PDFEngine, ExternalsMap, PDFEngineDocument } from 'hummus-reports'
 import uuid from 'node-uuid'
 
 import { ExternalFiles } from './external-files'

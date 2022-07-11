@@ -31,25 +31,25 @@ interface ReqInfo {
  */
 
 declare module 'express-serve-static-core' {
-    interface Response {
-        badRequest: (message?: string) => void
-        forbidden: (message?: string) => void
-        unauthenticated: (message?: string) => void
-        notFound: (message?: string) => void
-        unprocessable: (message?: string) => void
-        serverError: (message?: string) => void
+  interface Response {
+    badRequest: (message?: string) => void
+    forbidden: (message?: string) => void
+    unauthenticated: (message?: string) => void
+    notFound: (message?: string) => void
+    unprocessable: (message?: string) => void
+    serverError: (message?: string) => void
 
-        errStatus?: number
-    }
+    errStatus?: number
+  }
 
-    interface Request {
-      info?: ReqInfo | ReqInfo[]
-      user?: IUser
-    }
+  interface Request {
+    info?: ReqInfo | ReqInfo[]
+    user?: IUser
+  }
 }
 
 declare module 'winston' {
-  export function errorEx(err: Error|unknown, prefix?: string) : void
+  export function errorEx(err: Error | unknown, prefix?: string): void
 }
 
 
