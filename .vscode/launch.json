@@ -9,6 +9,7 @@
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceRoot}/backend",
+            "runtimeVersion": "16",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
                 "run",
