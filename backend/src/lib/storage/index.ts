@@ -1,7 +1,7 @@
 import config from 'config'
 import winston from 'winston'
 import uuid from 'node-uuid'
-import { S3Client, PutObjectCommand, DeleteObjectsCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, DeleteObjectsCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import fs from 'fs'
 import { StorageSource, UploadedFileData } from '@models/generated-files/types'
 import { Response } from 'express'
@@ -82,4 +82,26 @@ export async function downloadFileToStream(file: UploadedFileData, res: Response
         winston.info('Download failed', ex)
         throw ex
     }               
+}
+
+
+export async function getTotalFolderSize(bucketPrefix: string) {
+    // This goes by iterating files at aws. this is what i used to use, but it might not perform very well over time. a more performant
+    // option would be to do the count per what info is stored in the db at generatedFiles for the user.
+    let totalSize = 0
+    let continuationToken = undefined
+    try {
+        const command = new ListObjectsV2Command({
+            Bucket: defaultUploadBucketName,
+            Prefix: bucketPrefix,
+            ContinuationToken: continuationToken
+        })
+        const s3List = await s3Client.send(command)
+        s3List.Contents?.forEach( o => totalSize+=o.Size || 0)
+        continuationToken = s3List.NextContinuationToken
+    } catch (ex) {
+        winston.info('Sizing folder failed', ex)
+        throw ex
+    }   
+    return totalSize
 }
