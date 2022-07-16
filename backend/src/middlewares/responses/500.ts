@@ -7,7 +7,7 @@ export default (_req: Request, res: Response, next: NextFunction) => {
      */
     res.serverError = function(message?: string) {
         const err = new Error(message || 'Internal server error')
-        res.locals.errStatuss = 500
+        res.locals.errStatus = 500
         next(err)
     }
     next()

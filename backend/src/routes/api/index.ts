@@ -14,10 +14,6 @@ import { authorizeOwn } from '@middlewares/authorize'
 const router = express.Router()
 
 
-router.route('/authenticate/sign-in')
-    .post(authenticate.login, authenticationController.signIn)
-
-
 router.route('/generation-jobs')
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Job, Actions.Create), generationJobsController.create)
     .get(authenticate.authenticateOrDie, authorizeOwn(Resources.Job, Actions.Read), generationJobsController.list)
@@ -50,6 +46,12 @@ router.route('/tokens')
 router.route('/tokens/actions')
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Update), tokensController.actions)
 
+router.route('/authenticate/sign-in')
+    .post(authenticate.login, authenticationController.signIn)
+router.route('/authenticate/sign-out')
+    .delete(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Delete), authenticationController.signOut)
+//router.route('/authenticate/sign-up')
+//    .post(capcha.checkcapcha, usersController.create, authenticationController.signIn)
 
 router.route('/').get(root.health)
 router.route('/health').get(root.health)

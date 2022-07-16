@@ -6,6 +6,7 @@ export const createToken = (data: ITokenInput) => Model.create(data)
 export const findByJTI = (jti: string) => Model.findOne({ jti })
 export const findAll = (query: FilterQuery<IToken>) => Model.find(query)
 export const destroyAll = (query: FilterQuery<IToken>) => Model.deleteMany(query)
+export const destroyOne = (query: FilterQuery<IToken>) => Model.deleteOne(query).exec()
 
 export async function createTokenValue(sub: string, data: Omit<ITokenInput, 'sub'|'exp'>, exp?: number) {
     const newToken = await createToken({ sub, exp, ...data })
