@@ -32,7 +32,7 @@ function _createAccessJwt(sub: string, data: createJwtDataParam) {
 }
 
 function _createRefreshJwt(sub: string, data: createJwtDataParam) {
-    return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSecondsRefresh')), { ...data, trole: 'ref' })
+    return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSecondsRefresh')), { ...data, refresh: 'true' })
 }
 
 type SignInTokensResponse = {
