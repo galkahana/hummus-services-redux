@@ -8,9 +8,9 @@ export const loginStrategyVerify : VerifyFunction = async (username, password, d
     try {
         const user = await findByUsername(username)
         if (user && await verifyPassword({
-            salt: user.salt || '',
-            hash: user.hash || '',
-            iterations: user.iterations || 1
+            salt: user.salt,
+            hash: user.hash,
+            iterations: user.iterations
             
         }, password)) {
             return done(null, user, { provider: Providers.UserPasswordLoginProvider, message: 'login success' })

@@ -4,16 +4,16 @@ import { JwtPayload } from 'jsonwebtoken'
 
 import { Response } from 'express'
 
-interface TokenInfo {
+export interface TokenInfo {
     provider: Providers
     tokenData?: JwtPayload
     token?: string
     role?: string
   }
 
-interface AuthLocals extends Record<string, unknown> {
+export interface AuthLocals extends Record<string, unknown> {
     user?: IUser
-    info?: TokenInfo
+    info?: TokenInfo|TokenInfo[]
 }
 export interface AuthResponse<T> extends Response<T> {
     locals: AuthLocals

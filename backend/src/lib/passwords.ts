@@ -7,9 +7,9 @@ const DIGEST = 'sha256'
 const BYTE_TO_STRING_ENCODING = 'hex'
 
 export interface PersistedPassword {
-    salt: string;
-    hash: string;
-    iterations: number;
+    salt?: string;
+    hash?: string;
+    iterations?: number;
 }
 
 export async function generateHashPassword(password: string): Promise<PersistedPassword> {
@@ -31,11 +31,11 @@ export async function generateHashPassword(password: string): Promise<PersistedP
 
 export async function verifyPassword(persistedPassword: PersistedPassword, passwordAttempt: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-        crypto.pbkdf2(passwordAttempt, persistedPassword.salt, persistedPassword.iterations, PASSWORD_LENGTH, DIGEST, (error, hash) => {
+        crypto.pbkdf2(passwordAttempt, persistedPassword.salt || '', persistedPassword.iterations || 1, PASSWORD_LENGTH, DIGEST, (error, hash) => {
             if (error) {
                 reject(error)
             } else {
-                resolve(persistedPassword.hash === hash.toString(BYTE_TO_STRING_ENCODING))
+                resolve((persistedPassword.hash || '') === hash.toString(BYTE_TO_STRING_ENCODING))
             }
         })
     })

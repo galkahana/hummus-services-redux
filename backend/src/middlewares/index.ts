@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser'
 import config from 'config'
 import cors from 'cors'
-import { ErrorRequestHandler, Express } from 'express'
+import { ErrorRequestHandler, Express, NextFunction, Request, Response } from 'express'
 import _fs from 'fs'
 import path from 'path'
 import { logRequest, logResponse } from './log-request'
@@ -39,7 +39,7 @@ export function generalErrorHandlerSetup(app: Express) {
     app.use(_generalErrorHandler)
 }
 
-const _generalErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
+const _generalErrorHandler: ErrorRequestHandler = (err: Error, _req: Request, res: Response, next: NextFunction) => {
     if (res.headersSent) {
         return next(err)
     }
@@ -57,7 +57,7 @@ const _generalErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
             res.json({
                 message: err.message,
                 error: errData,
-                info: err.info
+                info: res.locals.errInfo
             })
         }
     })
