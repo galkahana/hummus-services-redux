@@ -3,7 +3,6 @@ import { verifyJwt } from '@lib/tokens/jwt'
 import { JwtPayload } from 'jsonwebtoken'
 import { Providers } from './types'
 import { findByUID } from '@lib/users'
-import { TokenPayload } from '@lib/tokens/types'
 import { verifyToken } from '@lib/tokens/db-tokens'
 
 
