@@ -46,7 +46,7 @@ export async function signIn(_req: Request, res: AuthResponse<SignInTokensRespon
     await _waitGoodRandomSeconds()
     const accessToken = createAccessToken(user.uid)
     const refreshToken = await createRefreshToken(user.uid)
-    return res.status(200).json({ accessToken, refreshToken, ...firstInfo })
+    res.status(200).json({ accessToken, refreshToken, ...firstInfo })
 }
 
 type SignoutBody = {

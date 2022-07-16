@@ -47,7 +47,7 @@ const _generalErrorHandler: ErrorRequestHandler = (err: Error, _req: Request, re
 
     // development error handler - will print stacktrace
     // production error handler - no stacktraces leaked to user
-    const errData = config.get<boolean>('isDebug') ? err : {}
+    const errData = config.get<boolean>('isDebug') ? { message: err.message, stack: err.stack } : {}
 
     res.format({
         text: () => {

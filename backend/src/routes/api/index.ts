@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 
 import * as root from '@controllers/root'
@@ -10,6 +10,7 @@ import * as usersController from '@controllers/users'
 import { Resources, Actions } from '@lib/authorization/rbac'
 import * as authenticate from '@middlewares/authenticate'
 import { authorizeOwn } from '@middlewares/authorize'
+import { checkCapcha } from '@middlewares/google-capcha'
 
 
 const router = express.Router()
@@ -48,11 +49,11 @@ router.route('/tokens/actions')
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Update), asyncHandler(tokensController.actions))
 
 router.route('/authenticate/sign-in')
-    .post(authenticate.login, authenticationController.signIn)
+    .post(authenticate.login, asyncHandler(authenticationController.signIn))
 router.route('/authenticate/sign-out')
     .delete(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Delete), asyncHandler(authenticationController.signOut))
-//router.route('/authenticate/sign-up')
-//    .post(capcha.checkcapcha, usersController.create, authenticationController.signIn)
+router.route('/authenticate/sign-up')
+    .post(checkCapcha, /* usersController.create,*/ asyncHandler(authenticationController.signIn))
 
 router.route('/').get(root.health)
 router.route('/health').get(root.health)
