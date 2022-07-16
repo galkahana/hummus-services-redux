@@ -23,6 +23,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "express-async-handler": "^1.2.0",
     "express-validator": "^6.14.1",
     "hummus": "^1.0.110",
     "hummus-reports": "^1.0.1",

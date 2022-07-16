@@ -60,10 +60,10 @@ export async function signOut(req:Request<Record<string, never>, Record<string, 
     }    
 
     // destroy input refresh token...making sure it belongs to the user, and is of the right role
-    try {
-        await destroyOne({ jti: req.body.refreshToken, sub: user.uid, role: Roles.SiteUser })
-    } catch(err) {
-        return next(err)
-    }
+    //try {
+    await destroyOne({ jti: req.body.refreshToken, sub: user.uid, role: Roles.SiteUser })
+    //} catch(err) {
+    //    return next(err)
+    //}
     res.sendStatus(204)
 }

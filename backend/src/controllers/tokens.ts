@@ -54,7 +54,7 @@ export async function create(req: Request<Record<string, never>, CreateTokenResp
     }
 
     const token = await createTokenValue(user.uid, { role: req.body.role })
-    return res.status(201).json({ token })
+    res.status(201).json({ token })
 }
 
 enum Actions {

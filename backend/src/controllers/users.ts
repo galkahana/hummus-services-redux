@@ -2,6 +2,7 @@ import moment from 'moment'
 import { Request, Response } from 'express'
 import { pick } from 'lodash'
 import { body } from 'express-validator'
+import asyncHandler from 'express-async-handler'
 
 import { IUser } from '@models/users/types'
 import { findByUID, patch as patchUser } from '@lib/users'
@@ -26,7 +27,7 @@ type UserPatchInput = {
 export const patch = [
     body('name').escape().optional(),
     body('email').isEmail().optional(),
-    _patch
+    asyncHandler(_patch)
 ]
 
 
