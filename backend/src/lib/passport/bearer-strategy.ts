@@ -1,5 +1,5 @@
 import { VerifyFunction } from 'passport-http-bearer'
-import { verifyJwt } from '@lib/jwt'
+import { verifyJwt } from '@lib/tokens/jwt'
 import { JwtPayload } from 'jsonwebtoken'
 import { Providers } from './types'
 import { findByUID } from '@lib/users'

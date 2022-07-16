@@ -1,12 +1,12 @@
+import { Response } from 'express'
+
 import { IUser } from '@models/users/types'
 import { Providers } from '@lib/passport/types'
-import { JwtPayload } from 'jsonwebtoken'
-
-import { Response } from 'express'
+import { TokenPayload } from '@lib/tokens/types'
 
 export interface TokenInfo {
     provider: Providers
-    tokenData?: JwtPayload
+    tokenData?: TokenPayload
     token?: string
     role?: string
   }

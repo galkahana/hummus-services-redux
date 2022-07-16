@@ -1,6 +1,7 @@
-import { Providers } from '@lib/passport/types'
-import { JwtPayload } from 'jsonwebtoken'
 import 'winston'
+
+import { Providers } from '@lib/passport/types'
+import { TokenPayload } from '@lib/tokens/types'
 
 declare module 'passport-local' {
   interface IVerifyOptions {
@@ -11,7 +12,7 @@ declare module 'passport-local' {
 declare module 'passport-http-bearer' {
   interface IVerifyOptions {
     provider: Providers
-    tokenData: JwtPayload
+    tokenData: TokenPayload
     token: string
     role: string
     scope?: string | Array[string] // overriding, making it optional to allow using "role" which is what i want

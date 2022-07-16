@@ -3,7 +3,7 @@ import moment  from 'moment'
 import winston from 'winston'
 import { Request, Response } from 'express'
 import _fs from 'fs'
-import { JwtPayload } from 'jsonwebtoken'
+
 import { ObjectId } from 'bson'
 
 import { enhanceResponse } from '@lib/express/enhanced-response'
@@ -16,6 +16,7 @@ import { JobPipeline } from '@lib/jobs/job-pipeline'
 import { uploadFileToDefaultBucket } from '@lib/storage'
 import { UploadedFileData } from '@models/generated-files/types'
 import { logJobRanAccountingEvent } from '@lib/accounting'
+import { TokenPayload } from '@lib/tokens/types'
 
 const fs = _fs.promises
 
@@ -209,7 +210,7 @@ export async function actions(req: Request<Record<string, never>, ActionsRespons
  * @returns 
  */
 
-async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, tokenData: JwtPayload) {
+async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, tokenData: TokenPayload) {
     // create job entry
     const job = await createJob({
         status:JobStatus.JobInProgress,

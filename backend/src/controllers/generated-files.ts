@@ -2,7 +2,6 @@ import moment  from 'moment'
 import { Request, Response } from 'express'
 import winston from 'winston'
 import { HydratedDocument } from 'mongoose'
-import { JwtPayload } from 'jsonwebtoken'
 
 import { findAllDesc, findByUID } from '@lib/generated-files'
 import { IGeneratedFile } from '@models/generated-files/types'
@@ -10,6 +9,7 @@ import { removeFile, downloadFileToStream } from '@lib/storage'
 import { enhanceResponse } from '@lib/express/enhanced-response'
 import { logFileDownloadedAccountingEvent } from '@lib/accounting'
 import { AuthResponse } from '@lib/express/types'
+import { TokenPayload } from '@lib/tokens/types'
 
 type ListQuery = {
     dateRangeFrom?: string
@@ -162,10 +162,10 @@ async function _serve(req: Request<{id: string}>, res: Response, shouldDownload:
 
     const firstInfo = enhanceResponse(res).firstInfo()
 
-    await _serveFileEntry(res, file, shouldDownload, firstInfo?.token as string, firstInfo?.tokenData as JwtPayload)
+    await _serveFileEntry(res, file, shouldDownload, firstInfo?.token as string, firstInfo?.tokenData as TokenPayload)
 }
 
-async function _serveFileEntry(res: Response, fileEntry: IGeneratedFile, shouldDownload: boolean, token: string, tokenData: JwtPayload) {
+async function _serveFileEntry(res: Response, fileEntry: IGeneratedFile, shouldDownload: boolean, token: string, tokenData: TokenPayload) {
     const targetFilename = shouldDownload ? (fileEntry.downloadTitle || fileEntry._id.toString()):null
     _setupDownloadHeader(res, targetFilename)
     const downloadSize = await downloadFileToStream(fileEntry.remoteSource, res)

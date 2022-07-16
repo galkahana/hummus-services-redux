@@ -1,4 +1,3 @@
-import { JwtPayload } from 'jsonwebtoken'
 import { pick } from 'lodash'
 import { Model } from 'mongoose'
 
@@ -6,9 +5,10 @@ import { IGenerationJob } from '@models/generation-jobs/types'
 import JobRanAccountingEventModel from '@models/job-ran-accounting-events'
 import FileDownloadedAccountingEventModel from '@models/file-downloaded-accounting-events'
 import { IGeneratedFile } from '@models/generated-files/types'
+import { TokenPayload } from './tokens/types'
 import { ObjectID } from 'bson'
 
-export async function logJobRanAccountingEvent(job: IGenerationJob, token: string, tokenData: JwtPayload, fileSize?: number) {
+export async function logJobRanAccountingEvent(job: IGenerationJob, token: string, tokenData: TokenPayload, fileSize?: number) {
 
     return JobRanAccountingEventModel.create({
         user: job.user,
@@ -22,7 +22,7 @@ export async function logJobRanAccountingEvent(job: IGenerationJob, token: strin
     })
 }
 
-export function logFileDownloadedAccountingEvent(file: IGeneratedFile, token: string, tokenData: JwtPayload, fileSize: Nullable<number>) {
+export function logFileDownloadedAccountingEvent(file: IGeneratedFile, token: string, tokenData: TokenPayload, fileSize: Nullable<number>) {
     return FileDownloadedAccountingEventModel.create({
         user: file.user,
         tokenId: tokenData.jti,

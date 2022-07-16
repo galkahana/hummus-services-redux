@@ -1,4 +1,4 @@
-import { createJwt, jwtTimeIn } from '@lib/jwt'
+import { createJwt, jwtTimeIn } from '@lib/tokens/jwt'
 import uuid from 'node-uuid'
 import config from 'config'
 import { Request } from 'express'
@@ -32,7 +32,7 @@ function _createAccessJwt(sub: string, data: createJwtDataParam) {
 }
 
 function _createRefreshJwt(sub: string, data: createJwtDataParam) {
-    return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSecondsRefresh')), { ...data, refresh: 'true' })
+    return createJwt(sub, jwtTimeIn(config.get<number>('jwtToken.maxAgeSecondsRefresh')), { ...data, refresh: true })
 }
 
 type SignInTokensResponse = {
