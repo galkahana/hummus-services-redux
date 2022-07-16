@@ -23,7 +23,7 @@ async function createDummyUser() {
             salt,
             hash,
             iterations,
-            status: UserStatus.Trial
+            status: UserStatus.Full
     
         })
     }

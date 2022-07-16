@@ -38,7 +38,7 @@ export const login = [
 ]
 
 export const authenticate = _authenticateWithProviders(
-    Providers.JwtProvider
+    Providers.JwtProvider, Providers.TokenProvider
 )
 
 export const ensureAuthentication = (req: Request, res: Response, next: NextFunction) => {

@@ -15,7 +15,7 @@ export interface AuthLocals extends Record<string, unknown> {
     user?: IUser
     info?: TokenInfo|TokenInfo[]
 }
-export interface AuthResponse<T> extends Response<T> {
+export interface AuthResponse<T=unknown> extends Response<T> {
     locals: AuthLocals
 }
 

@@ -4,6 +4,7 @@ import * as root from '@controllers/root'
 import * as authenticationController from '@controllers/authentication'
 import * as generationJobsController from '@controllers/generation-jobs'
 import * as generatedFilesController from '@controllers/generated-files'
+import * as tokensController from '@controllers/tokens'
 import * as usersController from '@controllers/users'
 import { Resources, Actions } from '@lib/authorization/rbac'
 import * as authenticate from '@middlewares/authenticate'
@@ -42,6 +43,13 @@ router.route('/users/me/plan-usage')
     .get(authenticate.authenticateOrDie, authorizeOwn(Resources.User, Actions.Read), usersController.getPlanUsage)
 router.route('/users/me/actions')
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.User, Actions.Update), usersController.actions)
+
+router.route('/tokens')
+    .get(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Read), tokensController.show)
+    .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Create), tokensController.create)
+router.route('/tokens/actions')
+    .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Update), tokensController.actions)
+
 
 router.route('/').get(root.health)
 router.route('/health').get(root.health)

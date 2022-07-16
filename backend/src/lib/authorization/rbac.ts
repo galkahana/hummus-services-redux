@@ -2,8 +2,8 @@ import { AccessControl } from 'accesscontrol'
 
 export enum Roles {
     SiteUser = 'SiteUser',
-    JobManager = 'JobManager',
-    JobCreator = 'JobCreator'
+    JobManager = 'JobManager', // aligns with private api token
+    JobCreator = 'JobCreator' // aligns with public api token
 }
 
 export enum Resources {
@@ -34,6 +34,7 @@ accesscontrol.grant(Roles.SiteUser)
     .updateOwn(Resources.User)
     .createOwn(Resources.Token)
     .readOwn(Resources.Token)
+    .updateOwn(Resources.Token)
     .deleteOwn(Resources.Token)
 
 // Job Manager access

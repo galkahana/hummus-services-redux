@@ -190,7 +190,7 @@ export async function actions(req: Request<Record<string, never>, ActionsRespons
             
         }
         default: {
-            res.badRequest('Unknown type. should be deleteAll')
+            res.badRequest('Unknown type. should be deleteAll or deleteFiles')
         }
     }
     
