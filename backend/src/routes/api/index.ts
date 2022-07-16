@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
 import asyncHandler from 'express-async-handler'
 
 import * as root from '@controllers/root'

@@ -1,4 +1,4 @@
-import { NextFunction, Request } from 'express'
+import { Request } from 'express'
 
 import { enhanceResponse } from '@lib/express/enhanced-response'
 import { sleep } from '@lib/async'
@@ -6,7 +6,6 @@ import { AuthResponse, TokenInfo } from '@lib/express/types'
 import { createAccessToken, createRefreshToken } from '@lib/tokens/site-tokens'
 import { destroyOne } from '@lib/tokens/db-tokens'
 import { Roles } from '@lib/authorization/rbac'
-import winston from 'winston'
 
 /*
     im faking some wait time to throw of potential hackers a bit.
@@ -53,17 +52,13 @@ type SignoutBody = {
     refreshToken: string
 }
 
-export async function signOut(req:Request<Record<string, never>, Record<string, never>, SignoutBody>, res: AuthResponse, next:NextFunction) {
+export async function signOut(req:Request<Record<string, never>, Record<string, never>, SignoutBody>, res: AuthResponse) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for signing out')
     }    
 
     // destroy input refresh token...making sure it belongs to the user, and is of the right role
-    //try {
     await destroyOne({ jti: req.body.refreshToken, sub: user.uid, role: Roles.SiteUser })
-    //} catch(err) {
-    //    return next(err)
-    //}
     res.sendStatus(204)
 }
