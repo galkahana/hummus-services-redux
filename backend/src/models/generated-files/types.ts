@@ -19,6 +19,7 @@ export interface IGeneratedFile {
     downloadTitle: string
     publicDownloadId?: string
     remoteSource: UploadedFileData
+    fileSize: number
     createdAt: Date
     updateedAt: Date
   }

@@ -7,7 +7,7 @@ export default (_req: Request, res: Response, next: NextFunction) => {
      */
     res.unprocessable = (message?: string) => {
         const err = new Error(message || 'Cannot process entity')
-        res.errStatus = 422
+        res.locals.errStatus = 422
         next(err)
     }
     next()

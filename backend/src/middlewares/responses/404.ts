@@ -14,7 +14,7 @@ export default (_req: Request, res: Response, next: NextFunction) => {
      */
     res.notFound = (message?: string) => {
         const err = new  Error(message || 'Not Found')
-        res.errStatus = 404
+        res.locals.errStatus = 404
         next(err)
     }
     next()

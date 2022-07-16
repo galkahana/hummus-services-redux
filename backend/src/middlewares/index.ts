@@ -43,7 +43,7 @@ const _generalErrorHandler: ErrorRequestHandler = (err, _req, res, next) => {
     if (res.headersSent) {
         return next(err)
     }
-    res.status(res.errStatus || 500)
+    res.status(res.locals.errStatus || 500)
 
     // development error handler - will print stacktrace
     // production error handler - no stacktraces leaked to user

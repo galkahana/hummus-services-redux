@@ -1,29 +1,21 @@
-import { Provider } from '@middlewares/authentication-providers'
-import { IUser } from '@models/users/types'
+import { Providers } from '@lib/passport/types'
 import { JwtPayload } from 'jsonwebtoken'
 import 'winston'
 
 declare module 'passport-local' {
   interface IVerifyOptions {
-    provider: Provider
+    provider: Providers
   }
 }
 
 declare module 'passport-http-bearer' {
   interface IVerifyOptions {
-    provider: Provider
+    provider: Providers
     tokenData: JwtPayload
     token: string
     role: string
     scope?: string | Array[string] // overriding, making it optional to allow using "role" which is what i want
   }
-}
-
-interface ReqInfo {
-  provider: Provider
-  tokenData?: JwtPayload
-  token?: string
-  role?: string
 }
 
 /**
@@ -38,13 +30,6 @@ declare module 'express-serve-static-core' {
     notFound: (message?: string) => void
     unprocessable: (message?: string) => void
     serverError: (message?: string) => void
-
-    errStatus?: number
-  }
-
-  interface Request {
-    info?: ReqInfo | ReqInfo[]
-    user?: IUser
   }
 }
 

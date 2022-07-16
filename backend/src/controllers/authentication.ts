@@ -2,7 +2,7 @@ import { createJwt, jwtTimeIn } from '@lib/jwt'
 import uuid from 'node-uuid'
 import config from 'config'
 import { Request, Response } from 'express'
-import { enhanceRequest } from '@lib/enhanced-request'
+import { enhanceResponse } from '@lib/express/enhanced-response'
 import { sleep } from '@lib/async'
 import { Roles } from '@lib/authorization/rbac'
 
@@ -35,14 +35,14 @@ function _createRefreshJwt(sub: string, data: createJwtDataParam) {
 }
 
 export async function signIn(req: Request, res: Response) {
-    const user = req.user
+    const user = res.locals.user
     
     if (!user) {
         await _waitBadRandomSeconds()
         return res.unauthenticated('Unauthenticated request')
     }
 
-    const firstInfo = enhanceRequest(req).firstInfo()
+    const firstInfo = enhanceResponse(res).firstInfo()
 
     // otherwise generate the token and send back
     await _waitGoodRandomSeconds()

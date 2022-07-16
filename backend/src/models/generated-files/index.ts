@@ -26,7 +26,11 @@ const generatedFileSchema = new Schema<IGeneratedFile>({
         },
         data: {
             remoteKey: String,
-        }
+        },
+    },
+    fileSize: { 
+        type: Number,
+        require: true        
     }
 },    
 {

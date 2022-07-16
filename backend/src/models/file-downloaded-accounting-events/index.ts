@@ -21,13 +21,14 @@ const fileDownloadedAccountingEventSchema = new Schema<IFileDownloadedAccounting
         type:String,
         enum: Roles,
     },
-    downloadedFile: {
+    file: {
         type: Schema.Types.ObjectId,
         ref: 'GeneratedFile',
         require: true
     },
-    downloadedFileSize: {
-        type: Number
+    fileSize: {
+        type: Number,
+        require: true
     }
 },    
 {

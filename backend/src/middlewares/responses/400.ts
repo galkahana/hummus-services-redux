@@ -12,7 +12,7 @@ export default (_req: Request, res: Response, next: NextFunction) => {
      */
     res.badRequest = (message?: string) => {
         const err = new Error(message || 'Not Found')
-        res.errStatus = 400
+        res.locals.errStatus = 400
         next(err)
     }
     next()

@@ -2,13 +2,14 @@ import moment  from 'moment'
 import { Request, Response } from 'express'
 import winston from 'winston'
 import { HydratedDocument } from 'mongoose'
+import { JwtPayload } from 'jsonwebtoken'
 
 import { findAllDesc, findByUID } from '@lib/generated-files'
 import { IGeneratedFile } from '@models/generated-files/types'
 import { removeFile, downloadFileToStream } from '@lib/storage'
-import { enhanceRequest } from '@lib/enhanced-request'
-import { JwtPayload } from 'jsonwebtoken'
+import { enhanceResponse } from '@lib/express/enhanced-response'
 import { logFileDownloadedAccountingEvent } from '@lib/accounting'
+import { AuthResponse } from '@lib/express/types'
 
 type ListQuery = {
     dateRangeFrom?: string
@@ -16,8 +17,8 @@ type ListQuery = {
     in?: string[]
 }
 
-export async function list(req: Request<Record<string, never>, IGeneratedFile[], null, ListQuery>, res: Response<IGeneratedFile[]>) {
-    const user = req.user
+export async function list(req: Request<Record<string, never>, IGeneratedFile[], null, ListQuery>, res: AuthResponse<IGeneratedFile[]>) {
+    const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being queried')
     }
@@ -96,11 +97,11 @@ export async function show(req: Request<{id: string}, IGeneratedFile|null>, res:
         return res.badRequest('Missing file id')
     }
 
-    if (!req.user) {
+    if (!res.locals.user) {
         return res.badRequest('Missing user. should have user for identifying whose job it is')
     }
 
-    const file = await findByUID(req.params.id, { user: req.user._id })
+    const file = await findByUID(req.params.id, { user: res.locals.user._id })
     res.status(200).json(file)
 }
 
@@ -109,11 +110,11 @@ export async function remove(req: Request<{id: string}>, res: Response) {
         return res.badRequest('Missing file id')
     }
     
-    if (!req.user) {
+    if (!res.locals.user) {
         return res.badRequest('Missing user for action')
     }        
 
-    const file = await findByUID(req.params.id, { user: req.user._id })
+    const file = await findByUID(req.params.id, { user: res.locals.user._id })
 
     if (!file) {
         return res.badRequest('No record found for input id')
@@ -145,21 +146,21 @@ async function _serve(req: Request<{id: string}>, res: Response, shouldDownload:
         return res.badRequest('Missing file id')
     }
     
-    if (!req.user) {
+    if (!res.locals.user) {
         return res.badRequest('Missing user for action')
     }        
 
-    if (!enhanceRequest(req).firstInfo()?.token){
+    if (!enhanceResponse(res).firstInfo()?.token){
         return res.badRequest('Missing token. cant bill properly. no download')
     }
 
-    const file = await findByUID(req.params.id, { user: req.user._id })
+    const file = await findByUID(req.params.id, { user: res.locals.user._id })
 
     if (!file) {
         return res.badRequest('No record found for input id')
     }
 
-    const firstInfo = enhanceRequest(req).firstInfo()
+    const firstInfo = enhanceResponse(res).firstInfo()
 
     await _serveFileEntry(res, file, shouldDownload, firstInfo?.token as string, firstInfo?.tokenData as JwtPayload)
 }

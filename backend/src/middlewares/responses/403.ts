@@ -16,7 +16,7 @@ export default (_req: Request, res: Response, next: NextFunction) => {
             message ||
                 'Access denied: you are not permitted to perform this action.'
         )
-        res.errStatus = 403
+        res.locals.errStatus = 403
         next(error)
     }
     next()

@@ -10,8 +10,8 @@ export interface IJobRanAccountingEvent{
     tokenType?: Roles
     job: ObjectId
     jobStatus: JobStatus
-    resultFile?: ObjectId
-    resultFileSize?: number
+    file?: ObjectId
+    fileSize?: number
     createdAt: Date
     updateedAt: Date
 }

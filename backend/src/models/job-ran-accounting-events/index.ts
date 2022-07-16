@@ -33,11 +33,11 @@ const jobRanAccountingEventSchema = new Schema<IJobRanAccountingEvent>({
         enum: JobStatus,
         required: true
     },
-    resultFile: {
+    file: {
         type: Schema.Types.ObjectId,
         ref: 'GeneratedFile'
     },
-    resultFileSize: {
+    fileSize: {
         type: Number
     }
 },    

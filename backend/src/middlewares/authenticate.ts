@@ -20,8 +20,8 @@ function _authenticateWithProviders(...rest: Providers[]) {
 
             // on success info will be the one from the provider that succeeded
             // on failure info will be array of all providers infos
-            req.user = user
-            req.info = info
+            res.locals.user = user
+            res.locals.info = info
 
             return next()
         })(req, res, next)
@@ -42,7 +42,7 @@ export const authenticate = _authenticateWithProviders(
 )
 
 export const ensureAuthentication = (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
+    if (!res.locals.user) {
         return res.unauthenticated('Unauthenitcated request')
     }
     

@@ -1,4 +1,3 @@
-import _fs from 'fs'
 import { JwtPayload } from 'jsonwebtoken'
 import { pick } from 'lodash'
 import { Model } from 'mongoose'
@@ -6,34 +5,20 @@ import { Model } from 'mongoose'
 import { IGenerationJob } from '@models/generation-jobs/types'
 import JobRanAccountingEventModel from '@models/job-ran-accounting-events'
 import FileDownloadedAccountingEventModel from '@models/file-downloaded-accounting-events'
-import winston from 'winston'
 import { IGeneratedFile } from '@models/generated-files/types'
 import { ObjectID } from 'bson'
 
-const fs = _fs.promises
-
-export async function logJobRanAccountingEvent(job: IGenerationJob, token: string, tokenData: JwtPayload, filePath?: string) {
-
-    let resultFileSize = null
-    if(filePath) {
-        try {
-            const stats = await fs.stat(filePath)
-            resultFileSize = stats.size
-        } catch (ex) {
-            winston.info(`Error, could not evaluate generated file size for file ${filePath}. defaulting to 0. error = ${ex}`)
-            resultFileSize = 0
-        }
-    }
+export async function logJobRanAccountingEvent(job: IGenerationJob, token: string, tokenData: JwtPayload, fileSize?: number) {
 
     return JobRanAccountingEventModel.create({
         user: job.user,
+        job: job._id,
+        jobStatus: job.status,
         tokenId: tokenData.jti,
         tokenString: token,
         tokenType: tokenData.role,
-        job: job._id,
-        jobStatus: job.status,
-        resultFile: job.generatedFile,
-        resultFileSize
+        file: job.generatedFile,
+        fileSize
     })
 }
 
@@ -43,8 +28,8 @@ export function logFileDownloadedAccountingEvent(file: IGeneratedFile, token: st
         tokenId: tokenData.jti,
         tokenString: token,
         tokenType: tokenData.role,
-        downloadedFile: file._id,
-        downloadedFileSize: fileSize,
+        file: file._id,
+        fileSize
     })    
 }
 
@@ -55,7 +40,7 @@ export function getAccumulatedSizeForJobsRan(userId: ObjectID, startDate: Date, 
 }
 
 export function getAccumulatedSizeForFilesDownloaded(userId: ObjectID, startDate: Date, endDate: Date) {
-    return _aggregateSizePerModel(JobRanAccountingEventModel, userId, startDate, endDate)
+    return _aggregateSizePerModel(FileDownloadedAccountingEventModel, userId, startDate, endDate)
 }
 
 
@@ -76,7 +61,7 @@ export async function _aggregateSizePerModel<T>(model: Model<T>, userId: ObjectI
                 $group:{
                     _id:'$user',
                     count:{ $sum:1 },
-                    size:{ $sum:'$resultFileSize' }
+                    size:{ $sum:'$fileSize' }
                 }
             }
         ] 

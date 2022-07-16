@@ -6,7 +6,9 @@
     "dev": "npm run build && npx ts-node --files src/main.ts",
     "start": "node ./dist/src/main",
     "lint": "npx eslint . --fix",
-    "build": "npx tsc && cp -r ./local-resources ./dist/local-resources",
+    "check-tsc": "npx tsc --noEmit",
+    "check": "npm run lint && npm run check-tsc",
+    "build": "mkdir -p dist && cp -r ./local-resources ./dist/local-resources && npx tsc",
     "clean": "rm -rf dist",
     "dummy": "npm run build && npx ts-node --files ./scripts/dummy-user.ts"
   },

@@ -6,7 +6,7 @@ import _fs from 'fs'
 import { JwtPayload } from 'jsonwebtoken'
 import { ObjectId } from 'bson'
 
-import { enhanceRequest } from '@lib/enhanced-request'
+import { enhanceResponse } from '@lib/express/enhanced-response'
 import { Ticket } from '@lib/jobs/types'
 import { IUser } from '@models/users/types'
 import { createJob, findAllDesc, findAllUIDsIn, findAll, deleteAllWithFiles, deleteFilesForJobs, findByUID } from '@lib/generation-jobs'
@@ -21,8 +21,8 @@ const fs = _fs.promises
 
 export async function create(req: Request<Record<string, never>, IGenerationJob, Ticket>, res: Response<IGenerationJob>) {
     const ticket = req.body // TODO: ticket should probably go through some sort of sanitation...especially the document part
-    const user = req.user
-    const requestInfo = enhanceRequest(req).firstInfo()
+    const user = res.locals.user
+    const requestInfo = enhanceResponse(res).firstInfo()
     const token = requestInfo?.token
     const tokenData = requestInfo?.tokenData
 
@@ -55,7 +55,7 @@ type ListQuery = {
 }
 
 export async function list(req: Request<Record<string, never>, IGenerationJob[], null, ListQuery>, res: Response<IGenerationJob[]>) {
-    const user = req.user
+    const user = res.locals.user
 
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being queried')
@@ -143,11 +143,11 @@ export async function show(req: Request<{id: string}, IGenerationJob|null, null,
         return res.badRequest('Missing job id')
     }
 
-    if (!req.user) {
+    if (!res.locals.user) {
         return res.badRequest('Missing user. should have user for identifying whose job it is')
     }
 
-    const job = await findByUID(req.params.id, { user: req.user._id }, Boolean(req.query.full))
+    const job = await findByUID(req.params.id, { user: res.locals.user._id }, Boolean(req.query.full))
     res.status(200).json(job)
 }
 
@@ -166,7 +166,7 @@ type ActionsResponse = {
 }
 
 export async function actions(req: Request<Record<string, never>, ActionsResponse, ActionsBody>, res: Response<ActionsResponse>) {
-    const user = req.user
+    const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
     }
@@ -230,8 +230,10 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
             // Upoad file
             const uploadFileData = await _uploadFileForUser(outputPath, user)
 
+            const resultFileSize = await _getFileSize(outputPath)
+
             // Create uploaded file record
-            const generatedFile = await _createGeneratedFile(uploadFileData, outputTitle, user, !ticket.meta || !ticket.meta.private, token)
+            const generatedFile = await _createGeneratedFileRecord(uploadFileData, resultFileSize, outputTitle, user, !ticket.meta || !ticket.meta.private, token)
 
             
             // Job data updates
@@ -246,7 +248,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
             winston.info('Job succeeded, finished OK', job._id)
 
             // accounting
-            await logJobRanAccountingEvent(job, token, tokenData, outputPath)
+            await logJobRanAccountingEvent(job, token, tokenData, resultFileSize)
 
             // cleanup temp file (after accounting record! so can read the file size!)
             await fs.unlink(outputPath)
@@ -282,15 +284,28 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
     return job
 }
 
+async function _getFileSize(filePath: string) {
+    let resultFileSize: number
+    try {
+        const stats = await fs.stat(filePath)
+        resultFileSize = stats.size
+    } catch (ex) {
+        winston.info(`Error, could not evaluate generated file size for file ${filePath}. defaulting to 0. error = ${ex}`)
+        resultFileSize = 0
+    }
+    return resultFileSize
+}
+
 function _uploadFileForUser(filePath: string, user: IUser) {
     return uploadFileToDefaultBucket(filePath, user.uid)
 }
 
-async function _createGeneratedFile(uploadFileData: UploadedFileData, outputTitle: string, user: IUser, shouldCreatePublicId: boolean, creatorToken: string) {
+async function _createGeneratedFileRecord(uploadFileData: UploadedFileData, outputFileSize: number, outputTitle: string, user: IUser, shouldCreatePublicId: boolean, creatorToken: string) {
     const generatedFile = await createFile({
         downloadTitle: outputTitle,
         remoteSource: uploadFileData,
-        user: user._id
+        user: user._id,
+        fileSize: outputFileSize
     })
 
     if(shouldCreatePublicId) {

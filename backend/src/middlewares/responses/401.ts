@@ -13,7 +13,7 @@ export default (_req: Request, res: Response, next: NextFunction) => {
      */
     res.unauthenticated = function(message?: string) {
         const err = new Error(message || 'Not Found')
-        res.errStatus = 401
+        res.locals.errStatus = 401
         next(err)
     }
     next()

@@ -9,7 +9,7 @@ import { getAccumulatedSizeForJobsRan, getAccumulatedSizeForFilesDownloaded } fr
 import { getTotalFolderSize } from '@lib/storage'
 
 export async function show(req: Request<Record<string, never>, IUser>, res: Response<IUser>) {
-    const user = req.user
+    const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. shouldnt get here')
     }    
@@ -42,7 +42,7 @@ type PlanUsageResult = {
 }
 
 export async function getPlanUsage(req: Request<Record<string, never>, null, PlanUsageResult, PlanUsageQuery>, res: Response<PlanUsageResult>) {
-    const user = req.user
+    const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. shouldnt get here')
     }
@@ -70,7 +70,7 @@ export async function getPlanUsage(req: Request<Record<string, never>, null, Pla
 
 async function _patch(req: Request<Record<string, never>, IUser, UserPatchInput>, res: Response<IUser>) {
     
-    const user = req.user
+    const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. shouldnt get here')
     }    

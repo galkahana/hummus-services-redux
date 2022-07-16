@@ -7,8 +7,8 @@ export interface IFileDownloadedAccountingEvent{
     tokenId: string
     tokenString: string
     tokenType?: Roles
-    downloadedFile: ObjectId
-    downloadedFileSize?: number
+    file: ObjectId
+    fileSize: number
     createdAt: Date
     updateedAt: Date
 }
