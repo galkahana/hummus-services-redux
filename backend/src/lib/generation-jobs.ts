@@ -46,6 +46,20 @@ export async function deleteFilesForJobs(items: ObjectId[]) {
     winston.info('Succeeded Deleting files for jobs')
 }
 
+export async function deleteTimedoutFiles() {
+
+    const timedOutFilesJobs = await findAll({ deleteFileAt:{ $lte:new Date() } })
+
+    if(!timedOutFilesJobs || timedOutFilesJobs.length == 0)
+        return
+
+    const timedOutFilesJobsIDs = timedOutFilesJobs.map( item => item._id)
+
+    await deleteFilesForJobs(timedOutFilesJobsIDs)
+    await patchIn(timedOutFilesJobsIDs, { deleteFileAt: null }) // so that it will stop showing up
+    
+}
+
 async function _deleteFilesForJobIDsNoUpdate(items: ObjectId[]) {
     winston.info('Fetching job items for IDs for their file records')
     const jobs = await findAllIn(items)
@@ -65,3 +79,4 @@ async function _deleteFilesForGeneratedFileIDs(generatedFilesIDs: ObjectId[]) {
     winston.info('Done Removing multiple files from remote storage')
     await generatedFilesService.destroyIn(generatedFilesIDs)
 }
+

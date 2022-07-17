@@ -7,7 +7,7 @@ export interface Ticket {
     meta?: {
         label?: string
         private?: boolean
-        deleteFileAfter?: number
+        deleteFileAfter?: number // in miliseconds
     }
     document: {
         options: WriterOptions

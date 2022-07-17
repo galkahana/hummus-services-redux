@@ -10,7 +10,8 @@
     "check": "npm run lint && npm run check-tsc",
     "build": "mkdir -p dist && cp -r ./assets ./dist/assets && npx tsc",
     "clean": "rm -rf dist",
-    "dummy": "npm run build && npx ts-node --files ./scripts/dummy-user.ts"
+    "dummy": "npm run build && npx ts-node --files ./scripts/dummy-user.ts",
+    "delete-timedout-files": "npm run build && npx ts-node --files ./scripts/delete-timedout-files.ts"
   },
   "author": "",
   "license": "ISC",
