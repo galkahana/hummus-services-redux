@@ -310,9 +310,9 @@ async function _createGeneratedFileRecord(uploadFileData: UploadedFileData, outp
     })
 
     if(shouldCreatePublicId) {
-        const publicDownloadId = _hashMe(generatedFile._id.toString()) + 
+        const publicDownloadId = _encodeBase64SafeForUrl(_hashMe(generatedFile._id.toString()) + 
                                 _hashMe(moment().format()) + 
-                                _hashMe(creatorToken)
+                                _hashMe(creatorToken))
         generatedFile.publicDownloadId = publicDownloadId
         await generatedFile.save()
     }
@@ -324,6 +324,9 @@ function _hashMe(value: string) {
     return crypto.createHash('sha256').update(value).digest('base64')
 }
 
+function _encodeBase64SafeForUrl(value: string) {
+    return value.replaceAll('+', '.').replaceAll('/', '_').replaceAll('=', '-')
+}
 
 async function _limitToUserJobs(userId: ObjectId, items?: string[]) {
     const results = await (items ? findAllUIDsIn(items, { user: userId }): findAll({ user: userId }))

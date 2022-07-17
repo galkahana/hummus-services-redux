@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import winston from 'winston'
 import { HydratedDocument } from 'mongoose'
 
-import { findAllDesc, findByUID } from '@lib/generated-files'
+import { findAllDesc, findByUID, findByPublicDownloadId } from '@lib/generated-files'
 import { IGeneratedFile } from '@models/generated-files/types'
 import { removeFile, downloadFileToStream } from '@lib/storage'
 import { enhanceResponse } from '@lib/express/enhanced-response'
@@ -132,6 +132,14 @@ export async function embed(req: Request<{id: string}>, res: Response) {
     await _serve(req, res, false)
 }
 
+export async function downloadPublic(req: Request<{publicDownloadId: string}>, res: Response) {
+    await _servePublic(req, res, true)
+}
+
+export async function embedPublic(req: Request<{publicDownloadId: string}>, res: Response) {
+    await _servePublic(req, res, false)
+}
+
 
 async function _removeRemoteAndDeleteEntry(file: HydratedDocument<IGeneratedFile> ) {
     winston.info('Removing remote file', file.remoteSource)
@@ -162,14 +170,14 @@ async function _serve(req: Request<{id: string}>, res: Response, shouldDownload:
 
     const firstInfo = enhanceResponse(res).firstInfo()
 
-    await _serveFileEntry(res, file, shouldDownload, firstInfo?.token as string, firstInfo?.tokenData as TokenPayload)
+    await _serveFileEntry(res, file, shouldDownload, firstInfo?.token, firstInfo?.tokenData)
 }
 
-async function _serveFileEntry(res: Response, fileEntry: IGeneratedFile, shouldDownload: boolean, token: string, tokenData: TokenPayload) {
+async function _serveFileEntry(res: Response, fileEntry: IGeneratedFile, shouldDownload: boolean, token?: string, tokenData?: TokenPayload) {
     const targetFilename = shouldDownload ? (fileEntry.downloadTitle || fileEntry._id.toString()):null
     _setupDownloadHeader(res, targetFilename)
     const downloadSize = await downloadFileToStream(fileEntry.remoteSource, res)
-    await logFileDownloadedAccountingEvent(fileEntry, token, tokenData, downloadSize || null)
+    await logFileDownloadedAccountingEvent(fileEntry, downloadSize || null, token, tokenData)
 }
 
 function _setupDownloadHeader(res: Response, inWithFileName: Nullable<string>) {
@@ -182,4 +190,19 @@ function _setupDownloadHeader(res: Response, inWithFileName: Nullable<string>) {
     }
     else
         res.writeHead(200, { 'Content-Type': 'application/pdf' })
+}
+
+async function _servePublic(req: Request<{publicDownloadId: string}>, res: Response, shouldDownload: boolean) {
+    if(!req.params.publicDownloadId) {
+        return res.badRequest('Missing file public download id')
+    }
+       
+
+    const file = await findByPublicDownloadId(req.params.publicDownloadId)
+
+    if (!file) {
+        return res.badRequest('No record public download id')
+    }
+
+    await _serveFileEntry(res, file, shouldDownload)
 }

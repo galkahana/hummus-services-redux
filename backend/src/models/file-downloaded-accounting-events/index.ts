@@ -9,17 +9,15 @@ const fileDownloadedAccountingEventSchema = new Schema<IFileDownloadedAccounting
         ref: 'User',
         require: true        
     },
+    // Token data is optional to allow for public download
     tokenId: {
         type: String,
-        require: true        
     },
     tokenString: {
         type: String,
-        required: true
     },
     tokenType: {
         type:String,
-        enum: Roles,
     },
     file: {
         type: Schema.Types.ObjectId,

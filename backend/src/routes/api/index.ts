@@ -7,6 +7,7 @@ import * as generationJobsController from '@controllers/generation-jobs'
 import * as generatedFilesController from '@controllers/generated-files'
 import * as tokensController from '@controllers/tokens'
 import * as usersController from '@controllers/users'
+import * as accountingController from '@controllers/accounting'
 import { Resources, Actions } from '@lib/authorization/rbac'
 import * as authenticate from '@middlewares/authenticate'
 import { authorizeOwn } from '@middlewares/authorize'
@@ -54,6 +55,14 @@ router.route('/authenticate/sign-out')
     .delete(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Delete), asyncHandler(authenticationController.signOut))
 router.route('/authenticate/sign-up')
     .post(checkCapcha, usersController.create, asyncHandler(authenticationController.signIn)) // userController.create handles asyncs internally cause is array
+
+router.route('/public/:publicDownloadId/download')
+    .get(asyncHandler(generatedFilesController.downloadPublic))
+router.route('/public/:publicDownloadId/embed')
+    .get(asyncHandler(generatedFilesController.embedPublic))
+
+router.route('/public/accounting/ran')
+    .get(asyncHandler(accountingController.getTotalJobsCount))
 
 router.route('/').get(root.health)
 router.route('/health').get(root.health)

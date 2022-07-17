@@ -9,7 +9,7 @@ export const findByUID = (uid: string, limitingQuery?: FilterQuery<IGeneratedFil
     uid,
     ...limitingQuery
 })
-
+export const findByPublicDownloadId = (publicDownloadId: string) => Model.findOne({ publicDownloadId })
 export const createFile = (data: IGeneratedFileInput) => Model.create(data)
 export const findAllIn = (ids: ObjectId[]) => Model.find({ _id: { $in:ids } })
 export const destroyIn = (ids: ObjectId[]) => Model.deleteMany({ _id: { $in:ids } })

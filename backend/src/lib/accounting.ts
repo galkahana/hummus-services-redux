@@ -22,12 +22,12 @@ export async function logJobRanAccountingEvent(job: IGenerationJob, token: strin
     })
 }
 
-export function logFileDownloadedAccountingEvent(file: IGeneratedFile, token: string, tokenData: TokenPayload, fileSize: Nullable<number>) {
+export function logFileDownloadedAccountingEvent(file: IGeneratedFile, fileSize: Nullable<number>, token?: string, tokenData?: TokenPayload) {
     return FileDownloadedAccountingEventModel.create({
         user: file.user,
-        tokenId: tokenData.jti,
+        tokenId: tokenData && tokenData.jti,
         tokenString: token,
-        tokenType: tokenData.role,
+        tokenType: tokenData && tokenData.role,
         file: file._id,
         fileSize
     })    
@@ -41,6 +41,10 @@ export function getAccumulatedSizeForJobsRan(userId: ObjectID, startDate: Date, 
 
 export function getAccumulatedSizeForFilesDownloaded(userId: ObjectID, startDate: Date, endDate: Date) {
     return _aggregateSizePerModel(FileDownloadedAccountingEventModel, userId, startDate, endDate)
+}
+
+export function getCountJobsRan() {
+    return JobRanAccountingEventModel.count()
 }
 
 
