@@ -53,7 +53,7 @@ router.route('/authenticate/sign-in')
 router.route('/authenticate/sign-out')
     .delete(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Delete), asyncHandler(authenticationController.signOut))
 router.route('/authenticate/sign-up')
-    .post(checkCapcha, /* usersController.create,*/ asyncHandler(authenticationController.signIn))
+    .post(checkCapcha, usersController.create, asyncHandler(authenticationController.signIn)) // userController.create handles asyncs internally cause is array
 
 router.route('/').get(root.health)
 router.route('/health').get(root.health)

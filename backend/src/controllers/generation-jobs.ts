@@ -223,7 +223,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
 
     const job_promise = pipeline.run()
 
-    // trigger files creation job and on it's async finish complete with activities till job can be marked as done
+    // trigger files creation job and on it's async finish complete with activities till job can be marked as done. need to make it properly async/other service sometime
     job_promise.then(async ([ outputPath, outputTitle ])=> {
         winston.info(`Generated pdf with title ${outputTitle}. pdf file in ${outputPath}`)
         

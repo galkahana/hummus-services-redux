@@ -4,6 +4,7 @@ import cors from 'cors'
 import { ErrorRequestHandler, Express, NextFunction, Request, Response } from 'express'
 import _fs from 'fs'
 import path from 'path'
+import winston from 'winston'
 import { logRequest, logResponse } from './log-request'
 
 const fs = _fs.promises
@@ -43,7 +44,13 @@ const _generalErrorHandler: ErrorRequestHandler = (err: Error, _req: Request, re
     if (res.headersSent) {
         return next(err)
     }
-    res.status(res.locals.errStatus || 500)
+    const statusCode: number = res.locals.errStatus || 500
+    res.status(statusCode)
+
+    if(statusCode >= 500)
+        winston.error(err)
+    else
+        winston.warn(err)
 
     // development error handler - will print stacktrace
     // production error handler - no stacktraces leaked to user

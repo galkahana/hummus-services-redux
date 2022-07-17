@@ -1,6 +1,7 @@
 export enum Providers {
     JwtProvider = 'Jwt',
     TokenProvider = 'Token',
-    UserPasswordLoginProvider = 'UserPasswordLogin'
+    UserPasswordLoginProvider = 'UserPasswordLogin',
+    UserSignupProvider = 'UserSignupProvider'
   }
 

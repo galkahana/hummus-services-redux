@@ -1,24 +1,24 @@
 import path from 'path'
 
-const localResourcesPath = path.resolve(__dirname, '../../../../local-resources/')
+const assetsPath = path.resolve(__dirname, '../../../../assets/')
 
 export const localResources = {
-    'arial': path.resolve(localResourcesPath, './fonts/arial.ttf'),
-    'arial bold': path.resolve(localResourcesPath, './fonts/arialb.ttf'),
-    'arial bold italic': path.resolve(localResourcesPath, './fonts/arialbi.ttf'),
-    'arial black': path.resolve(localResourcesPath, './fonts/arialbl.ttf'),
-    'arial black bold': path.resolve(localResourcesPath, './fonts/arialblb.ttf'),
-    'arial black italic': path.resolve(localResourcesPath, './fonts/arialbli.ttf'),
-    'arial italic': path.resolve(localResourcesPath, './fonts/ariali.ttf'),
-    'comic sans': path.resolve(localResourcesPath, './fonts/comicms.ttf'),
-    'comic sans bold': path.resolve(localResourcesPath, './fonts/comicmsb.ttf'),
-    'courier': path.resolve(localResourcesPath, './fonts/courier.ttf'),
-    'courier bold': path.resolve(localResourcesPath, './fonts/courierb.ttf'),
-    'courier bold italic':  path.resolve(localResourcesPath, './fonts/courierbi.ttf'),
-    'courier italic': path.resolve(localResourcesPath, './fonts/courieri.ttf'),
-    'georgia': path.resolve(localResourcesPath, './fonts/georgia.ttf'),
-    'georgia bold': path.resolve(localResourcesPath, './fonts/georgiab.ttf'),
-    'georgia bold italic': path.resolve(localResourcesPath, './fonts/georgiabi.ttf'),
-    'georgia italic': path.resolve(localResourcesPath, './fonts/georgiai.ttf'),
-    'impact': path.resolve(localResourcesPath, './fonts/impact.ttf')
+    'arial': path.resolve(assetsPath, './fonts/arial.ttf'),
+    'arial bold': path.resolve(assetsPath, './fonts/arialb.ttf'),
+    'arial bold italic': path.resolve(assetsPath, './fonts/arialbi.ttf'),
+    'arial black': path.resolve(assetsPath, './fonts/arialbl.ttf'),
+    'arial black bold': path.resolve(assetsPath, './fonts/arialblb.ttf'),
+    'arial black italic': path.resolve(assetsPath, './fonts/arialbli.ttf'),
+    'arial italic': path.resolve(assetsPath, './fonts/ariali.ttf'),
+    'comic sans': path.resolve(assetsPath, './fonts/comicms.ttf'),
+    'comic sans bold': path.resolve(assetsPath, './fonts/comicmsb.ttf'),
+    'courier': path.resolve(assetsPath, './fonts/courier.ttf'),
+    'courier bold': path.resolve(assetsPath, './fonts/courierb.ttf'),
+    'courier bold italic':  path.resolve(assetsPath, './fonts/courierbi.ttf'),
+    'courier italic': path.resolve(assetsPath, './fonts/courieri.ttf'),
+    'georgia': path.resolve(assetsPath, './fonts/georgia.ttf'),
+    'georgia bold': path.resolve(assetsPath, './fonts/georgiab.ttf'),
+    'georgia bold italic': path.resolve(assetsPath, './fonts/georgiabi.ttf'),
+    'georgia italic': path.resolve(assetsPath, './fonts/georgiai.ttf'),
+    'impact': path.resolve(assetsPath, './fonts/impact.ttf')
 }

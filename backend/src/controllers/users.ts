@@ -1,15 +1,18 @@
 import moment from 'moment'
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { pick } from 'lodash'
 import { body } from 'express-validator'
 import asyncHandler from 'express-async-handler'
+import winston from 'winston'
 
-import { IUser } from '@models/users/types'
-import { findByUID, patch as patchUser } from '@lib/users'
+import { IUser, IUserInput, UserStatus } from '@models/users/types'
+import { findByUID, patch as patchUser, createUser } from '@lib/users'
 import { getAccumulatedSizeForJobsRan, getAccumulatedSizeForFilesDownloaded } from '@lib/accounting'
 import { getTotalFolderSize } from '@lib/storage'
 import { AuthResponse } from '@lib/express/types'
 import { generateHashPassword, verifyPassword } from '@lib/passwords'
+import { Providers } from '@lib/passport/types'
+import { sendUserJoinedAdminEmail, sendUserJoinedWelcomeEmail } from '@lib/emails'
 
 export async function show(req: Request<Record<string, never>, IUser>, res: Response<IUser>) {
     const user = res.locals.user
@@ -18,6 +21,21 @@ export async function show(req: Request<Record<string, never>, IUser>, res: Resp
     }    
     res.status(200).json(user)
 }
+
+type UserCreateInput = {
+    username: string
+    password: string
+    email: string
+    name?: string
+}
+
+export const create = [
+    body('email').isEmail(),
+    body('username').escape(),
+    body('name').escape().optional(),
+    asyncHandler(_create)
+]
+
 
 type UserPatchInput = {
     email?: string
@@ -165,6 +183,59 @@ export async function actions(req: Request<Record<string, never>, ActionsRespons
         }
     }
     
+}
+
+// user create is used as middleware.
+// as such it does not set response but rather sets user and info on res local
+async function _create(req: Request<Record<string, never>, unknown, UserCreateInput>, res: AuthResponse<unknown>, next: NextFunction) {
+    if (!req.body.email) {
+        return res.badRequest('Missing email. Please provide email for user creation')
+    }
+
+    if (!req.body.username) {
+        return res.badRequest('Missing username. Please provide username for user creation')
+    }
+
+    if (!req.body.password) {
+        return res.badRequest('Missing password. Please provide password for user creation')
+    }
+
+    const userData: IUserInput = {
+        email: req.body.email,
+        username: req.body.username,
+        name: req.body.name || req.body.username,
+        status: UserStatus.Trial,
+        ...await generateHashPassword(req.body.password)
+    }
+    
+    let user: Nullable<IUser> = null
+    try {
+        user = await createUser(userData)
+    } catch(err: unknown) {
+        if(_isErrorWithCode(err) && err.code == '11000') {
+            res.locals.errInfo = { duplicateUsername: true }
+            throw new Error('A user with this username already exists')
+        }
+
+        throw err
+    }    
+
+    // trigger users creation emails. need to make it properly async/other service sometime
+    Promise.all([
+        sendUserJoinedAdminEmail(user),
+        sendUserJoinedWelcomeEmail(user)
+    ]).then(() => {
+        winston.info(`success sending welcome emails about user ${user?._id} joining`)
+    }).catch((ex: unknown) => {
+        winston.info(`success sending welcome emails about user ${user?._id} joining`)
+        winston.errorEx(ex)        
+    })
+
+    // setup relevant "login" emulators so that later stage can generate tokens
+    res.locals.user = user
+    res.locals.info = { provider: Providers.UserSignupProvider }
+    next()    
+
 }
 
 async function _patch(req: Request<Record<string, never>, IUser, UserPatchInput>, res: Response<IUser>) {
