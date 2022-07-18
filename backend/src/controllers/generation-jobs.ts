@@ -234,7 +234,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
             const resultFileSize = await _getFileSize(outputPath)
 
             // Create uploaded file record
-            const generatedFile = await _createGeneratedFileRecord(uploadFileData, resultFileSize, outputTitle, user, !ticket.meta || !ticket.meta.private, token)
+            const generatedFile = await _createGeneratedFileRecord(uploadFileData, resultFileSize, outputTitle, user, Boolean(ticket?.meta?.public), token)
 
             
             // Job data updates
