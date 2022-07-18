@@ -27,7 +27,7 @@ module.exports = {
         // AWS AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are used directly from env vars by aws sdk
         region: process.env.AWS_REGION || 'us-west-2',
         s3: {
-            uploadBucket: 'hummus-services'
+            uploadBucket: process.env.AWS_BUCKET || 'hummus-services'
         }
     },
     recaptcha: {
