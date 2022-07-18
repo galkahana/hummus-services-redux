@@ -18,6 +18,7 @@ const fileDownloadedAccountingEventSchema = new Schema<IFileDownloadedAccounting
     },
     tokenType: {
         type:String,
+        enum: Roles,
     },
     file: {
         type: Schema.Types.ObjectId,

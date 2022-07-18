@@ -73,7 +73,7 @@ export class JobPipeline  {
     }    
 
     async _generatePDF(document: PDFEngineDocument, externalsMap: ExternalsMap) {
-        const writerOptions = this.ticket.document.options ? this.ticket.document.options:null
+        const writerOptions = this.ticket.document.options
         const resultPath = new File().path
         const outputStream = new PDFWStreamForFile(resultPath)
 
