@@ -37,10 +37,11 @@ so restart the service manually every time you want to change something and test
 - `npm run lint`: run eslint with automatic fixing
 - `npm run check-tsc`: run typescript validation (without building)
 - `npm run check`: combines lint and typescript validation to make sure you got everything right
-- `build`: build the resultant javascript dist folder used to actually run the service on production
-- `clean`: clean the dist folder
-- `dummy`: create an initial dummy user you can then use for demoing
-- `delete-timedout-files`: delete files for which their timeout setup expired. This is to be used as a cron job on the final service.
+- `npm run build`: build the resultant javascript dist folder used to actually run the service on production
+- `npm run clean`: clean the dist folder
+- `npm run dummy`: create an initial dummy user you can then use for demoing
+- `npm run delete-timedout-files`: delete files for which their timeout setup expired. This is to be used as a cron job on the final service.
+- `npm start`: run the site built in dist. so build it first with `npm run build`.
 
 _you will notice the stark missing part! test. cause i don't. cause i don't have to. that's why. i got secret ways to make sure things work. very secret._
 # Docker setup
