@@ -13,6 +13,16 @@ make sure you got [nvm](https://github.com/nvm-sh/nvm) installed with node `16.1
 2. `npm install`
 
 # Preparing to run
+
+## Pre-reqs
+
+You will need:
+1. Mongo instance to work with. it'll be the service db
+2. AWS buckets which will serve for storing the generated files
+
+For signup functionality (still to be implemented here) you will also need a google recaptcha account.
+If you want emails to be triggered from the service, you'll also need a sendgrid account.
+
 ## Setting up the envs vars
 
 You'll need the following env vars to run the service:
@@ -27,12 +37,12 @@ You'll need the following env vars to run the service:
 
 Note that if you don't run signup process, you don't need all the signup related stuff.
 
-## Running dev service
+# Running dev service
 
 To run the service for dev purposes use `npm run dev`. You can also use the VSCode debug functionality. Note that at this point the dev running command does not support watching, 
 so restart the service manually every time you want to change something and test again. don't worry...it's fairly quick to load.
 
-## Other verbs
+# Other verbs
 
 - `npm run lint`: run eslint with automatic fixing
 - `npm run check-tsc`: run typescript validation (without building)
