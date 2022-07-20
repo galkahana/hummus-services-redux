@@ -16,6 +16,7 @@ RUN npm install --production
 
 COPY --from=builder ./app/dist/src ./dist/src
 COPY --from=builder ./app/dist/assets ./dist/assets
+COPY --from=builder ./app/dist/scripts ./dist/scripts
 # config is required at root. so put it there (rest is as is due to module-aliases)
 COPY --from=builder ./app/dist/config ./config
 

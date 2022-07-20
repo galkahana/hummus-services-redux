@@ -4,6 +4,7 @@
     "./src",
     "./config",
     "./typings",
+    "./scripts",
   ],
   "exclude": [
     "node_modules"
