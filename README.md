@@ -39,8 +39,7 @@ Note that if you don't run signup process, you don't need all the signup related
 
 # Running dev service
 
-To run the service for dev purposes use `npm run dev`. You can also use the VSCode debug functionality. Note that at this point the dev running command does not support watching, 
-so restart the service manually every time you want to change something and test again. don't worry...it's fairly quick to load.
+To run the service for dev purposes use `npm run dev`. You can also use the VSCode debug functionality. _watching_ is provided.
 
 # Other verbs
 

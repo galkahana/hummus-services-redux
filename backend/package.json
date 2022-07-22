@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "backned for hummus services",
   "scripts": {
-    "dev": "npx ts-node --files src/main.ts",
+    "dev": "nodemon",
     "start": "node ./dist/src/main",
     "lint": "npx eslint . --fix",
     "check-tsc": "npx tsc --noEmit",
@@ -63,6 +63,7 @@
     "@typescript-eslint/parser": "^5.26.0",
     "bson": "^4.6.4",
     "eslint": "^8.16.0",
+    "nodemon": "^2.0.19",
     "ts-node": "^10.8.0",
     "typescript": "^4.7.2"
   }

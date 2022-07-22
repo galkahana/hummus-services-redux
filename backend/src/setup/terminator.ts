@@ -4,14 +4,10 @@ import winston from 'winston'
 // first create a generic "terminator"
 const terminator = (sig: string) => {
     if (typeof sig === 'string') {
-        winston.info(
-            '%s: Received %s - terminating app ...',
-            Date.now().toLocaleString(),
-            sig
-        )
+        winston.info(`Received ${sig} - terminating app ...`)
         process.exit(1)
     }
-    winston.info('%s: Node server stopped.', Date.now().toLocaleString())
+    winston.info('Node server stopped.')
 }
 
 export function setup() {
