@@ -10,3 +10,5 @@ frontend/build/
 
 .etc/
 *.env
+
+deployment/**/secret.yaml

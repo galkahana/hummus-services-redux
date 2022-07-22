@@ -73,3 +73,14 @@ Run:
 ```bash
 docker run --env-file ./backend/.env -p 8080:8080  --name hummus  --detach hummus
 ```
+
+
+# Minikube setup
+
+- you'll need to create your ./deployment/manifests/hummus/secret.yaml based on the secret values (same from .env) and you can prbbly figure out what fields go there by reading the deployment.yaml/cronjob.yaml.
+
+- `minikube start` to start it off
+- `minikube addons enable ingress` to setup the ngynx ingress controller
+- kubectl apply for all (including the secret)...make sure to start with the namespace.yaml and then the rest (probably namespace;secret;configmap;deployment;services;ingress;cronjob)
+- go `minikube tunnel` to have the ingress setup available on yr 127.0.0.1
+- add `hummus` to yr host as `127.0.0.1 hummus` for extra credit - and now you can go `curl http://hummus/api/health` 

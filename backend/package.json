@@ -11,7 +11,8 @@
     "build": "mkdir -p dist && cp -r ./assets ./dist/assets && npx tsc",
     "clean": "rm -rf dist",
     "dummy": "npx ts-node --files ./scripts/dummy-user.ts",
-    "delete-timedout-files": "npx ts-node --files ./scripts/delete-timedout-files.ts"
+    "delete-timedout-files": "npx ts-node --files ./scripts/delete-timedout-files.ts",
+    "delete-timedout-files-cron": "node ./dist/scripts/delete-timedout-files.js"
   },
   "author": "",
   "license": "ISC",

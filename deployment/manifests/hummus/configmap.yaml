@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hummus
+  namespace: hummus
+data:
+  ADMIN_EMAIL: "admin@pdfhummus.com"
+  JOIN_EMAIL: "join@pdfhummus.com"
+  SUPPORT_EMAIL: "support@pdfhummus.com"
+  EMAIL_SERVICE_URL: "http://localhost:8080"

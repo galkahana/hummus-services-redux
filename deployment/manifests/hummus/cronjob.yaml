@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hummus-cronjob
+  namespace: hummus
+spec:
+  schedule: "0 0/1 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: hummus-cronjob    
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: hummus
+            image: hummus:latest
+            imagePullPolicy: Never # as long as im using local images...
+            command:
+            - npm
+            - run
+            - delete-timedout-files-cron
+            envFrom:
+            - configMapRef:
+                name: hummus
+            env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key: mongodb-uri
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key:  sendgrid-api-key
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key:  aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key:  aws-secret-access-key
+            - name: RECAPTCHA_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key:  recaptcha-key
+            - name: RECAPTCHA_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key:  recaptcha-secret
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key:  jwt-key          
