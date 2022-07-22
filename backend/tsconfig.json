@@ -11,54 +11,57 @@
   ],
   "compilerOptions": {
     "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "./dist",
     "typeRoots": [
       "./typings"
     ],
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
       "@setup/*": [
-        "./src/setup/*"
+        "setup/*"
       ],
       "@setup": [
-        "./src/setup"
+        "setup"
       ],
       "@controllers/*": [
-        "./src/controllers/*"
+        "controllers/*"
       ],
       "@controllers": [
-        "./src/controllers"
+        "controllers"
       ],
       "@lib/*": [
-        "./src/lib/*"
+        "lib/*"
       ],
       "@lib": [
-        "./src/lib"
+        "lib"
       ],
       "@middlewares/*": [
-        "./src/middlewares/*"
+        "middlewares/*"
       ],
       "@middlewares": [
-        "./src/middlewares"
+        "middlewares"
       ],
       "@models/*": [
-        "./src/models/*"
+        "models/*"
       ],
       "@models": [
-        "./src/models"
+        "models"
       ],
       "@routes/*": [
-        "./src/routes/*"
+        "routes/*"
       ],
       "@routes": [
-        "./src/routes"
+        "routes"
       ],
       "@services/*": [
-        "./src/services/*"
+        "services/*"
       ],
       "@services": [
-        "./src/services"
+        "services"
       ]
     }
   }

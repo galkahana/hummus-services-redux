@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import 'module-alias/register'
+import '../src/module-alias-register'
 import winston from 'winston'
 import config from 'config'
 

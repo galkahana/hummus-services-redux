@@ -1,6 +1,7 @@
 import path from 'path'
+import winston from 'winston'
 
-const assetsPath = path.resolve(__dirname, '../../../../assets/')
+const assetsPath = path.resolve(__dirname, '../../../assets/')
 
 export const localResources = {
     'arial': path.resolve(assetsPath, './fonts/arial.ttf'),
@@ -22,3 +23,5 @@ export const localResources = {
     'georgia italic': path.resolve(assetsPath, './fonts/georgiai.ttf'),
     'impact': path.resolve(assetsPath, './fonts/impact.ttf')
 }
+
+winston.info('registering local resources', { resources: localResources })
