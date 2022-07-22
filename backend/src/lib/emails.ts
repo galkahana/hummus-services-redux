@@ -13,7 +13,7 @@ const JOINED_ADMIN_EMAIL = fs.readFileSync(path.resolve(assetsPath, './email-tem
 const ADMIN_EMAIL = config.get<string>('emails.adminEmail')
 const JOIN_EMAIL = config.get<string>('emails.joinEmail')
 const SUPPORT_EMAIL = config.get<string>('emails.supportEmail')
-const SERVICE_URL = config.get<string>('service.url')
+const EMAIL_SERVICE_URL = config.get<string>('emails.serviceURL')
 
 // create markdown engine
 const markdown = new MarkdownIt()
@@ -61,7 +61,7 @@ export function sendUserJoinedWelcomeEmail(user: IUser) {
             name: user.name,
             username: user.username,
             supportEmail: SUPPORT_EMAIL,
-            serviceUrl: SERVICE_URL
+            serviceUrl: EMAIL_SERVICE_URL
         })),
 
     )

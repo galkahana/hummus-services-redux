@@ -63,6 +63,10 @@ Build:
 docker build --label hummus --tag hummus:latest .
 ```
 
+(if building for minikube so that it could grab it locally, then before this go):
+```bash
+eval $(minikube docker-env)
+```
 
 Run: 
 

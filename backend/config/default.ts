@@ -9,7 +9,6 @@ module.exports = {
     defaultPort: process.env.PORT || 8080, 
     service: {
         name: process.env.SERVICE_NAME || 'hummus',
-        url: process.env.SERVICE_URL
     },
     db: {
         connectionString: process.env.MONGODB_URI,
@@ -21,7 +20,8 @@ module.exports = {
     emails: {
         adminEmail: process.env.ADMIN_EMAIL,
         joinEmail: process.env.JOIN_EMAIL,
-        supportEmail: process.env.SUPPORT_EMAIL
+        supportEmail: process.env.SUPPORT_EMAIL,
+        serviceURL: process.env.EMAIL_SERVICE_URL
     },
     aws: {
         // AWS AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are used directly from env vars by aws sdk
