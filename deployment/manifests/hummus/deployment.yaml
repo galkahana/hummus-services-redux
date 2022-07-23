@@ -32,13 +32,13 @@ spec:
           httpGet:
             path: /api/ready
             port: 8080
-          initialDelaySeconds: 10
           periodSeconds: 3        
         livenessProbe:
           httpGet:
             path: /api/ready
             port: 8080
           periodSeconds: 5 
+          initialDelaySeconds: 10
         envFrom:
         - configMapRef:
             name: hummus
