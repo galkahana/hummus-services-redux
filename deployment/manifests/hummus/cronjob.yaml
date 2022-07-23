@@ -21,6 +21,13 @@ spec:
             - npm
             - run
             - delete-timedout-files-cron
+            resources:
+              limits:
+                cpu: "500m"
+                memory: "256Mi"
+              requests:
+                cpu: "250m"
+                memory: "128Mi"
             envFrom:
             - configMapRef:
                 name: hummus
@@ -60,3 +67,4 @@ spec:
                 secretKeyRef:
                   name: hummus
                   key:  jwt-key          
+

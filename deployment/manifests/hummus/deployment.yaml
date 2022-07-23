@@ -19,6 +19,15 @@ spec:
       - name: hummus
         image: hummus:latest
         imagePullPolicy: Never # as long as im using local images...
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+          requests:
+            cpu: "250m"
+            memory: "128Mi"
+        ports:
+        - containerPort: 8080
         readinessProbe:
           httpGet:
             path: /api/ready
@@ -69,12 +78,4 @@ spec:
             secretKeyRef:
               name: hummus
               key:  jwt-key
-        #resources:
-        #  limits:
-        #    cpu: "1"
-        #    memory: "1Gi"
-        #  requests:
-        #    cpu: "0.5"
-        #    memory: "500Mi"
-        ports:
-        - containerPort: 8080
+
