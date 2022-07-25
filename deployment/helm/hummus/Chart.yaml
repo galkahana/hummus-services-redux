@@ -1,0 +1,8 @@
+apiVersion: v2
+name: hummus
+description: A Helm chart for Kubernetes
+type: application
+# chart version
+version: 0.1.0
+# hummus app version
+appVersion: "0.1.1"

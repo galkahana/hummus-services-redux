@@ -1,0 +1,65 @@
+{{- $cronjobName := printf "%s-cronjob" (include "hummus.fullname" .) -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $cronjobName }}
+  labels:
+    {{- include "hummus.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronjobSchedule }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "hummus.labels" . | nindent 12 }}          
+        spec:
+          restartPolicy: Never
+          serviceAccountName: {{ include "hummus.serviceAccountName" . }}
+          containers:
+            - name: {{ include "hummus.fullname" . }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command:
+                {{- toYaml .Values.cronjobCommand | nindent 16 }}
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
+              envFrom:
+                - configMapRef:
+                    name: {{ include "hummus.fullname" . }}
+              env:
+                - name: MONGODB_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "hummus.fullname" . }}
+                      key: mongodb-uri
+                - name: SENDGRID_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "hummus.fullname" . }}
+                      key: sendgrid-api-key
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "hummus.fullname" . }}
+                      key: aws-access-key-id
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "hummus.fullname" . }}
+                      key: aws-secret-access-key
+                - name: RECAPTCHA_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "hummus.fullname" . }}
+                      key: recaptcha-key
+                - name: RECAPTCHA_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "hummus.fullname" . }}
+                      key: recaptcha-secret
+                - name: JWT_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ include "hummus.fullname" . }}
+                      key: jwt-key   

@@ -1,0 +1,15 @@
+{{- range .Values.externalServices -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  labels: 
+    {{- include "hummus.labels" $ | nindent 4 }}
+spec:
+  type: ExternalName
+  externalName: {{ .externalName }}
+---
+{{- end }}
+
+
+

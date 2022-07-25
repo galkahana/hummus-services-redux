@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hummus.fullname" . }}
+  labels:
+    {{- include "hummus.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hummus.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "hummus.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "hummus.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.containerPort }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: {{ .Values.containerPort }}
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /api/ready
+              port: {{ .Values.containerPort }}
+            periodSeconds: 5
+            initialDelaySeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "hummus.fullname" . }}
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hummus.fullname" . }}
+                  key: mongodb-uri
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hummus.fullname" . }}
+                  key: sendgrid-api-key
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hummus.fullname" . }}
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hummus.fullname" . }}
+                  key: aws-secret-access-key
+            - name: RECAPTCHA_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hummus.fullname" . }}
+                  key: recaptcha-key
+            - name: RECAPTCHA_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hummus.fullname" . }}
+                  key: recaptcha-secret
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "hummus.fullname" . }}
+                  key: jwt-key                            
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
