@@ -15,67 +15,67 @@ spec:
       labels:
         app.kubernetes.io/name: hummus
     spec:
+      serviceAccountName: hummus
       containers:
-      - name: hummus
-        image: hummus:latest
-        imagePullPolicy: Never # as long as im using local images...
-        resources:
-          limits:
-            cpu: "500m"
-            memory: "256Mi"
-          requests:
-            cpu: "250m"
-            memory: "128Mi"
-        ports:
-        - containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /api/ready
-            port: 8080
-          periodSeconds: 3        
-        livenessProbe:
-          httpGet:
-            path: /api/ready
-            port: 8080
-          periodSeconds: 5 
-          initialDelaySeconds: 10
-        envFrom:
-        - configMapRef:
-            name: hummus
-        env:
-        - name: MONGODB_URI
-          valueFrom:
-            secretKeyRef:
-              name: hummus
-              key: mongodb-uri
-        - name: SENDGRID_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: hummus
-              key:  sendgrid-api-key
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: hummus
-              key:  aws-access-key-id
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: hummus
-              key:  aws-secret-access-key
-        - name: RECAPTCHA_KEY
-          valueFrom:
-            secretKeyRef:
-              name: hummus
-              key:  recaptcha-key
-        - name: RECAPTCHA_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: hummus
-              key:  recaptcha-secret
-        - name: JWT_KEY
-          valueFrom:
-            secretKeyRef:
-              name: hummus
-              key:  jwt-key
-
+        - name: hummus
+          image: hummus:latest
+          imagePullPolicy: Never # as long as im using local images...
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 8080
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /api/ready
+              port: 8080
+            periodSeconds: 5
+            initialDelaySeconds: 10
+          envFrom:
+            - configMapRef:
+                name: hummus
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key: mongodb-uri
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key: sendgrid-api-key
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key: aws-secret-access-key
+            - name: RECAPTCHA_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key: recaptcha-key
+            - name: RECAPTCHA_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key: recaptcha-secret
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: hummus
+                  key: jwt-key

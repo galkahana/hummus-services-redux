@@ -1,0 +1,9 @@
+# Use this for work com, where mongo is in docker, and the host name there is mongo
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: hummus
+spec:
+  type: ExternalName
+  externalName: host.minikube.internal
