@@ -51,6 +51,13 @@ resources:
 
 containerPort: 8080
 
+podAnnotations: 
+  "prometheus.io/scrape": "true"
+  "prometheus.io/path": /metrics
+  "prometheus.io/port": "8080"  
+
+
+
 service:
   type: NodePort
   port: 8080
@@ -88,8 +95,6 @@ cronjobCommand:
 
 imagePullSecrets: []
 
-podAnnotations: {}
-
 podSecurityContext:
   {}
   # fsGroup: 2000
@@ -115,3 +120,15 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+## end values for hummus
+
+
+prometheus:
+  server:
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts: 
+        - prometheus
+

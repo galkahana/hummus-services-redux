@@ -14,3 +14,6 @@ frontend/build/
 # leave out files that i'm using during dev to introduce secret/config data
 deployment/manifests/hummus/secret.yaml
 deployment/helm/values.yaml
+
+# charts downloads
+**/charts/*.tgz

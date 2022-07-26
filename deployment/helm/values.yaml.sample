@@ -31,3 +31,9 @@
 #joinEmail: 
 #supportEmail: 
 #emailServiceUrl: 
+
+
+# let prometheus know which namespace to put itself in, if you want to:
+#prometheus:
+#  namespaces:
+#    hummus-helm
