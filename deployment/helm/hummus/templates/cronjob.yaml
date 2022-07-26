@@ -12,7 +12,10 @@ spec:
       template:
         metadata:
           labels:
-            {{- include "hummus.labels" . | nindent 12 }}          
+            {{- include "hummus.labels" . | nindent 12 }}   
+          annotations:
+            checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+            checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
         spec:
           restartPolicy: Never
           serviceAccountName: {{ include "hummus.serviceAccountName" . }}
