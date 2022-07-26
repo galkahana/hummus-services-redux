@@ -3,6 +3,6 @@ name: hummus
 description: A Helm chart for Kubernetes
 type: application
 # chart version
-version: 0.1.0
+version: 0.1.1
 # hummus app version
 appVersion: "0.1.1"

@@ -9,3 +9,9 @@ data:
   JOIN_EMAIL: {{ .Values.joinEmail | quote }}
   SUPPORT_EMAIL: {{ .Values.supportEmail | quote }} 
   EMAIL_SERVICE_URL: {{ .Values.emailServiceUrl | quote }}
+  {{- if .Values.awsRegion }}
+  AWS_REGION: {{ .Values.awsRegion | quote }}
+  {{- end}}
+  {{- if .Values.awsBucket }}
+  AWS_BUCKET: {{ .Values.awsBucket | quote }}
+  {{- end}}

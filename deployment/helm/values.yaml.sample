@@ -1,0 +1,33 @@
+# this file is a sample to use when installing hummus package with helm install.
+# use it to provide values for env vars, and maybe decide on replicacount. 
+# then you can do something like this:
+# helm install hummus-local hummus -n hummus-helm --create-namespace  -f ./values.yaml
+
+# use externalServices if you got wierd setup where mongo is setup to be yr
+# host name, and then you can't just access it with the url provided as mongodbUri
+#externalServices:
+#  - name: mongo
+#    externalName: host.minikube.internal
+
+# default is 1, so you can spoil yrself with sample more
+#replicaCount: 2
+
+# all the env vars, as helm variables. some will be secret, some config. 
+# required for minimal activity
+#mongodbUri: 
+#jwtKey: 
+
+# required for generating job (bucket upload creds)
+#awsAccessKeyId: 
+#awsSecretAccessKey: 
+# optionally you can also add awsBucket and awsRegion if you wish to override the default
+# bucket name which is hummus-services and region which is us-west-2
+
+# signup stuff, so only needed if you want to run signup
+#recaptchaKey: 
+#recaptchaSecret: 
+#sendgridApiKey: 
+#adminEmail: 
+#joinEmail: 
+#supportEmail: 
+#emailServiceUrl: 

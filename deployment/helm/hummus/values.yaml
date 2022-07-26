@@ -9,6 +9,8 @@ adminEmail: ""
 joinEmail: ""
 supportEmail: ""
 emailServiceUrl: ""
+awsRegion: ""
+awsBucket: ""
 # secret
 mongodbUri: ""
 sendgridApiKey: ""
