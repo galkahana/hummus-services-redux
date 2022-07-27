@@ -16,6 +16,14 @@ dependencies:
   repository: "https://grafana.github.io/helm-charts"
   condition: metrics.enabled
 - name: elasticsearch
-  version: "19.1.1"
-  repository: "https://charts.bitnami.com/bitnami"
+  version: "7.17.3"
+  repository: "https://helm.elastic.co"
+  condition: logging.enabled
+- name: kibana
+  version: "7.17.3"
+  repository: "https://helm.elastic.co"
+  condition: logging.enabled
+- name: fluentd
+  version: "0.3.9"
+  repository: "https://fluent.github.io/helm-charts"
   condition: logging.enabled
