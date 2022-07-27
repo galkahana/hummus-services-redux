@@ -15,3 +15,7 @@ dependencies:
   version: "6.32.7"
   repository: "https://grafana.github.io/helm-charts"
   condition: metrics.enabled
+- name: elasticsearch
+  version: "19.1.1"
+  repository: "https://charts.bitnami.com/bitnami"
+  condition: logging.enabled

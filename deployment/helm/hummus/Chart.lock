@@ -5,5 +5,8 @@ dependencies:
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 6.32.7
-digest: sha256:484b3356adfd8f5411b54ad086b6c31bc9682da106f115be266f6fb91b5a5ffb
-generated: "2022-07-26T18:14:46.558985+03:00"
+- name: elasticsearch
+  repository: https://charts.bitnami.com/bitnami
+  version: 19.1.1
+digest: sha256:73a60a12ac4fbeb4b73669e8b6cac3811154aec9b51e5ea80d59f81e162ed20d
+generated: "2022-07-27T17:21:06.907888+03:00"

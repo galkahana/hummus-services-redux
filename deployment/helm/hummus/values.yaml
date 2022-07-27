@@ -156,3 +156,7 @@ grafana:
 #        url: http://hummus-local-prometheus-server 
 #        access: proxy
 #        isDefault: true
+
+
+logging:
+  enabled: false
