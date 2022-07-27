@@ -32,8 +32,21 @@
 #supportEmail: 
 #emailServiceUrl: 
 
-
-# let prometheus know which namespace to put itself in, if you want to:
-#prometheus:
-#  namespaces:
-#    hummus-helm
+# you can enable metrics (prometheus and grafana)
+#metrics:
+#  enabled: true
+# If enabling metrics you will also probably want to define grafana datasources note that you should be used the
+# service name below, for prometheus. it'll be http://<release-name>-prometheus-service
+#grafana
+#  datasources:
+#    datasources.yaml:
+#      apiVersion: 1
+#      datasources:
+#      - name: Prometheus
+#        type: prometheus
+#        # Here's something i don't like so much...i need the actual service name...and it's based
+#        # on the release name. could give up and say, install your own datasources..but what's the point...
+#        # k. let's fix this if it ever matters
+#        url: http://hummus-local-prometheus-server 
+#        access: proxy
+#        isDefault: true

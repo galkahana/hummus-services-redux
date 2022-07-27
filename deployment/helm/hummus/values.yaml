@@ -123,6 +123,8 @@ affinity: {}
 
 ## end values for hummus
 
+metrics:
+  enabled: false
 
 prometheus:
   server:
@@ -132,3 +134,25 @@ prometheus:
       hosts: 
         - prometheus
 
+grafana:
+  adminUser: admin
+  adminPassword: admin
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana
+# you will also probably want to define grafana datasources note that you should be used the
+# service name below, for prometheus. it'll be http://<release-name>-prometheus-service
+#  datasources:
+#    datasources.yaml:
+#      apiVersion: 1
+#      datasources:
+#      - name: Prometheus
+#        type: prometheus
+#        # Here's something i don't like so much...i need the actual service name...and it's based
+#        # on the release name. could give up and say, install your own datasources..but what's the point...
+#        # k. let's fix this if it ever matters
+#        url: http://hummus-local-prometheus-server 
+#        access: proxy
+#        isDefault: true
