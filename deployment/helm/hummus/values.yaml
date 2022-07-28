@@ -200,12 +200,3 @@ kibana:
         paths:
           - path: /
 
-
-#fluentd:
-#  aggregator:
-#    configMap: elasticsearch-output
-#    extraEnvVars:
-#      - name: ELASTICSEARCH_HOST
-#        value: elasticsearch-master
-#      - name: ELASTICSEARCH_PORT
-#        value: "9200"
