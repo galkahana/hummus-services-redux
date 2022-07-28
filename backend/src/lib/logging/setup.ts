@@ -14,7 +14,7 @@ export function setup() {
     winston.configure({
         format: combine(
             timestamp({
-                format: 'YYYY-MM-DD HH:mm:ss ZZ'
+                format: 'YYYY-MM-DD HH:mm:ss.SSS ZZ'
             }),
             config.get<string>('logOutput') === 'printf' ?
                 printf(
