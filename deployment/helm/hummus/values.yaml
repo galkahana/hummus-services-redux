@@ -156,3 +156,137 @@ grafana:
 #        url: http://hummus-local-prometheus-server 
 #        access: proxy
 #        isDefault: true
+
+
+logging:
+  enabled: false
+
+
+elasticsearch:
+  # per example setup in: 
+  # https://raw.githubusercontent.com/elastic/Helm-charts/master/elasticsearch/examples/minikube/values.yaml
+
+  # Permit co-located instances for solitary minikube virtual machines.
+  antiAffinity: "soft"
+
+  # Shrink default JVM heap.
+  esJavaOpts: "-Xmx128m -Xms128m"
+
+  # Allocate smaller chunks of memory per pod.
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512M"
+    limits:
+      cpu: "1000m"
+      memory: "512M"
+
+  # Request smaller persistent volumes.
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: "standard"
+    resources:
+      requests:
+        storage: 100M
+
+kibana:
+  ingress:
+    enabled: true
+    className: "nginx"
+    pathtype: ImplementationSpecific
+    annotations: {}
+    hosts:
+      - host: kibana
+        paths:
+          - path: /
+
+
+fluentd:
+  fileConfigs:
+    01_sources.conf: |-
+      ## logs from podman
+      <source>
+        @type tail
+        @id in_tail_container_logs
+        @label @KUBERNETES
+        path /var/log/containers/*.log
+        pos_file /var/log/fluentd-containers.log.pos
+        tag kubernetes.*
+        read_from_head true
+        <parse>
+          @type multi_format
+          <pattern>
+            format json
+            time_key timestamp
+            time_type string
+            time_format "%Y-%m-%dT%H:%M:%S.%NZ"
+            keep_time_key false
+          </pattern>          
+          <pattern>
+            format regexp
+            expression /^(?<time>.+) (?<stream>stdout|stderr)( (.))? (?<log>.*)$/
+            time_format '%Y-%m-%dT%H:%M:%S.%NZ'
+            keep_time_key false
+          </pattern>
+        </parse>
+        emit_unmatched_lines true
+      </source>
+  
+    02_filters.conf: |-
+      <label @KUBERNETES>
+        <match kubernetes.var.log.containers.fluentd**>
+          @type relabel
+          @label @FLUENT_LOG
+        </match>
+
+        # <match kubernetes.var.log.containers.**_kube-system_**>
+        #   @type null
+        #   @id ignore_kube_system_logs
+        # </match>
+
+        <filter kubernetes.**>
+          @type kubernetes_metadata
+          @id filter_kube_metadata
+          skip_labels false
+          skip_container_metadata false
+          skip_namespace_metadata true
+          skip_master_url true
+        </filter>
+
+        <filter kubernetes.**>
+          @type parser
+          key_name log
+          reserve_data true
+          remove_key_name_field true
+          <parse>
+            @type multi_format
+            <pattern>
+              format json
+            </pattern>
+            <pattern>
+              format none
+            </pattern>
+          </parse>
+        </filter>
+
+        <filter kubernetes.**>
+          @type parser
+          key_name message
+          reserve_data true
+          remove_key_name_field true
+          <parse>
+            @type multi_format
+            <pattern>
+              format json
+            </pattern>
+            <pattern>
+              format none
+            </pattern>
+          </parse>
+        </filter>      
+
+        <match **>
+          @type relabel
+          @label @DISPATCH
+        </match>
+      </label>

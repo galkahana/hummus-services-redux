@@ -5,5 +5,14 @@ dependencies:
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 6.32.7
-digest: sha256:484b3356adfd8f5411b54ad086b6c31bc9682da106f115be266f6fb91b5a5ffb
-generated: "2022-07-26T18:14:46.558985+03:00"
+- name: elasticsearch
+  repository: https://helm.elastic.co
+  version: 7.17.3
+- name: kibana
+  repository: https://helm.elastic.co
+  version: 7.17.3
+- name: fluentd
+  repository: https://fluent.github.io/helm-charts
+  version: 0.3.9
+digest: sha256:f49d77bf09f027759d8a7b54d1dd9902e90020659d9736f0b075b142469be527
+generated: "2022-07-27T23:49:15.240695+03:00"
