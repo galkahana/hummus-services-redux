@@ -1,6 +1,6 @@
 import config from 'config'
 import winston from 'winston'
-import uuid from 'node-uuid'
+import uuid from 'uuid'
 import { S3Client, PutObjectCommand, DeleteObjectsCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import fs from 'fs'
 import { StorageSource, UploadedFileData } from '@models/generated-files/types'

@@ -1,4 +1,4 @@
-import uuid from 'node-uuid'
+import uuid from 'uuid'
 import config from 'config'
 
 import { createJwt, jwtTimeIn } from '@lib/tokens/jwt'

@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import uuid from 'node-uuid'
+import uuid from 'uuid'
 import { IGenerationJob, JobStatus } from './types'
 
 const generationJobSchema = new Schema<IGenerationJob>({

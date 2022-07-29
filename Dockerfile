@@ -12,7 +12,7 @@ EXPOSE 8080
 WORKDIR /app
 
 COPY backend/package*.json ./
-RUN npm install --production
+RUN npm install --omit=dev
 
 COPY --from=builder ./app/dist/src ./dist/src
 COPY --from=builder ./app/dist/assets ./dist/assets

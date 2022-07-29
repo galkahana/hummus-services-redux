@@ -1,5 +1,5 @@
 import { CallbackError, model, Schema } from 'mongoose'
-import uuid from 'node-uuid'
+import uuid from 'uuid'
 
 import generationJobsModel from '@models/generation-jobs'
 import { IGeneratedFile, StorageSource } from './types'
