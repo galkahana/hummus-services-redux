@@ -55,6 +55,17 @@ There are also additional variables required for specific functionality.
 
 To run the service for dev purposes use `npm run dev`. You can also use the VSCode debug functionality. _watching_ is provided.
 
+# Making API calls
+
+There's an available postman collection that you can use to familiarise yourself with the server api and run calls to the server [here](https://www.postman.com/collections/6e41a7902cad96913af2).
+
+The collection relies on some variables that you can define in your local postman env to get it going:
+- `hummus_server_url` - the server url. if running locally that's be `http://localhost:8080`. When running the below minikube setup and using its ingress, `http://hummus` is the right way to go.
+- `hummus_usename` and `hummus_password` are the login credentials for a user who's on behalf you'd be making api calls. It is useful to run `npm run dummy` to create a dummy user, and then you can use their credentials: `a.a@hotmail.com` and `test`, respectively.
+
+Make sure to call `sign in` which will get you tokens, and on occasion go `refresh token` to get a fresh one. The apis' will ask for authentication when it's not fresh, so you'll know when. After you generated a job with `generate job`, use `get job` to retrieve job data and in that file download info that you can later use to download the file. The collection holds tests scripts to keep json output data feeding later apis, which should give you a nice XP when going through them one by one.
+
+
 # Other verbs
 
 - `npm run lint`: run eslint with automatic fixing
