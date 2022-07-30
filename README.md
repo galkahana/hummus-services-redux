@@ -170,7 +170,7 @@ When using the postman collection, make sure to change the `hummus_server_url` v
 
 helm charts make it really simple to pack your installation and install with a single command. plus there's all these available charts to just install alongside, it makes one wants more. So with this helm chart setup for hummus sitting in ./deployments/helm i also threw in logging with EFK (elasticsearch, fluentd and kibana) as well as metrics (prometheus and grafana) using the absolutely most basic setup on those additionals other than some tweaking on fluentd to get the json logs coming out from hummus to translate to proper attributes.
 
-What you are left to do with is just install the damn thing. Go to ./deployments/helm and create a `values.yaml` file for your env vars values (and some more). You can follow the template provided in `values.yaml.sample`. 
+What you are left to do with is just install it. Go to ./deployments/helm and create a `values.yaml` file for your env vars values (and some more). You can follow the template provided in `values.yaml.sample`. 
 
 Then just:
 
@@ -198,3 +198,31 @@ Now, if you are looking to use logging and/or metrics you will want to also expo
 127.0.0.1 kibana
 ```
 
+Turning on logging is done by including the following section in your values.yaml file (or other method of setting values when installing):
+```
+logging:
+  enabled: true
+```
+
+With this in place the EFK elements will be installed with mostly default settings, but fluentd which configuration is adapted to properly read json logs of hummus, and provide a meaningful logs to elasticsearch.
+To be able to view hummus logs in kibana (which if ingress is setup should be with `http://kibana`), do the following:
+- login to kibana
+- go to Stack management->Index management using the upper left menu and make sure "fluetnd" is there. there? good.
+- go back to Stack management, and then into Index patterns. Create a new index pattern to be based on fluetnd (fluentd* is a good name)
+
+
+When logging into kibana (which if ingress is setup should be with `http://kibana`), create a fluentd* index. The time field is `time`. Now you can go into discover and you will see the logs. filter by `kubernetes.labels.app_kubernetes_io/name` is `hummus` to filter only the hummus (and hummus cron job) messages. useful columns are: Time, message, resource (for the api handler) and `kubernetes.labels.app_kubernetes_io/name`. 
+Good luck.
+
+
+You can turn on the basic prometheus/grafana setup with:
+```
+metrics:
+  enabled: true
+```
+
+With ingress you can now access `http://grafana` or `http://prometheus` and check out p95 stats for the api calls (For example) with the following query:
+```
+histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[30m])) by (le, service, route, method))
+```
+(the p95 quantile of http_request_duration_seconds metric for the past 30 minutes, showing measure service, route (handler) and method)
