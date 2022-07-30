@@ -92,8 +92,8 @@ You can install the service on minikube using the provided manifests in ./deploy
 
 - Make sure you got a minikube instance install, and then run those few commands to adapt it to hummus:
     - `minikube addons enable ingress` to setup the ngynx ingress controller
-    - `minikube addons enable metrics-servicer` to show up cpu and memory consumption in mimkube dashboard
-    - `minikube start --extra-config=kubelet.housekeeping-interval=10s` to start it off
+    - `minikube addons enable metrics-servicer` to show up cpu and memory consumption in minikube dashboard
+    - `minikube start --extra-config=kubelet.housekeeping-interval=10s` to start it off (faster housekeeping so CPU data is shown properly)
 
 - Build a docker image using minikube docker deamon:
     ```bash
@@ -112,7 +112,7 @@ You can install the service on minikube using the provided manifests in ./deploy
     - deployment.yaml, cronjob.yaml
     - service.yaml
     - ingress.yaml
-    (mongo-service.yaml is an example yaml for cases when you want to use "mongo" as service name and the mongo instance is on yr host).
+    - (mongo-service.yaml is an example yaml for cases when you want to use "mongo" as service name and the mongo instance is on yr host. you probably dont need it.)
 - go `minikube tunnel` to have the ingress setup available on yr 127.0.0.1
 - add `hummus` to yr `/etc/hosts` as `127.0.0.1 hummus` so you can properly use the ingress host name, like this `curl http://hummus/api/health` 
 
