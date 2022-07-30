@@ -1,5 +1,7 @@
 Welcome to hummus services. A simple SAAS service over [hummus-reports](https://github.com/galkahana/hummus-reports), A layout engine using [hummus](https://github.com/galkahana/hummusjs) module to generate PDF files.
 
+The server API allows for generate PDF jobs and later downloading the resultant files. There's also job management, accounting information and other useful stuff.
+
 # Structure
 There's `backend` folder for the server and `frontend` for the web app. 
 
@@ -94,29 +96,58 @@ Run:
 docker run --env-file ./backend/.env -p 8080:8080  --name hummus  --detach hummus
 ```
 
-# Installing on Minikube
+# Installing on Minikube (or...a k8s cluster)
 
-You can install the service on minikube using the provided manifests in ./deployment/manifests/hummus and a docker image.
+[Minikube](https://minikube.sigs.k8s.io/docs/) is an tool to run k8s clusters on your home computer. It can serve as an actual method to run stuff, or a preparation method to test matters prior to load stuff to the cloud. Placing hummus in a k8s cluster allows both running the server and running any cronjob internally in there. With a simple deployment method i can easily recreate this setup anywhere i can put a minikube on. cool.
 
-## Preparation
-- You'll need to create your ./deployment/manifests/hummus/secret.yaml based on the secret values (same from .env) and the secret template in ./deployment/manifests/hummus/secret.yaml.tpl. The secrets refet to similarly named env vars, so use what values you'd use for regular running. what's not in there is in the configmap.yaml, which you can edit to your hearts content.
+There's two methods to install hummus on minikube provided here (or any cluster for that matter...though you might need to edit stuff a bit...it is aimed at running locally and is very basic on permissions and such...and no certmgr):
+- installing with manifests. This provides the basic installation of hummus server and a cronjob for deleting old files
+- installing with helm, which is faster than going through applying one manifest after the other + includes basic logging with EFK and metrics with prometheus and grafana (very basic...i did some more effort on the logging, with some fluentd adaptation to fit this scenario...and there's historgram api duration spewing for prometheus...but that's it..it was mostly about being able to do it...plus im quite happy with what i managed to get on logging. but might be basic to others though.).
 
-- Make sure you got a minikube instance install, and then run those few commands to adapt it to hummus:
-    - `minikube addons enable ingress` to setup the ngynx ingress controller
+You'll probably want to use the helm method. It's easier and provides a fairly good centralized logging mechanism. I'll describe installing with both methods below, after a bit of common steps.
+
+## Minikube setup
+
+Here's some setup instructions for minikube to get the most of hummus
+
+Addons:
+    - `minikube addons enable ingress` to setup the ngynx ingress controller for hummus ingress (and kibana and grafana for logging and metrics for the helm setup)
     - `minikube addons enable metrics-servicer` to show up cpu and memory consumption in minikube dashboard
-    - `minikube start --extra-config=kubelet.housekeeping-interval=10s` to start it off (faster housekeeping so CPU data is shown properly)
+If you will be wanting to use the centralized logging capability then to have elasticsearch functioning properly there's two more addons:
+    - `minikube addons enable default-storageclass`
+    - `minikube addons enable storage-provisioner`
 
-- Build a docker image using minikube docker deamon:
-    ```bash
-    eval $(minikube docker-env)
-    ```
-    and then run the docker build command to build the image, something like:
-    ```bash
-    docker build --label hummus --tag hummus:latest .
-    ```
+Also for elasticsearch you'll want to make sure there's sufficient memory and CPU for your minikube instance. 4 cpus and 8gbs is what's normally recommended. So prior to starting minikube go:
+    - `minikube config set memory 8192`
+    - `minikube config set cpus 4`
+(they can also be provided on the first `minikube start` as `minikube start --memory 8192 --cpus 2` with some drivers allowing you to do so also post the first start).
 
-## Applying and using the result
-- `kubectl apply -f XXXXX` to all the .yaml files, including the secret you prepared. should go by this order:
+Either with or without elastic search it is recommended to speed up kubelet housekeeping so CPU tracking in the minikube dashbaord works properly. So start minikube with:
+`minikube start --extra-config=kubelet.housekeeping-interval=10s`.
+
+## Building docker image and pushing to minikube
+
+Easiest way to make a docker image available to minikube (other than making it available online of course) is to build it within the minikube docker context, like this:
+```bash
+eval $(minikube docker-env)
+docker build --label hummus --tag hummus:latest .
+```
+
+you can use a different tag or add another tag...and then make sure to update the setup files (manifests or helm) as they currently point to latest...which is obviously not the best method when deploying to the cloud...but serves local development well enough.
+
+## Deployment
+
+From here the instructions differ a bit if you are looking to use the helm method or install the manifests individually.
+We'll start with manifests and then helm.
+
+oh. one thing. when looking to use yr computers mongo instance, use `host.minikube.internal` instead of `localhost`. So the pods won't search for mongo in their own container but rather on the host.
+
+### Installing with manifests
+
+The ./deployment/manifests/hummus folder holds manifest files to allow you to install hummus api server and a cronjob to delete old files. You will need to create a secret file with some of the env vars in ./deployment/manifests/hummus/secret.yaml, and you can use ./deployment/manifests/hummus/secret.yaml.tpl to figure out the formats. The values are following the env vars which are expected to be "Secret" on a "real" implementation. you can edit the configmap in ./deployment/manifests/hummus/configmap.yaml for the rest of them. both cronjob and the api server deployment share them...so no need to repeat for each. Note that both assume the latest tag on hummus image and that it's local, so update if you got it in some other place.
+
+
+Then it's just a matter of repeated `kubectl apply -f XXXXX`. For best results do it in this order:
     - namespace.yaml
     - configmap.yaml, secret.yaml (don't run secret.yaml.tpl!)
     - serviceaccount.yaml
@@ -124,7 +155,46 @@ You can install the service on minikube using the provided manifests in ./deploy
     - service.yaml
     - ingress.yaml
     - (mongo-service.yaml is an example yaml for cases when you want to use "mongo" as service name and the mongo instance is on yr host. you probably dont need it.)
-- go `minikube tunnel` to have the ingress setup available on yr 127.0.0.1
-- add `hummus` to yr `/etc/hosts` as `127.0.0.1 hummus` so you can properly use the ingress host name, like this `curl http://hummus/api/health` 
+The setup will be created wholly in the `hummus` namespace.
 
-Good. you should be ready now.
+you can track the deployment with the minikube dashboard (`minikube dashboard`) or via kubectl.
+to access the service go port forwarding...or go ingress, in which case:
+- go `minikube tunnel` to allow ingress calls into minikube to happen on yr 127.0.0.1.
+- edit yr hosts file (`/etc/hosts` on unixlikes) and add `127.0.0.1 hummus`
+
+Now `curl http://hummus/api/health` should provide you with a friendly message.
+When using the postman collection, make sure to change the `hummus_server_url` value to `http://hummus`.
+
+
+### Installing with helm
+
+helm charts make it really simple to pack your installation and install with a single command. plus there's all these available charts to just install alongside, it makes one wants more. So with this helm chart setup for hummus sitting in ./deployments/helm i also threw in logging with EFK (elasticsearch, fluentd and kibana) as well as metrics (prometheus and grafana) using the absolutely most basic setup on those additionals other than some tweaking on fluentd to get the json logs coming out from hummus to translate to proper attributes.
+
+What you are left to do with is just install the damn thing. Go to ./deployments/helm and create a `values.yaml` file for your env vars values (and some more). You can follow the template provided in `values.yaml.sample`. 
+
+Then just:
+
+```bash
+helm install hummus-local hummus -n hummus-helm --create-namespace  -f ./values.yaml
+```
+
+This will create a namespace named hummus-helm and will install everything there. The helm release name is hummus-local in this example.
+
+you can track the deployment with the minikube dashboard (`minikube dashboard`) or via kubectl.
+to access the service go port forwarding...or go ingress, in which case:
+- go `minikube tunnel` to allow ingress calls into minikube to happen on yr 127.0.0.1.
+- edit yr hosts file (`/etc/hosts` on unixlikes) and add `127.0.0.1 hummus`
+
+Now `curl http://hummus/api/health` should provide you with a friendly message.
+When using the postman collection, make sure to change the `hummus_server_url` value to `http://hummus`.
+
+Now, if you are looking to use logging and/or metrics you will want to also expose kibana (for logging) and grafana (for metrics). actually prometheus is also exposed via ingress by default. So edit your hosts file to also include them. So in total:
+
+```
+# Gal: for my minikube app
+127.0.0.1 hummus
+127.0.0.1 prometheus
+127.0.0.1 grafana
+127.0.0.1 kibana
+```
+

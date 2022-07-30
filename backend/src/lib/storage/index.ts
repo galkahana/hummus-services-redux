@@ -1,6 +1,6 @@
 import config from 'config'
 import winston from 'winston'
-import uuid from 'uuid'
+import { v1 } from 'uuid'
 import { S3Client, PutObjectCommand, DeleteObjectsCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import fs from 'fs'
 import { StorageSource, UploadedFileData } from '@models/generated-files/types'
@@ -13,7 +13,7 @@ const s3Client = new S3Client({ region: config.get<string>('aws.region') })
 const defaultUploadBucketName = config.get<string>('aws.s3.uploadBucket')
 
 export async function uploadFileToDefaultBucket(filePath: string, bucketPrefix: string): Promise<UploadedFileData> {
-    const fileKey = `${bucketPrefix}/${uuid.v1()}.pdf`
+    const fileKey = `${bucketPrefix}/${v1()}.pdf`
 
     const fileStream = fs.createReadStream(filePath)
 

@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import uuid from 'uuid'
+import { v1 } from 'uuid'
 import { IGenerationJob, JobStatus } from './types'
 
 const generationJobSchema = new Schema<IGenerationJob>({
@@ -7,7 +7,7 @@ const generationJobSchema = new Schema<IGenerationJob>({
         type:String,
         require:true,
         unique:true,
-        default: uuid.v1
+        default: v1
     },
     status: {
         type: Number,

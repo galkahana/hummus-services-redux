@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import uuid from 'uuid'
+import { v1 } from 'uuid'
 import { IUser, UserStatus } from './types'
 
 const userSchema = new Schema<IUser>({
@@ -7,7 +7,7 @@ const userSchema = new Schema<IUser>({
         type:String,
         require:true,
         unique:true,
-        default: uuid.v1
+        default: v1
     },
     username: {
         type:String,

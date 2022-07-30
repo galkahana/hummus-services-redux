@@ -1,5 +1,5 @@
 import { CallbackError, model, Schema } from 'mongoose'
-import uuid from 'uuid'
+import { v1 } from 'uuid'
 
 import generationJobsModel from '@models/generation-jobs'
 import { IGeneratedFile, StorageSource } from './types'
@@ -10,7 +10,7 @@ const generatedFileSchema = new Schema<IGeneratedFile>({
         type:String,
         require:true,
         unique:true,
-        default: uuid.v1
+        default: v1
     },
     user: {
         type: Schema.Types.ObjectId,
