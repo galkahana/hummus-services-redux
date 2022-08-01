@@ -5,6 +5,9 @@ dependencies:
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 6.32.7
+- name: metricbeat
+  repository: https://helm.elastic.co
+  version: 7.17.3
 - name: elasticsearch
   repository: https://helm.elastic.co
   version: 7.17.3
@@ -14,5 +17,5 @@ dependencies:
 - name: fluentd
   repository: https://fluent.github.io/helm-charts
   version: 0.3.9
-digest: sha256:f49d77bf09f027759d8a7b54d1dd9902e90020659d9736f0b075b142469be527
-generated: "2022-07-27T23:49:15.240695+03:00"
+digest: sha256:2c42ecb43163ac7d03d4d9a1f1f9737b3ce98952c43ab6dbaf6b4a9f1a587927
+generated: "2022-08-01T18:10:52.697947+03:00"
