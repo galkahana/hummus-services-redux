@@ -89,101 +89,70 @@ export async function getPlanUsage(req: Request<Record<string, never>, null, Pla
 
 }
 
-enum Actions {
-    ChangeUsername = 'changeUsername',
-    ChangePassword = 'changePassword'
-}
-
-type ActionsBody =ActionsChangeUsername | ActionsChangePassword
-
-type ActionsChangeUsername = {
-    type: Actions.ChangeUsername,
-    username: string
-}
-
-type ActionsChangePassword = {
-    type: Actions.ChangePassword,
-    oldPassword: string,
-    newPassword: string
-}
-
-
-type ActionsResponse = {
+type OKResponse = {
     ok: boolean
 }
 
-export async function actions(req: Request<Record<string, never>, ActionsResponse, ActionsBody>, res: AuthResponse<ActionsResponse>) {
+type ChangeUsernameBody = {
+    username: string
+}
+
+export async function changeUsername(req: Request<Record<string, never>, OKResponse, ChangeUsernameBody>, res: AuthResponse<OKResponse>) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
     }
-    
-    const type = req.body.type
-    if(!type) {
-        return res.badRequest('Missing type. should be changeUsername or changePassword')
+
+    const username = req.body.username
+    if(!username) {
+        return res.badRequest('Missing username for username change')
     }
-    
-    switch(type) {
-        case Actions.ChangeUsername: {
-            const username = req.body.username
-            if(!username) {
-                res.badRequest('Missing username for username change')
-                break
-            }
 
-            try {
-                await patchUser(user._id, { username })
-            } catch (err: unknown) {
-                // handle duplicate username
-                if(_isErrorWithCode(err) && err.code == '11000') {
-                    res.locals.errInfo = { duplicateUsername: true }
-                    throw new Error('A user with this username already exists')
-                }
-
-                throw err
-            }
-
-            res.status(200).json({ ok:true })
-            break
+    try {
+        await patchUser(user._id, { username })
+    } catch (err: unknown) {
+        // handle duplicate username
+        if(_isErrorWithCode(err) && err.code == '11000') {
+            res.locals.errInfo = { duplicateUsername: true }
+            throw new Error('A user with this username already exists')
         }
-        case Actions.ChangePassword: {
-            const oldPassword = req.body.oldPassword
-            const newPassword = req.body.newPassword
-            
-            if(!oldPassword) {
-                res.badRequest('Missing old password for password change')
-                break
-            }
 
-            if(!newPassword) {
-                res.badRequest('Missing new password for password change')
-                break
-            }
-
-            if(!await verifyPassword({
-                salt: user.salt,
-                hash: user.hash,
-                iterations: user.iterations
-                
-            }, oldPassword)) {
-                res.locals.errInfo = { oldPasswordMismatch: true }
-                throw new Error('old password does not match')
-            }
-
-            const { salt, hash, iterations } = await generateHashPassword(newPassword)
-
-            await patchUser(user._id, { salt, hash, iterations })
-
-            res.status(200).json({ ok:true })
-            break
-            
-        }
-        default: {
-            res.badRequest('Unknown type. should be changeUsername or changePassword')
-        }
+        throw err
     }
-    
+
+    res.status(200).json({ ok:true })
 }
+
+type ChangePasswordBody = {
+    oldPassword: string,
+    newPassword: string    
+}
+
+export async function changePassword(req: Request<Record<string, never>, OKResponse, ChangePasswordBody>, res: AuthResponse<OKResponse>) {
+    const user = res.locals.user
+    if (!user) {
+        return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
+    }
+
+    const oldPassword = req.body.oldPassword
+    const newPassword = req.body.newPassword
+    
+    if(!oldPassword) {
+        return res.badRequest('Missing old password for password change')
+    }
+
+    if(!newPassword) {
+        return res.badRequest('Missing new password for password change')
+    }
+
+
+    const { salt, hash, iterations } = await generateHashPassword(newPassword)
+
+    await patchUser(user._id, { salt, hash, iterations })
+
+    res.status(200).json({ ok:true })
+}
+
 
 // user create is used as middleware.
 // as such it does not set response but rather sets user and info on res local

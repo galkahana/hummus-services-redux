@@ -57,76 +57,52 @@ export async function create(req: Request<Record<string, never>, CreateTokenResp
     res.status(201).json({ token })
 }
 
-enum Actions {
-    Revoke = 'revoke',
-    Refresh = 'refresh'
-}
-
-type ActionsBody = ActionsRevoke | ActionsRefresh 
-
-type ActionsRevoke = {
-    type: Actions.Revoke
-    role: Roles.JobCreator | Roles.JobManager
-}
-
-type ActionsRefresh = {
-    type: Actions.Refresh
-}
-
-
-type ActionOK = {
+type OKResponse = {
     ok: boolean
 }
 
-type ActionRefreshResponse = {
-    accessToken: string,
-    refreshToken: string
+type RevokeBody = {
+    role: Roles.JobCreator | Roles.JobManager
 }
 
-
-type ActionsResponse = ActionOK | ActionRefreshResponse
-
-export async function actions(req: Request<Record<string, never>, ActionsResponse, ActionsBody>, res: AuthResponse<ActionsResponse>) {
+export async function revoke(req: Request<Record<string, never>, OKResponse, RevokeBody>, res: AuthResponse<OKResponse>) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose tokens are being manipulated')
     }
-    
-    const type = req.body.type
-    if(!type) {
-        return res.badRequest('Missing type. should be revoke or refresh')
+
+    if(!req.body.role ||
+        (req.body.role !== Roles.JobCreator  &&
+            req.body.role !== Roles.JobManager )) {
+        return res.badRequest('Missing or invalid token type. should be JobCreator (public api) or JobManager (private api).')
     }
+    await destroyAll({ sub: user.uid, role:req.body.role })
+    res.status(200).json({ ok:true })    
+
+}
+
+type RefreshResponse = {
+    accessToken: string,
+    refreshToken: string
+}
+
+export async function refresh(req: Request<Record<string, never>, RefreshResponse, null>, res: AuthResponse<RefreshResponse>) {
+    const user = res.locals.user
+    if (!user) {
+        return res.badRequest('Missing user. should have user for identifying whose tokens are being manipulated')
+    }
+
+    const isRefresh = enhanceResponse(res).firstInfo()?.tokenData?.refresh
+    if(!isRefresh) {
+        return res.badRequest('Invalid token')
+    }
+
+    const accessToken = createAccessToken(user.uid)
     
-    switch(type) {
-        case 'revoke': {
-            if(!req.body.role ||
-                (req.body.role !== Roles.JobCreator  &&
-                    req.body.role !== Roles.JobManager )) {
-                return res.badRequest('Missing or invalid token type. should be JobCreator (public api) or JobManager (private api).')
-            }
-            await destroyAll({ sub: user.uid, role:req.body.role })
-            res.status(200).json({ ok:true })
-            break
-        }
-        case 'refresh': {
-            const isRefresh = enhanceResponse(res).firstInfo()?.tokenData?.refresh
-            if(!isRefresh) {
-                return res.badRequest('Invalid token')
-            }
-
-            const accessToken = createAccessToken(user.uid)
-            
-            // Refresh returns as well, even though it's unchanged. this is to support future possiblity
-            // for updating refresh token on the go
-            res.status(200).json({
-                accessToken,
-                refreshToken: enhanceResponse(res).firstInfo()?.token as string // cant be null at this point
-            })
-            break
-        }
-
-        default: {
-            res.badRequest('Unknown type. should be revoke or refresh')
-        }
-    }    
+    // Refresh returns as well, even though it's unchanged. this is to support future possiblity
+    // for updating refresh token on the go
+    res.status(200).json({
+        accessToken,
+        refreshToken: enhanceResponse(res).firstInfo()?.token as string // cant be null at this point
+    })    
 }

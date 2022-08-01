@@ -152,49 +152,36 @@ export async function show(req: Request<{id: string}, IGenerationJob|null, null,
     res.status(200).json(job)
 }
 
-enum Actions {
-    DeleteAll = 'deleteAll',
-    DeleteFiles = 'deleteFiles'
-}
-
-type ActionsBody = {
-    type: Actions,
-    items?: string[]
-}
-
-type ActionsResponse = {
+type OKResponse = {
     ok: boolean
 }
 
-export async function actions(req: Request<Record<string, never>, ActionsResponse, ActionsBody>, res: Response<ActionsResponse>) {
+type ItemsBody = {
+    items?: string[]
+}
+
+export async function deleteJobs(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: Response<OKResponse>) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
     }
-    
-    const type = req.body.type
-    if(!type) {
-        return res.badRequest('Missing type. should be deleteAll or deleteFiles')
-    }
-    
-    switch(type) {
-        case Actions.DeleteAll: {
-            await deleteAllWithFiles(await _limitToUserJobs(user._id, req.body.items))
-            res.status(200).json({ ok:true })
-            break
-        }
-        case Actions.DeleteFiles: {
-            await deleteFilesForJobs(await _limitToUserJobs(user._id, req.body.items))
-            res.status(200).json({ ok:true })
-            break
-            
-        }
-        default: {
-            res.badRequest('Unknown type. should be deleteAll or deleteFiles')
-        }
-    }
-    
+
+    await deleteAllWithFiles(await _limitToUserJobs(user._id, req.body.items))
+    res.status(200).json({ ok:true })
+
 }
+
+export async function deleteFiles(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: Response<OKResponse>) {
+    const user = res.locals.user
+    if (!user) {
+        return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
+    }
+
+    await deleteFilesForJobs(await _limitToUserJobs(user._id, req.body.items))
+    res.status(200).json({ ok:true })
+
+}
+
 
 /**
  * This method has all the job process defined in it. I might want to do a better job in making it properly async job if there'
