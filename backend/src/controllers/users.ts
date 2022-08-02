@@ -14,6 +14,8 @@ import { generateHashPassword, verifyPassword } from '@lib/passwords'
 import { Providers } from '@lib/passport/types'
 import { sendUserJoinedAdminEmail, sendUserJoinedWelcomeEmail } from '@lib/emails'
 
+import { OKResponse } from './root'
+
 export async function show(req: Request<Record<string, never>, IUser>, res: Response<IUser>) {
     const user = res.locals.user
     if (!user) {
@@ -89,15 +91,11 @@ export async function getPlanUsage(req: Request<Record<string, never>, null, Pla
 
 }
 
-type OKResponse = {
-    ok: boolean
-}
-
 type ChangeUsernameBody = {
     username: string
 }
 
-export async function changeUsername(req: Request<Record<string, never>, OKResponse, ChangeUsernameBody>, res: AuthResponse<OKResponse>) {
+export async function changeUsername(req: Request<Record<string, never>, OKResponse, ChangeUsernameBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
@@ -120,7 +118,7 @@ export async function changeUsername(req: Request<Record<string, never>, OKRespo
         throw err
     }
 
-    res.status(200).json({ ok:true })
+    next()
 }
 
 type ChangePasswordBody = {
@@ -128,7 +126,7 @@ type ChangePasswordBody = {
     newPassword: string    
 }
 
-export async function changePassword(req: Request<Record<string, never>, OKResponse, ChangePasswordBody>, res: AuthResponse<OKResponse>) {
+export async function changePassword(req: Request<Record<string, never>, OKResponse, ChangePasswordBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
@@ -145,12 +143,22 @@ export async function changePassword(req: Request<Record<string, never>, OKRespo
         return res.badRequest('Missing new password for password change')
     }
 
+    if(!await verifyPassword({
+        salt: user.salt,
+        hash: user.hash,
+        iterations: user.iterations
+        
+    }, oldPassword)) {
+        res.locals.errInfo = { oldPasswordMismatch: true }
+        throw new Error('old password does not match')
+    }    
+
 
     const { salt, hash, iterations } = await generateHashPassword(newPassword)
 
     await patchUser(user._id, { salt, hash, iterations })
-
-    res.status(200).json({ ok:true })
+    
+    next()
 }
 
 

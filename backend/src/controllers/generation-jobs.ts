@@ -1,7 +1,7 @@
 import * as crypto from 'crypto'
 import moment  from 'moment'
 import winston from 'winston'
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import _fs from 'fs'
 
 import { ObjectId } from 'bson'
@@ -17,6 +17,9 @@ import { uploadFileToDefaultBucket } from '@lib/storage'
 import { UploadedFileData } from '@models/generated-files/types'
 import { logJobRanAccountingEvent } from '@lib/accounting'
 import { TokenPayload } from '@lib/tokens/types'
+import { AuthResponse } from '@lib/express/types'
+
+import { OKResponse } from './root'
 
 const fs = _fs.promises
 
@@ -152,34 +155,30 @@ export async function show(req: Request<{id: string}, IGenerationJob|null, null,
     res.status(200).json(job)
 }
 
-type OKResponse = {
-    ok: boolean
-}
-
 type ItemsBody = {
     items?: string[]
 }
 
-export async function deleteJobs(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: Response<OKResponse>) {
+export async function deleteJobs(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
     }
 
     await deleteAllWithFiles(await _limitToUserJobs(user._id, req.body.items))
-    res.status(200).json({ ok:true })
 
+    next()
 }
 
-export async function deleteFiles(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: Response<OKResponse>) {
+export async function deleteFiles(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
     }
 
     await deleteFilesForJobs(await _limitToUserJobs(user._id, req.body.items))
-    res.status(200).json({ ok:true })
-
+    
+    next()
 }
 
 

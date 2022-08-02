@@ -18,3 +18,12 @@ export function ready(_req: Request, res: Response) {
 export function notFound(_req: Request, res: Response) {
     res.notFound('API call not found')
 }
+
+export type OKResponse = {
+    ok: boolean
+}
+
+
+export function returnOK(_req: Request, res: Response<OKResponse>) {
+    res.status(200).json({ ok:true })
+}

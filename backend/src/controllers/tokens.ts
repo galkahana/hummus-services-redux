@@ -1,11 +1,13 @@
 import { find } from 'lodash'
 import { AuthResponse } from '@lib/express/types'
-import { Request } from 'express'
+import { Request, NextFunction } from 'express'
 import { findAll, destroyAll, createTokenValue } from '@lib/tokens/db-tokens'
 import { Roles } from '@lib/authorization/rbac'
 import { UserStatus } from '@models/users/types'
 import { enhanceResponse } from '@lib/express/enhanced-response'
 import { createAccessToken } from '@lib/tokens/site-tokens'
+
+import { OKResponse } from './root'
 
 
 type ShowTokensResponse = {
@@ -57,15 +59,11 @@ export async function create(req: Request<Record<string, never>, CreateTokenResp
     res.status(201).json({ token })
 }
 
-type OKResponse = {
-    ok: boolean
-}
-
 type RevokeBody = {
     role: Roles.JobCreator | Roles.JobManager
 }
 
-export async function revoke(req: Request<Record<string, never>, OKResponse, RevokeBody>, res: AuthResponse<OKResponse>) {
+export async function revoke(req: Request<Record<string, never>, OKResponse, RevokeBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose tokens are being manipulated')
@@ -77,8 +75,8 @@ export async function revoke(req: Request<Record<string, never>, OKResponse, Rev
         return res.badRequest('Missing or invalid token type. should be JobCreator (public api) or JobManager (private api).')
     }
     await destroyAll({ sub: user.uid, role:req.body.role })
-    res.status(200).json({ ok:true })    
 
+    next()
 }
 
 type RefreshResponse = {
