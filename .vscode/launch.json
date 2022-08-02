@@ -16,6 +16,16 @@
                 "dev"
             ],
             "outputCapture": "std"
+        },
+        {
+            "name": "Debug frontend (after npm start)",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*"
+            }
         }
     ]
 }

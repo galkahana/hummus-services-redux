@@ -17,6 +17,5 @@ moduleAlias.addAliases(
         '@middlewares': `${__dirname}/middlewares`,
         '@models': `${__dirname}/models`,
         '@routes': `${__dirname}/routes`,
-        '@services': `${__dirname}/services`
     }    
 )

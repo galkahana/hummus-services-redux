@@ -1,0 +1,5 @@
+node_modules
+*.log
+frontend-build
+.env*
+dist

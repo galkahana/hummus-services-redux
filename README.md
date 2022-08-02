@@ -8,7 +8,7 @@ There's `backend` folder for the server and `frontend` for the web app.
 The `backend` folder has the hummus server backend code, as well as several scripts, including ./scripts/delete-timedout-files which can be used as cronjob to occasionally delete files that were marked with expiration date.
 
 
-TBD on `frontend`.
+`frontend` is a react application (created with create-react-app) implementing a console application for users to test jobs, review job history and their account details.
 
 # Installing
 
@@ -19,11 +19,18 @@ make sure you got [nvm](https://github.com/nvm-sh/nvm) installed with node `16.1
 1. `cd backend`
 2. `npm install`
 
-# Running
+## Installing the frontend
+
+1. `cd frontend`
+2. `npm install`
+
+# Running the backend
 
 The following setup provides instructions for:
 - being able to run the main hummus services server
 - being able to run the scripts (e.g. deleting timedout files)
+
+To run also the frontend side from the backend see below under **Runnning the frontend**
 
 ## Pre-reqs
 
@@ -57,18 +64,7 @@ There are also additional variables required for specific functionality.
 
 To run the service for dev purposes use `npm run dev`. You can also use the VSCode debug functionality. _watching_ is provided.
 
-# Making API calls
-
-There's an available postman collection that you can use to familiarise yourself with the server api and run calls to the server [here](https://www.postman.com/collections/6e41a7902cad96913af2).
-
-The collection relies on some variables that you can define in your local postman env to get it going:
-- `hummus_server_url` - the server url. if running locally that's be `http://localhost:8080`. When running the below minikube setup and using its ingress, `http://hummus` is the right way to go.
-- `hummus_usename` and `hummus_password` are the login credentials for a user who's on behalf you'd be making api calls. It is useful to run `npm run dummy` to create a dummy user, and then you can use their credentials: `a.a@hotmail.com` and `test`, respectively.
-
-Make sure to call `sign in` which will get you tokens, and on occasion go `refresh token` to get a fresh one. The apis' will ask for authentication when it's not fresh, so you'll know when. After you generated a job with `generate job`, use `get job` to retrieve job data and in that file download info that you can later use to download the file. The collection holds tests scripts to keep json output data feeding later apis, which should give you a nice XP when going through them one by one.
-
-
-# Other verbs
+# Other verbs on the backend
 
 - `npm run lint`: run eslint with automatic fixing
 - `npm run check-tsc`: run typescript validation (without building)
@@ -80,9 +76,57 @@ Make sure to call `sign in` which will get you tokens, and on occasion go `refre
 - `npm start`: run the site built in dist. so build it first with `npm run build`.
 
 _you will notice that testing is missing. cause i don't. cause i don't have to. that's why. i got secret ways to make sure things work. very secret._
+
+
+# Making API calls
+
+There's an available postman collection that you can use to familiarise yourself with the server api and run calls to the server [here](https://www.postman.com/collections/6e41a7902cad96913af2).
+
+The collection relies on some variables that you can define in your local postman env to get it going:
+- `hummus_server_url` - the server url. if running locally that's be `http://localhost:8080`. When running the below minikube setup and using its ingress, `http://hummus` is the right way to go.
+- `hummus_usename` and `hummus_password` are the login credentials for a user who's on behalf you'd be making api calls. It is useful to run `npm run dummy` to create a dummy user, and then you can use their credentials: `a.a@hotmail.com` and `test`, respectively.
+
+Make sure to call `sign in` which will get you tokens, and on occasion go `refresh token` to get a fresh one. The apis' will ask for authentication when it's not fresh, so you'll know when. After you generated a job with `generate job`, use `get job` to retrieve job data and in that file download info that you can later use to download the file. The collection holds tests scripts to keep json output data feeding later apis, which should give you a nice XP when going through them one by one.
+
+# Running the frontend
+
+The frontend folder contains the frontend site for hummus services. 
+There are several methods of running the frontend in the dev environment:
+- As an independent app making api calls to the backend server
+- As served content from the backend
+
+
+You would normally choose the first option when working on developing the frontend, and the latter option only to make sure the it works when served...which is how it will be in its final built form.
+
+To run as an independent app:
+
+```bash
+cd frontend
+npm start
+```
+
+This will launch the react app on http://localhost:3000.  
+You can also debug the code from VSCode after this is done, if you are interested, by choosing the "Debug frontend (after npm start)" option.
+There's more options available with the react app, and they are all in the generated create react app documentation [here](./frontend/docs/create-react-app.md).
+
+To be able to run the content from the backend, do the following:
+```bash
+cd frontend
+npm run build-on-backend
+```
+This will build the frontend and copy it to a destination on the backend folder which will allow its serving via the root of the url. For example, if running the backend via dev, use http://localhost:8080 from the browser to view the UI.
+
+Note that you can also view the build content running independently via the frontend with:
+```bash
+cd frontend
+npm run build
+npx serve -s build
+```
+(this uses the "serve" program installed as dev dependency in the frontend folder).
+
 # Build a docker image
 
-There's a dockerfile for building an image of the service.
+There's a dockerfile for building an image of the service. The image include both backend api and frontend, where the frontend is served via the root api urls (http://example.com) and the backend api is served via an api prefix - (http://example.com/api).
 
 Build:
 
