@@ -14,7 +14,7 @@ import { generateHashPassword, verifyPassword } from '@lib/passwords'
 import { Providers } from '@lib/passport/types'
 import { sendUserJoinedAdminEmail, sendUserJoinedWelcomeEmail } from '@lib/emails'
 
-import { OKResponse } from './root'
+import { OKResponse } from '@middlewares/responses/200'
 
 export async function show(req: Request<Record<string, never>, IUser>, res: Response<IUser>) {
     const user = res.locals.user
@@ -95,7 +95,7 @@ type ChangeUsernameBody = {
     username: string
 }
 
-export async function changeUsername(req: Request<Record<string, never>, OKResponse, ChangeUsernameBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
+export async function changeUsername(req: Request<Record<string, never>, OKResponse, ChangeUsernameBody>, res: AuthResponse<OKResponse>) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
@@ -118,7 +118,7 @@ export async function changeUsername(req: Request<Record<string, never>, OKRespo
         throw err
     }
 
-    next()
+    res.ok()
 }
 
 type ChangePasswordBody = {
@@ -126,7 +126,7 @@ type ChangePasswordBody = {
     newPassword: string    
 }
 
-export async function changePassword(req: Request<Record<string, never>, OKResponse, ChangePasswordBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
+export async function changePassword(req: Request<Record<string, never>, OKResponse, ChangePasswordBody>, res: AuthResponse<OKResponse>) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
@@ -158,7 +158,7 @@ export async function changePassword(req: Request<Record<string, never>, OKRespo
 
     await patchUser(user._id, { salt, hash, iterations })
     
-    next()
+    res.ok()
 }
 
 

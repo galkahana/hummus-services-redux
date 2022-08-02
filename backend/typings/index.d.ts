@@ -31,6 +31,7 @@ declare module 'express-serve-static-core' {
     notFound: (message?: string) => void
     unprocessable: (message?: string) => void
     serverError: (message?: string) => void
+    ok: () => void
   }
 }
 

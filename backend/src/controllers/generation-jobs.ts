@@ -1,7 +1,7 @@
 import * as crypto from 'crypto'
 import moment  from 'moment'
 import winston from 'winston'
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response } from 'express'
 import _fs from 'fs'
 
 import { ObjectId } from 'bson'
@@ -19,7 +19,7 @@ import { logJobRanAccountingEvent } from '@lib/accounting'
 import { TokenPayload } from '@lib/tokens/types'
 import { AuthResponse } from '@lib/express/types'
 
-import { OKResponse } from './root'
+import { OKResponse } from '@middlewares/responses/200'
 
 const fs = _fs.promises
 
@@ -159,7 +159,7 @@ type ItemsBody = {
     items?: string[]
 }
 
-export async function deleteJobs(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
+export async function deleteJobs(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: AuthResponse<OKResponse>) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
@@ -167,10 +167,10 @@ export async function deleteJobs(req: Request<Record<string, never>, OKResponse,
 
     await deleteAllWithFiles(await _limitToUserJobs(user._id, req.body.items))
 
-    next()
+    res.ok()
 }
 
-export async function deleteFiles(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: AuthResponse<OKResponse>, next: NextFunction) {
+export async function deleteFiles(req: Request<Record<string, never>, OKResponse, ItemsBody>, res: AuthResponse<OKResponse>) {
     const user = res.locals.user
     if (!user) {
         return res.badRequest('Missing user. should have user for identifying whose jobs are being manipulated')
@@ -178,7 +178,7 @@ export async function deleteFiles(req: Request<Record<string, never>, OKResponse
 
     await deleteFilesForJobs(await _limitToUserJobs(user._id, req.body.items))
     
-    next()
+    res.ok()
 }
 
 
