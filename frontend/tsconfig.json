@@ -33,14 +33,14 @@
       "lib/*": [
         "lib/*"
       ],
-      "lib": [
-        "lib"
-      ],
       "components/*": [
         "components/*"
       ],
-      "components": [
-        "components"
+      "pages/*": [
+        "pages/*"
+      ],
+      "assets/*": [
+        "assets/*"
       ],
     }
   },

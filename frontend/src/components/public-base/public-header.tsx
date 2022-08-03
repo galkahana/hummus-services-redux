@@ -1,0 +1,30 @@
+import React from 'react'
+
+import { Link } from 'react-router-dom'
+import SiteTitle from 'components/site-title'
+import { InlineListItem } from 'components/common.styles'
+
+import { HeaderTools, PublicHeaderRoot } from './public-header.styles'
+
+
+const PublicHeader = () => (
+    <PublicHeaderRoot>
+        <SiteTitle/>
+        <HeaderTools>
+            <InlineListItem><Link to="/about"><button type="button">About</button></Link></InlineListItem>
+            <InlineListItem><Link to="/contact"><button type="button">Contact Us</button></Link></InlineListItem>
+            <InlineListItem><Link to="/login"><button type="button">Log In</button></Link></InlineListItem>
+            <InlineListItem><Link to="/signup"><button type="button">Sign Up</button></Link></InlineListItem>
+            <InlineListItem>
+                <a href="http://www.pdfhummus.com"
+                    target="_blank" rel="noreferrer">
+                    <button type="button">Blog</button>
+                </a>
+            </InlineListItem>
+            <InlineListItem><Link to="/documentation"><button type="button">Documentation</button></Link></InlineListItem>
+        </HeaderTools>
+    </PublicHeaderRoot>    
+)
+
+
+export default PublicHeader
