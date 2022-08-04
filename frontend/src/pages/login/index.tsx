@@ -36,7 +36,7 @@ const Login = () => {
         setPassword(event.target.value)
     }
 
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) {
                 
         event.preventDefault()
 
@@ -52,14 +52,14 @@ const Login = () => {
         })
     }
 
-    const clearLoginError = () => {
+    const onModalClose = () => {
         setLoginError('')
     }
 
     return <PublicBase>         
         <Container>
             <LoginFormContainer>
-                <Form  onSubmit={handleSubmit}>
+                <Form  onSubmit={onSubmit}>
                     <Form.Group>
                         <Form.Label>Username</Form.Label>
                         <Form.Control type="text" autoCorrect='off' name='username' defaultValue={username} onChange={onChangeUsername}/>
@@ -83,13 +83,13 @@ const Login = () => {
                         />)}
                     </AwaitableActionPanel>
                 </Form>
-                <Modal show={Boolean(loginError)}  onHide={clearLoginError}>
+                <Modal show={Boolean(loginError)}  onHide={onModalClose}>
                     <Modal.Header closeButton>
                         <Modal.Title>Login Error</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>{loginError}</Modal.Body>
                     <Modal.Footer>
-                        <Button variant="primary" onClick={clearLoginError}>Close</Button>
+                        <Button variant="primary" onClick={onModalClose}>Close</Button>
                     </Modal.Footer>
                 </Modal>                
             </LoginFormContainer>
