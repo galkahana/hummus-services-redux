@@ -1,31 +1,13 @@
 import React from 'react'
 import PublicHeader from './public-header'
+import PageBase from 'components/page-base'
 
-import {
-    Wrapper,
-    Header,
-    Content,
-    Footer,
-    PublicFooter
-} from './public-base.styles'
-
-interface PublicBaseProps {
+type ChildrenProps = {
     children?: React.ReactNode
 }
 
-const PublicBase = ({ children }: PublicBaseProps) => {
-    return <Wrapper>
-        <Header>
-            <PublicHeader/>
-        </Header>
-        <Content>
-            {children}
-        </Content>
-        <Footer>
-            <PublicFooter/>
-        </Footer>
-    </Wrapper>
-
+const PublicBase = ({ children }: ChildrenProps) => {
+    return <PageBase header={<PublicHeader/>}>{children}</PageBase>
 }
 
 export default PublicBase

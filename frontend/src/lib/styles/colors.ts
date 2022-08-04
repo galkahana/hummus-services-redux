@@ -14,3 +14,6 @@ export const DEFAULT_GRAY_BORDER = '#ccc'
 export const DEFAULT_GRAY_BACKGROUND = '#e8e8e8'
 
 export const DEFAULT_BRIGHT_BLUE = '#0000EE'
+
+export const LIGHT_BACKGROUND_COLOR = '#f5f5f5'
+export const LIGHT_BORDER_COLOR = '#e5e5e5'

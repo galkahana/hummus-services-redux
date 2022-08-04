@@ -1,8 +1,9 @@
 
+import { AxiosError } from 'axios'
 import storedTokensService, { StoredTokens } from './stored-tokens'
 import hummusClientService, { HummusClient } from './hummus-client'
 import { HummusClientTokensProvider } from './hummus-client/types'
-import { AxiosError } from 'axios'
+import history from './history'
 
 
 class Auth implements HummusClientTokensProvider {
@@ -15,6 +16,10 @@ class Auth implements HummusClientTokensProvider {
         this.api = api
 
         this.api.setTokensProvider(this)
+    }
+
+    isLoggedin() {
+        return this.tokens.accessToken
     }
 
     async signin(username: string, password: string) {
@@ -34,16 +39,32 @@ class Auth implements HummusClientTokensProvider {
         }
     }
 
-    // signout
+    async signout() {
+        if(this.tokens.refreshToken)
+            await this.api.signout(this.tokens.refreshToken)
+        this.tokens.clearTokens()
+    }
 
-    // signup
+    // signup?
 
     // HummusClientTokensProvider implementation
-    // getToken
-    // refreshToken
-    // onInvalidToken
+    
+    async refresh()  {
+        const { accessToken, refreshToken } = await this.api.refreshToken(this.tokens.refreshToken || '')
+        this.tokens.accessToken = accessToken
+        this.tokens.refreshToken = refreshToken
+    }
+    renewLogin(): void | Promise<void> {
+        this.tokens.clearTokens()
+        history.push('/login') // renewLogin uncharachteristically also navigates...and let's keep it this one instance. 
+    }
+    getToken(): string {
+        return this.tokens.accessToken || ''
+    }    
 }
 
 // for now create instance here, later lets think of services strategy
 
-export default new Auth(storedTokensService, hummusClientService)
+const instance = new Auth(storedTokensService, hummusClientService)
+hummusClientService.setTokensProvider(instance)
+export default instance

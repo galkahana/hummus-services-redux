@@ -8,6 +8,7 @@ import {  useNavigate, useLocation } from 'react-router-dom'
 
 import PublicBase from 'components/public-base'
 import auth from 'lib/auth'
+import { usePrincipal } from 'lib/principal'
 
 import {
     LoginFormContainer,
@@ -16,6 +17,15 @@ import {
 } from './login.styles'
 
 
+// Something missing in history def...and we don't have to just take it.
+class Location {
+    state?: {
+        from?: {
+            pathname?: string
+        }
+    }
+
+}
 
 const Login = () => {
     const [ username, setUsername ] = useState<string>('')
@@ -23,7 +33,8 @@ const Login = () => {
     const [ loginError, setLoginError ] = useState<string>('')
     const [ waiting, setWaiting ] = useState<boolean>(false)
     const navigate = useNavigate()
-    const location = useLocation()
+    const principal = usePrincipal()
+    const location = useLocation() as Location
 
     const to = location.state?.from?.pathname || '/console'
 
@@ -41,7 +52,8 @@ const Login = () => {
         event.preventDefault()
 
         setWaiting(true)
-        auth.signin(username, password).then(() => {
+        auth.signin(username, password).then( async () => {
+            await principal.identity(true) // force identity update based on login
             setWaiting(false)
             navigate(to, { replace: true })
         }).catch((ex: unknown) => {

@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
-import { DEFAULT_GRAY_BORDER, DEFAULT_GRAY_BACKGROUND } from 'lib/styles/colors'
+import { DEFAULT_GRAY_BORDER, DEFAULT_GRAY_BACKGROUND, DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK } from 'lib/styles/colors'
+import { Link } from 'react-router-dom'
 
 
 export const PositionBase = css`
@@ -22,6 +23,39 @@ export const DefaultItemContainer = css`
     border: 1px solid ${DEFAULT_GRAY_BORDER};
     background-color:${DEFAULT_GRAY_BACKGROUND};    
 `
+
+export const PrettyClickable = css`
+    cursor: pointer;
+
+    color: ${DEFAULT_BLACK_TRANSPARENT};
+    &:hover,
+    &:focus {
+        color: ${DEFAULT_BLACK};
+    }
+
+    &:visited {
+        color: ${DEFAULT_BLACK_TRANSPARENT};
+    }
+`
+
+export const PrettyClickableDiv = styled.div`
+    ${PrettyClickable}
+`
+
+export const PrettyClickableSpan = styled.span`
+    ${PrettyClickable}
+`
+
+export const PrettyClickableAnchor = styled.a`
+    ${PrettyClickable}
+    ${NoUnderlineEver}
+`
+
+export const PrettyClickableLink = styled(Link)`
+    ${PrettyClickable}
+    ${NoUnderlineEver}
+`
+
 
 export const NiceRedBadge = styled.span.attrs({ className: 'nice-red-badge' })`
     position: absolute;
@@ -56,4 +90,5 @@ export const NiceRedBadge = styled.span.attrs({ className: 'nice-red-badge' })`
 
 export const InlineList = styled.ul.attrs({ className: 'list-inline' })``
 export const InlineListItem = styled.li.attrs({ className: 'list-inline-item' })``
+export const UnstyledList = styled.ul.attrs({ className: 'list-unstyled' })``
 

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { LIGHT_BACKGROUND_COLOR, LIGHT_BORDER_COLOR } from './shared.styles'
+import { LIGHT_BACKGROUND_COLOR, LIGHT_BORDER_COLOR } from 'lib/styles/colors'
 
 export const Wrapper = styled.div`
     min-height: 100%;
@@ -25,7 +25,7 @@ export const Footer = styled.div`
     left: 0;
 `
 
-export const PublicFooter = styled.div`
+export const PageFooter = styled.div`
     background-color: ${LIGHT_BACKGROUND_COLOR};
     border-top: 1px solid ${LIGHT_BORDER_COLOR};
     display:block;

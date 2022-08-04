@@ -1,19 +1,28 @@
 import { InlineList } from 'components/common.styles'
 import styled from 'styled-components'
 
-import { DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK } from 'lib/styles/colors'
-import { LIGHT_BACKGROUND_COLOR, LIGHT_BORDER_COLOR } from './shared.styles'
+import { DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK, LIGHT_BACKGROUND_COLOR, LIGHT_BORDER_COLOR } from 'lib/styles/colors'
 
-export const PublicHeaderRoot = styled.div.attrs({ className: 'clearfix' })`
+export const HeaderRoot = styled.div.attrs({ className: 'clearfix' })`
     background-color: ${LIGHT_BACKGROUND_COLOR};
     border-bottom: 1px solid ${LIGHT_BORDER_COLOR};
     display:block;
     padding-bottom:5px;    
 `
 
-export const HeaderTools = styled(InlineList)`
+export const HeaderToolsContainer = styled.div`
     float:right;
-    margin: 18px 30px 0 0;
+            
+    >* {
+        display:inline-block;
+        vertical-align: middle;
+    }
+
+`
+
+export const HeaderTools = styled(InlineList)`
+    margin-top: 18px;
+    margin-right: 30px;
 
     button {
         background: rgba(0,0,0,0.05);
@@ -31,7 +40,3 @@ export const HeaderTools = styled(InlineList)`
     }
 
 `
-
-export const HeaderTool = styled.li.attrs({
-    className : 'list-inline-item'
-})``
