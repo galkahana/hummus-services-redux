@@ -36,7 +36,7 @@ const Login = () => {
         setPassword(event.target.value)
     }
 
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) {
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
                 
         event.preventDefault()
 
