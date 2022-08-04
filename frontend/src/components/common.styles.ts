@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { DEFAULT_GRAY_BORDER, DEFAULT_GRAY_BACKGROUND } from 'lib/styles/colors'
 
 
 export const PositionBase = css`
@@ -15,6 +16,11 @@ export const NoUnderlineEver = css`
     &:visited {
         text-decoration: none;
     }
+`
+
+export const DefaultItemContainer = css`
+    border: 1px solid ${DEFAULT_GRAY_BORDER};
+    background-color:${DEFAULT_GRAY_BACKGROUND};    
 `
 
 export const NiceRedBadge = styled.span.attrs({ className: 'nice-red-badge' })`

@@ -11,6 +11,6 @@ export const HUMMUS_COLOR = '#CBAB53'
 
 // for items surroundings [like bootstrap pre]
 export const DEFAULT_GRAY_BORDER = '#ccc'
-export const DEFUALT_GRAY_BACKGROUND = '#e8e8e8'
+export const DEFAULT_GRAY_BACKGROUND = '#e8e8e8'
 
 export const DEFAULT_BRIGHT_BLUE = '#0000EE'
