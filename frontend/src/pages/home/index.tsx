@@ -2,8 +2,6 @@ import React from 'react'
 
 import ConsoleBase from 'components/console-base'
 
-import { Link } from 'react-router-dom'
-
 import { HomePage } from './home.styles'
 import { Container } from 'react-bootstrap'
 import { UnstyledList, PrettyClickableLink } from 'components/common.styles'

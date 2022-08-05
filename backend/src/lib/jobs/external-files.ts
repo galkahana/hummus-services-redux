@@ -7,7 +7,7 @@ import axios from 'axios'
 const fs = _fs.promises
 
 async function _downloadFile(source: string, targetPath: string): Promise<string> {
-    if(source.substring(0, 5) != 'https')
+    if(source.substring(0, 5) != 'https' && !source.startsWith('http://localhost')) // require https. allow http only for localhost
         throw new Error(`external urls should have https prefix. failing url - ${source}`)
 
     const file = _fs.createWriteStream(targetPath)

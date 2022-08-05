@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose'
 import { v1 } from 'uuid'
 import { IGenerationJob, JobStatus } from './types'
+import { ObjectId } from 'bson'
 
 const generationJobSchema = new Schema<IGenerationJob>({
     uid: {
@@ -46,7 +47,10 @@ generationJobSchema.set('toJSON', {
         GENERATION_JOB_PRIVATE_FIELDS.forEach(function(fn) {
             delete ret[fn] 
         })
-        
+
+        // also this...delete unpopulated generatedFile cause i dont want the _id returned
+        if(ret['generatedFile'] instanceof  ObjectId)
+            delete ret['generatedFile']
     }
 })
 

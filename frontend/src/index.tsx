@@ -2,13 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './index.css'
+
 
 import history from 'lib/history'
-
-
 import App from 'components/app'
 import reportWebVitals from 'lib/reportWebVitals'
-import './index.css'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

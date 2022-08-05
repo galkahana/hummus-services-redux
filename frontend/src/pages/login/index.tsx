@@ -3,19 +3,16 @@ import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
-import Spinner from 'react-bootstrap/Spinner'
 import {  useNavigate, useLocation } from 'react-router-dom'
 
 import PublicBase from 'components/public-base'
+import ButtonWithSpinner from 'components/waiting/button-with-spinner'
 import auth from 'lib/auth'
 import { usePrincipal } from 'lib/principal'
 
 import {
     LoginFormContainer,
-    AwaitableActionPanel,
-    AwaintableElement
 } from './login.styles'
-
 
 // Something missing in history def...and we don't have to just take it.
 class Location {
@@ -80,20 +77,9 @@ const Login = () => {
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" name='password' defaultValue={password} onChange={onChangePassword}/>
                     </Form.Group>
-                    <AwaitableActionPanel>
-                        <Button variant="primary" type="submit">
+                    <ButtonWithSpinner variant="primary" type="submit" className='mt-3' waiting={waiting}>
                         Log In
-                        </Button>
-                        {waiting &&
-                        (<Spinner
-                            variant="primary"
-                            as={AwaintableElement}
-                            animation="border"
-                            size="sm"
-                            role="status"
-                            aria-hidden="true"
-                        />)}
-                    </AwaitableActionPanel>
+                    </ButtonWithSpinner>                        
                 </Form>
                 <Modal show={Boolean(loginError)}  onHide={onModalClose}>
                     <Modal.Header closeButton>

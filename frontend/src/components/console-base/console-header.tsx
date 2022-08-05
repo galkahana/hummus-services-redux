@@ -12,7 +12,7 @@ import auth from 'lib/auth'
 
 import { Caret } from './console-header.styles'
 import { usePrincipal } from 'lib/principal'
-import { IUser } from 'lib/hummus-client/types'
+import { UserResponse } from 'lib/hummus-client/types'
 
 
 
@@ -20,7 +20,7 @@ import { IUser } from 'lib/hummus-client/types'
 const ConsoleHeader = () => {
     const navigate = useNavigate()
     const principal = usePrincipal()
-    const [ me, setMe ] = useState<Nullable<IUser>>(null)
+    const [ me, setMe ] = useState<Nullable<UserResponse>>(null)
 
     useEffect(() => {
         principal.identity().then((user)=> {setMe(user)})

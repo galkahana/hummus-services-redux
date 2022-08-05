@@ -1,10 +1,10 @@
 
 import React from 'react'
 import hummusClientService from 'lib/hummus-client'
-import { IUser } from 'lib/hummus-client/types'
+import { UserResponse } from 'lib/hummus-client/types'
 
 class Principal {
-    user?: Nullable<IUser>
+    user?: Nullable<UserResponse>
 
     identity = async (force: Boolean = false) => {
         if(!this.user || force) {

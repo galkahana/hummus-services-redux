@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { GeneralWaiting } from './waiting.styles'
+import { GeneralWaiting } from './all-screen-waiting.styles'
 
 import Spinner from './spinner'
 

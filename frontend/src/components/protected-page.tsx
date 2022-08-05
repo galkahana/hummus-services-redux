@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
-import Waiting from 'components/waiting'
+import Waiting from 'components/waiting/all-screen-waiting'
 import auth from 'lib/auth'
 import history from 'lib/history'
 import { usePrincipal } from 'lib/principal'
@@ -16,13 +16,21 @@ const ProtectedPage = ({ children }: ChildrenProps) => {
     const principal = usePrincipal()
     const [ hasIdentity, setHasIdentity ] = useState<Boolean>(principal.hasIdentity())
 
+    useEffect(() => {
+        principal.identity().then(
+            ()=> {
+                setHasIdentity(true)
+            }
+        ).catch(
+            ()=> {
+                history.push('/login') // if this failed...attempt to login again
+            }
+        )
+    }, [ principal, setHasIdentity ])
 
     if(!auth.isLoggedin())
         return <Navigate to="/login" state={{ from: location }} replace />
 
-    principal.identity().then(()=> {setHasIdentity(true)}).catch(()=> {
-        history.push('/login') // if this failed...attempt to login again
-    })
 
     if(hasIdentity)
         return children

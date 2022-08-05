@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
-
-export const SpinnerContainer = styled.div`
+export const SpinnerContainer = styled.div.attrs({ className: 'spinner' })`
     margin: 100px auto 0;
     width: 70px;
     text-align: center;

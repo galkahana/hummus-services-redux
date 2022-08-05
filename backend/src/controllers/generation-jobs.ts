@@ -23,6 +23,8 @@ import { OKResponse } from '@middlewares/responses/200'
 
 const fs = _fs.promises
 
+// Actually in the below commands, IGenerationJob is not whats returned cause the GeneratedFile is populated...fix this sometimes
+
 export async function create(req: Request<Record<string, never>, IGenerationJob, Ticket>, res: Response<IGenerationJob>) {
     const ticket = req.body // TODO: ticket should probably go through some sort of sanitation...especially the document part
     const user = res.locals.user
