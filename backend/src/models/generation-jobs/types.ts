@@ -16,8 +16,8 @@ export interface IGenerationJob {
     ticket: Ticket
     deleteFileAt?: Date
     createdAt: Date
-    updateedAt: Date
+    updatedAt: Date
     generatedFile?: ObjectId
   }
 
-export type IGenerationJobInput = Omit<IGenerationJob, 'uid'|'createdAt'|'updateedAt'|'deleteFileAt'|'generatedFile'|'_id'>;
+export type IGenerationJobInput = Omit<IGenerationJob, 'uid'|'createdAt'|'updatedAt'|'deleteFileAt'|'generatedFile'|'_id'>;

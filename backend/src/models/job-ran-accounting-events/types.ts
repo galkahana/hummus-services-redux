@@ -13,7 +13,7 @@ export interface IJobRanAccountingEvent{
     file?: ObjectId
     fileSize?: number
     createdAt: Date
-    updateedAt: Date
+    updatedAt: Date
 }
 
-export type IJobRanAccountingEventInput = Omit<IJobRanAccountingEvent, 'createdAt'|'updateedAt'|'_id'>;
+export type IJobRanAccountingEventInput = Omit<IJobRanAccountingEvent, 'createdAt'|'updatedAt'|'_id'>;

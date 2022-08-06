@@ -58,6 +58,7 @@ type ListQuery = {
     dateRangeFrom?: string
     dateRangeTo?: string
     in?: string[]
+    full?: boolean
 }
 
 export async function list(req: Request<Record<string, never>, IGenerationJob[], null, ListQuery>, res: Response<IGenerationJob[]>) {
@@ -136,7 +137,7 @@ export async function list(req: Request<Record<string, never>, IGenerationJob[],
         queryParams.uid = { $in:req.query.in }            
     }
 
-    const results = await findAllDesc(queryParams)
+    const results = await findAllDesc(queryParams, Boolean(req.query.full))
     res.status(200).json(results)
 }
 

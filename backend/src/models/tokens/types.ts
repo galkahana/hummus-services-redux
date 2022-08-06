@@ -12,7 +12,7 @@ export interface IToken {
     refresh?: boolean
 
     createdAt: Date
-    updateedAt: Date
+    updatedAt: Date
   }
 
-export type ITokenInput = Omit<IToken, 'createdAt'|'updateedAt'|'_id'|'jti'>;
+export type ITokenInput = Omit<IToken, 'createdAt'|'updatedAt'|'_id'|'jti'>;

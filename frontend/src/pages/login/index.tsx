@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
 import {  useNavigate, useLocation } from 'react-router-dom'
 
 import PublicBase from 'components/public-base'
@@ -13,6 +11,7 @@ import { usePrincipal } from 'lib/principal'
 import {
     LoginFormContainer,
 } from './login.styles'
+import ModalAlert from 'components/modal-alert'
 
 // Something missing in history def...and we don't have to just take it.
 class Location {
@@ -81,15 +80,7 @@ const Login = () => {
                         Log In
                     </ButtonWithSpinner>                        
                 </Form>
-                <Modal show={Boolean(loginError)}  onHide={onModalClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Login Error</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>{loginError}</Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={onModalClose}>Close</Button>
-                    </Modal.Footer>
-                </Modal>                
+                <ModalAlert body={loginError} title="Login Error" show={Boolean(loginError)} onDismiss={onModalClose}/>
             </LoginFormContainer>
         </Container>
     </PublicBase>

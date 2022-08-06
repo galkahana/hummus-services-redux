@@ -25,7 +25,7 @@ export type UserResponse = {
     name?: string
     status: UserStatus
     createdAt: Date
-    updateedAt: Date
+    updatedAt: Date
 }
 
 export enum JobStatus {
@@ -41,8 +41,8 @@ export type GenerationJobResponse = {
     ticket: object
     deleteFileAt?: Date
     createdAt: Date
-    updateedAt: Date
-    generatedFile?: GeneratedFileResponse
+    updatedAt: Date
+    generatedFile?: Nullable<GeneratedFileResponse>
     
 }
 
@@ -52,10 +52,18 @@ export type GeneratedFileResponse = {
     publicDownloadId?: string
     fileSize: number
     createdAt: Date
-    updateedAt: Date    
+    updatedAt: Date    
 }
 
 export type GetTokensAPIResponse = {
     public?: string,
     private?: string
+}
+
+export type GenerationJobsQuery = {
+    searchTerm?: string
+    dateRangeFrom?: string
+    dateRangeTo?: string
+    in?: string[]
+    full?: boolean
 }

@@ -17,7 +17,7 @@ export interface IUser {
     iterations?: number
     status: UserStatus
     createdAt: Date
-    updateedAt: Date
+    updatedAt: Date
   }
 
-export type IUserInput = Omit<IUser, 'uid'|'createdAt'|'updateedAt'|'_id'>;
+export type IUserInput = Omit<IUser, 'uid'|'createdAt'|'updatedAt'|'_id'>;

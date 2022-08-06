@@ -1,4 +1,12 @@
-import { HummusClientTokensProvider, TokensResponse, UserResponse, GenerationJobResponse, JobStatus, GetTokensAPIResponse } from './types'
+import { 
+    HummusClientTokensProvider, 
+    TokensResponse, 
+    UserResponse, 
+    GenerationJobResponse, 
+    JobStatus, 
+    GetTokensAPIResponse, 
+    GenerationJobsQuery 
+} from './types'
 import axios, { AxiosResponse } from 'axios'
 import combine from 'lib/api-helpers/combine'
 import { dataFetch, notAuthRefresh, notAuthToLogout, verboseError } from 'lib/api-helpers/api-mws'
@@ -108,11 +116,23 @@ export class HummusClient {
     )
 
     getJob = this.authMWs(
-        (jobId: string, full: Boolean = false) => axios.get<GenerationJobResponse>(`${this.apiUrl}/api/generation-jobs/${jobId}?full=${full}`, { headers: this.createAuthorizedHeaders() })
+        (jobId: string, full: Boolean = false) => axios.get<GenerationJobResponse>(`${this.apiUrl}/api/generation-jobs/${jobId}`, { params:{ full }, headers: this.createAuthorizedHeaders() })
     )
 
     getTokens = this.authMWs(
         () => axios.get<GetTokensAPIResponse>(`${this.apiUrl}/api/tokens`, { headers: this.createAuthorizedHeaders() })
+    )
+
+    getJobs = this.authMWs(
+        (params: GenerationJobsQuery) => axios.get<GenerationJobResponse[]>(`${this.apiUrl}/api/generation-jobs`, { params,  headers: this.createAuthorizedHeaders() })
+    )
+
+    deleteFilesForJobs = this.authMWs(
+        (jobIDs: string[]) => axios.post(`${this.apiUrl}/api/generation-jobs/delete-files`, { items: jobIDs }, { headers: this.createAuthorizedHeaders() })
+    )
+        
+    deleteJobs = this.authMWs(
+        (jobIDs: string[]) => axios.post(`${this.apiUrl}/api/generation-jobs/delete-jobs`, { items: jobIDs }, { headers: this.createAuthorizedHeaders() })
     )
 
 

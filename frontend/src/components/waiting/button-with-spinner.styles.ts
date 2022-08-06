@@ -9,6 +9,7 @@ type VariantProps = {
 }
 
 
+const LIKES_WHITE_BACKGROUND = [ 'primary', 'danger' ]
 
 export const ButtonSpinnerContent = styled.div.attrs(({ waiting }: WaitingProps) => ({ className: waiting && 'spinner-active' }))`
     .spinner {
@@ -20,7 +21,7 @@ export const ButtonSpinnerContent = styled.div.attrs(({ waiting }: WaitingProps)
         >div {
             width: 12px;
             height: 12px;
-            ${({ variant }: VariantProps) => variant ==='primary' ? 'background-color:white;': ''}
+            ${({ variant }: VariantProps) => LIKES_WHITE_BACKGROUND.includes(variant) ? 'background-color:white;': ''}
         }    
     }
 

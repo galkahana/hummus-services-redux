@@ -9,23 +9,32 @@ import { removeFiles } from '@lib/storage'
 
 export const createJob = (data: IGenerationJobInput) => Model.create(data)
 export const findByUID = (uid: string, limitingQuery?: FilterQuery<IGenerationJob>, populate?: boolean) => {
-    const query = Model.findOne({
+    const curser = Model.findOne({
         uid,
         ...limitingQuery
     })
 
     if(populate) {
-        query.populate('generatedFile')
+        curser.populate('generatedFile')
     }
 
-    return query
+    return curser
 }
 export const findAllUIDsIn = (items: string[], query?: FilterQuery<IGenerationJob>) => Model.find({
     uid: { $in:items },
     ...query
 })
 export const findAll = (query: FilterQuery<IGenerationJob>) => Model.find(query)
-export const findAllDesc = (query: FilterQuery<IGenerationJob>) => Model.find(query).sort({ createdAt:-1 })
+export const findAllDesc = (query: FilterQuery<IGenerationJob>, populate?: boolean) => {
+    const curser = Model.find(query).sort({ createdAt:-1 })
+
+    if(populate) {
+        curser.populate('generatedFile')
+    }
+
+    return curser
+}
+
 export const findAllIn = (ids: ObjectId[]) => Model.find({ _id: { $in:ids } })
 export const destroyIn = (ids: ObjectId[]) => Model.deleteMany({ _id: { $in:ids } })
 export const patchIn = (ids: ObjectId[], patch: AnyObject) => Model.updateMany({ _id: { $in:ids } }, { $set: patch })

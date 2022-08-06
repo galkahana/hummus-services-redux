@@ -21,7 +21,7 @@ export interface IGeneratedFile {
     remoteSource: UploadedFileData
     fileSize: number
     createdAt: Date
-    updateedAt: Date
+    updatedAt: Date
   }
 
-export type IGeneratedFileInput = Omit<IGeneratedFile, 'uid'|'createdAt'|'updateedAt'|'_id'>;
+export type IGeneratedFileInput = Omit<IGeneratedFile, 'uid'|'createdAt'|'updatedAt'|'_id'>;

@@ -10,7 +10,7 @@ export interface IFileDownloadedAccountingEvent{
     file: ObjectId
     fileSize: number
     createdAt: Date
-    updateedAt: Date
+    updatedAt: Date
 }
 
-export type IFileDownloadedAccountingEventInput = Omit<IFileDownloadedAccountingEvent, 'createdAt'|'updateedAt'|'_id'>;
+export type IFileDownloadedAccountingEventInput = Omit<IFileDownloadedAccountingEvent, 'createdAt'|'updatedAt'|'_id'>;

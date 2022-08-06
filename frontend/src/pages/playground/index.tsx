@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 
 import Container from 'react-bootstrap/Container'
-import Button  from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import CodeMirror from '@uiw/react-codemirror'
@@ -11,6 +9,7 @@ import Split from 'react-split'
 import moment from 'moment'
 
 
+import ModalAlert from 'components/modal-alert'
 import ConsoleBase from 'components/console-base'
 import hummusClientService from 'lib/hummus-client'
 import { GetTokensAPIResponse } from 'lib/hummus-client/types'
@@ -320,15 +319,7 @@ const Playground = () => {
                         </Tabs>
                     </div>
                 </div>
-                <Modal show={Boolean(jobError)}  onHide={onErrorModalClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Login Error</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>{jobError}</Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={onErrorModalClose}>Close</Button>
-                    </Modal.Footer>
-                </Modal>                
+                <ModalAlert show={Boolean(jobError)}  onDismiss={onErrorModalClose} title="File Creation Error" body={jobError}/>
             </Container>
         </PlaygroundPage>
     </ConsoleBase>)
