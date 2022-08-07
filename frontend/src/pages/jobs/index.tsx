@@ -5,7 +5,6 @@ import { difference } from 'lodash'
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
-import Toast from 'react-bootstrap/Toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faRefresh, faArrowLeft, faTrash, faCheckDouble } from '@fortawesome/free-solid-svg-icons'
 import DatePicker from 'react-datepicker'
@@ -17,6 +16,7 @@ import ConsoleBase from 'components/console-base'
 import JobsList from 'components/jobs-list'
 import ModalAlert from 'components/modal-alert'
 import ModalConfirm from 'components/modal-confirm'
+import { useToast } from 'components/toast'
 
 import deletePDFImage from 'assets/delete-pdf.png'
 
@@ -38,7 +38,6 @@ const getToday = () => moment().toDate()
 
 
 const Jobs = () => {
-    const [ toastMessage, setToastMessage ] = useState<string>('')
     const [ isRefreshing, setIsRefreshing ] = useState<Boolean>(false)
     const [ searchTerm, setSearchTerm ] = useState<string>('')
     const [ dateRange, setDateRange ] = useState<[Nullable<Date>, Nullable<Date>]>([ getLastMonth(), getToday() ])
@@ -66,6 +65,8 @@ const Jobs = () => {
     const loadingDateRange = useRef<[Nullable<Date>, Nullable<Date>]>([ getLastMonth(), getToday() ])
     // this one here allows to differ initial window load time from later edits
     const didEdit = useRef<boolean>(false)
+
+    const showToast = useToast()
     
 
     const loadData = useCallback(async () => {
@@ -89,11 +90,11 @@ const Jobs = () => {
             setJobs(newJobs)
         } catch(ex) {
             // maybe show something on error? maybe not
-            setToastMessage('Jobs fetching failed')
+            showToast('Jobs fetching failed', 'Jobs')
         }
         isFetchingData.current = false
         setCurrentPage(0)
-    }, [])
+    }, [ showToast ])
 
     // update current per updates on the fields
     useEffect(()=> {
@@ -222,14 +223,14 @@ const Jobs = () => {
         try {
             await hummusClientService.deleteFilesForJobs([ targetJob.current.uid ])
             updateJobWithNewData(targetJob.current, { ...targetJob.current, generatedFile: null })
-            setToastMessage('Job file deleted')
+            showToast('Job file deleted', 'Jobs')
         } catch(ex: unknown) {
             setModalErrorMessage(ex instanceof Error ? ex.message : `The was an error deleting the file for job ${targetJob.current.uid} but it won't tell us what it was.`)
         }
         targetJob.current = null
 
         resolveDeleteFile()
-    }, [ targetJob, resolveDeleteFile, setModalErrorMessage, updateJobWithNewData, setIsConfirmingDeleteJobFile ])
+    }, [ targetJob, resolveDeleteFile, setModalErrorMessage, updateJobWithNewData, setIsConfirmingDeleteJobFile, showToast ])
 
     const onCancelSelectionClick = useCallback(()=> {
         setSelectedJobs([])
@@ -265,13 +266,13 @@ const Jobs = () => {
             // and update the lists
             setJobs(difference(jobs, selectedJobs))
             setSelectedJobs([])
-            setToastMessage(`Job${selectedJobs.length > 1 ?'s':''} successfully deleted`)
+            showToast(`Job${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
         } catch(ex: unknown) {
             setModalErrorMessage(ex instanceof Error ? ex.message : `The was an error deleting the jobs ${jobIDs} but it won't tell us what it was.`)
         }
 
         setIsDeletingJobs(false)
-    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobs, setIsDeletingJobs,  setModalErrorMessage, setJobs, setSelectedJobs ])
+    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobs, setIsDeletingJobs,  setModalErrorMessage, setJobs, setSelectedJobs, showToast ])
 
 
     const onDeleteJobsFilesClick = useCallback(() => {
@@ -296,13 +297,13 @@ const Jobs = () => {
             const newJobs = jobs.map((job) => selectedJobs.includes(job) ? { ...job, generatedFile: null }:job)
             setJobs(newJobs)
             setSelectedJobs([])
-            setToastMessage(`Job${selectedJobs.length > 1 ?'s':''} file${selectedJobs.length > 1 ?'s':''} successfully deleted`)
+            showToast(`Job${selectedJobs.length > 1 ?'s':''} file${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
         } catch(ex: unknown) {
             setModalErrorMessage(ex instanceof Error ? ex.message : `The was an error deleting the jobs files for ${jobIDs} but it won't tell us what it was.`)
         }
 
         setIsDeletingJobsFiles(false)
-    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobsFiles, setIsDeletingJobsFiles,  setModalErrorMessage, setJobs, setSelectedJobs ])
+    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobsFiles, setIsDeletingJobsFiles,  setModalErrorMessage, setJobs, setSelectedJobs, showToast ])
 
 
     // and now for some stickiness
@@ -360,12 +361,6 @@ const Jobs = () => {
 
     return <ConsoleBase>
         <JobsPage>
-            <Toast onClose={() => setToastMessage('')} show={Boolean(toastMessage)} delay={2000} autohide className="alert-toaster">
-                <Toast.Header>
-                    <strong className="me-auto">Hummus</strong>
-                </Toast.Header>
-                <Toast.Body>{toastMessage}</Toast.Body>
-            </Toast>    
             <Container>
                 <div className={`toolbar ${selectedJobs.length > 0 ? 'selection':''} ${isDetachingToolbar ? 'detached container': ''}`}>
                     <div className="toolbar-frame">

@@ -18,12 +18,6 @@ export const JobsPage = styled.div`
 
 @keyframes spin { 100% { transform:rotate(360deg); } }
 
-.alert-toaster {
-    z-index: 5000;
-    position: absolute;
-    margin: 1em;
-}
-   
 .container {
     padding:20px 0;
     .toolbar {
