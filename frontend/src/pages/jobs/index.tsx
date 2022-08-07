@@ -6,7 +6,6 @@ import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Toast from 'react-bootstrap/Toast'
-import Pagination from 'react-bootstrap/Pagination'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faRefresh, faArrowLeft, faTrash, faCheckDouble } from '@fortawesome/free-solid-svg-icons'
 import DatePicker from 'react-datepicker'
@@ -23,6 +22,7 @@ import deletePDFImage from 'assets/delete-pdf.png'
 
 import { JobsPage } from './jobs.styles'
 import { PrettyClickableDiv } from 'components/common.styles'
+import DynamicPagination from 'components/dynamic-pagination'
 
 
 const DOWN_THRESHOLD = 100
@@ -354,7 +354,9 @@ const Jobs = () => {
 
 
     // pagination list
-    const pagesListLength = Math.ceil(jobs.length/ITEMS_PER_PAGE)
+    const onPaginationPageChange = useCallback((value: number)=> {
+        setCurrentPage(value)
+    }, [ setCurrentPage ])
 
     return <ConsoleBase>
         <JobsPage>
@@ -427,47 +429,15 @@ const Jobs = () => {
                         </div>
                     </div>
                 </div>
-                {pagesListLength > 1 && (
+                {jobs.length > ITEMS_PER_PAGE && (
                     <>
-                        <Pagination>
-                            {pagesListLength > SIMPLE_PAGES_LIST_LIMIT ? (
-                                <>
-                                    <Pagination.First disabled={currentPage === 0} onClick={()=>setCurrentPage(0)}/>
-                                    <Pagination.Prev disabled={currentPage === 0} onClick={()=>setCurrentPage(currentPage - 1)}/>
-                                    {currentPage > 2 && (
-                                        <>
-                                            <Pagination.Item onClick={()=>setCurrentPage(0)}>{1}</Pagination.Item>
-                                            <Pagination.Ellipsis disabled/>
-                                        </>
-                                    )}
-                                    {currentPage > 1 && (
-                                        <Pagination.Item onClick={()=>setCurrentPage(currentPage - 2)}>{currentPage - 1}</Pagination.Item>
-                                    )}
-                                    {currentPage > 0 && (
-                                        <Pagination.Item onClick={()=>setCurrentPage(currentPage - 1)}>{currentPage}</Pagination.Item>
-                                    )}
-                                    <Pagination.Item active>{currentPage+1}</Pagination.Item>
-                                    {(currentPage < pagesListLength - 1) && (
-                    
-                                        <Pagination.Item onClick={()=>setCurrentPage(currentPage + 1)}>{currentPage + 2}</Pagination.Item>
-                                    )}
-                                    {(currentPage < pagesListLength - 2) && (
-                                        <Pagination.Item onClick={()=>setCurrentPage(currentPage + 2)}>{currentPage + 3}</Pagination.Item>
-                                    )}
-                                    {(currentPage < pagesListLength - 3) && (
-                                        <>
-                                            <Pagination.Ellipsis disabled/>
-                                            <Pagination.Item onClick={()=>setCurrentPage(pagesListLength - 1)}>{pagesListLength}</Pagination.Item>
-                                        </>
-                                    )}
-                                    <Pagination.Next disabled={currentPage === pagesListLength-1}  onClick={()=>setCurrentPage(currentPage + 1)}/>
-                                    <Pagination.Last disabled={currentPage === pagesListLength-1}  onClick={()=>setCurrentPage(pagesListLength-1)} />
-                                </>
-                            ): Array.from({ length: pagesListLength }, (x, i) => i).map((i) =>
-                                <Pagination.Item key={i} active={currentPage === i} onClick={()=>setCurrentPage(i)}>{i+1}</Pagination.Item>
-                            )
-                            }
-                        </Pagination>
+                        <DynamicPagination 
+                            page={currentPage} 
+                            itemsCount={jobs.length} 
+                            onPageChange={onPaginationPageChange} 
+                            itemsPerPage={ITEMS_PER_PAGE} 
+                            simplePagesListLimit={SIMPLE_PAGES_LIST_LIMIT}
+                        />
                         <div>Job {currentPage*ITEMS_PER_PAGE+1} to {Math.min((currentPage+1)*(ITEMS_PER_PAGE), jobs.length)}:</div>
                     </>
                 )}

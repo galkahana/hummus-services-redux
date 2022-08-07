@@ -1,5 +1,5 @@
 import React from 'react'
-import RootNavigator from 'components/RootNavigator'
+import RootNavigator from 'components/root-navigator'
 
 function App() {
     return (
