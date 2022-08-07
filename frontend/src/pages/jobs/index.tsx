@@ -14,9 +14,9 @@ import { GenerationJobsQuery, GenerationJobResponse, JobStatus } from 'lib/hummu
 import { executeForAtLeast } from 'lib/async'
 import ConsoleBase from 'components/console-base'
 import JobsList from 'components/jobs-list'
-import ModalConfirm from 'components/modal-confirm'
 import { useToast } from 'components/toast'
 import { useModalAlert } from 'components/modal-alert/context'
+import { useModalConfirm } from 'components/modal-confirm/context'
 
 import deletePDFImage from 'assets/delete-pdf.png'
 
@@ -41,22 +41,15 @@ const Jobs = () => {
     const [ isRefreshing, setIsRefreshing ] = useState<Boolean>(false)
     const [ searchTerm, setSearchTerm ] = useState<string>('')
     const [ dateRange, setDateRange ] = useState<[Nullable<Date>, Nullable<Date>]>([ getLastMonth(), getToday() ])
-    const [ isConfirmingDeleteJobFile, setIsConfirmingDeleteJobFile ] = useState<boolean>(false)
     const [ selectedJobs, setSelectedJobs ] = useState<GenerationJobResponse[]>([])
     const [ jobs, setJobs ] = useState<GenerationJobResponse[]>([])
-    const [ isConfirmingDeleteJobs, setIsConfirmingDeleteJobs ] = useState<boolean>(false)
     const [ isDeletingJobs, setIsDeletingJobs ] = useState<boolean>(false)
-    const [ isConfirmingDeleteJobsFiles, setIsConfirmingDeleteJobsFiles ] = useState<boolean>(false)
     const [ isDeletingJobsFiles, setIsDeletingJobsFiles ] = useState<boolean>(false)
     const [ isDetachingToolbar, setIsDetachingToolbar ] = useState<boolean>(false)
     const [ currentPage, setCurrentPage ] = useState<number>(0)
 
     // a helper to avoid fetching multiple time due to excited user actions
     const isFetchingData = useRef<boolean>(false)
-    // resolver for job action propegated through job list
-    const deleteFileResolve = useRef<Nullable<(value: unknown)=> void>>(null)
-    // target job for actions as per propegated through job list
-    const targetJob = useRef<Nullable<GenerationJobResponse>>(null)
     // idle typing timeout
     const searchTermTypingIdleTimeout = useRef<Nullable<ReturnType<typeof setTimeout>>>(null)
     // using ref for actual search, so it's easier to control when it's being triggered
@@ -66,7 +59,8 @@ const Jobs = () => {
     const didEdit = useRef<boolean>(false)
 
     const showToast = useToast()
-    const showModaelAlert = useModalAlert()
+    const showModalAlert = useModalAlert()
+    const showModalConfirm = useModalConfirm()
     
 
     const loadData = useCallback(async () => {
@@ -179,54 +173,22 @@ const Jobs = () => {
         })
     }, [])
 
-    const onJobFileDeleteRequest = useCallback((job: GenerationJobResponse) => {
-        // create new promise to resolve this guy later when done with delete
-        const completePromise = new Promise((resolve) => {deleteFileResolve.current = resolve})
-        targetJob.current = job
-        setIsConfirmingDeleteJobFile(true)
-        return completePromise
-    }, [ setIsConfirmingDeleteJobFile, targetJob, deleteFileResolve ])
-
-    const resolveDeleteFile = useCallback(() => {
-        if (deleteFileResolve.current) {
-            deleteFileResolve.current(true)
-            deleteFileResolve.current = null
-        }
-    }, [ deleteFileResolve ])
-
-    const updateJobWithNewData = useCallback((oldJob: GenerationJobResponse, newJob: GenerationJobResponse) => {
-        // update data object. so will update both collections of job with new job object
-        const newJobs = jobs.map((job) => job === oldJob ? newJob : job)
-        const newSelectedJobs = selectedJobs.map((job) => job === oldJob ? newJob : job)
-
-        setJobs(newJobs)
-        setSelectedJobs(newSelectedJobs)
-    }, [ jobs, selectedJobs, setJobs, setSelectedJobs ])
-
-    const onModalConfirmDeleteJobFileDismiss = useCallback(() => {
-        setIsConfirmingDeleteJobFile(false)
-        targetJob.current = null
-        resolveDeleteFile()
-    }, [ setIsConfirmingDeleteJobFile, targetJob, resolveDeleteFile ])
-    
-    const onModalConfirmDeleteJobFileOK = useCallback(async () => {
-        setIsConfirmingDeleteJobFile(false)
-        if(!targetJob.current) {
-            resolveDeleteFile()
-            return
-        }
-
+    const onJobFileDeleteRequest = useCallback(async (theJob: GenerationJobResponse) => {
         try {
-            await hummusClientService.deleteFilesForJobs([ targetJob.current.uid ])
-            updateJobWithNewData(targetJob.current, { ...targetJob.current, generatedFile: null })
+            await hummusClientService.deleteFilesForJobs([ theJob.uid ])
+            const newJob = { ...theJob, generatedFile: null }
+            // update data object. so will update both collections of job with new job object
+            const newJobs = jobs.map((aJob) => aJob === theJob ? newJob : aJob)
+            const newSelectedJobs = selectedJobs.map((aJob) => aJob === theJob ? newJob : aJob)
+
+            setJobs(newJobs)
+            setSelectedJobs(newSelectedJobs)
+
             showToast('Job file deleted', 'Jobs')
         } catch(ex: unknown) {
-            showModaelAlert(ex instanceof Error ? ex.message : `The was an error deleting the file for job ${targetJob.current.uid} but it won't tell us what it was.`, 'Job Page Error')
+            showModalAlert(ex instanceof Error ? ex.message : `The was an error deleting the file for job ${theJob.uid} but it won't tell us what it was.`, 'Job Page Error')
         }
-        targetJob.current = null
-
-        resolveDeleteFile()
-    }, [ targetJob, resolveDeleteFile, updateJobWithNewData, setIsConfirmingDeleteJobFile, showToast, showModaelAlert ])
+    }, [ jobs, selectedJobs, showToast, showModalAlert ])
 
     const onCancelSelectionClick = useCallback(()=> {
         setSelectedJobs([])
@@ -241,19 +203,19 @@ const Jobs = () => {
     }, [ jobs, selectedJobs, setSelectedJobs ])
 
 
-    const onDeleteJobsClick = useCallback(() => {
-        if(isDeletingJobs || isConfirmingDeleteJobs)
-            return // and never come back
+    const onDeleteJobsClick = useCallback(async () => {
+        const doesUserConfirm = await showModalConfirm(
+            `You are about to *permanenetly* delete the selected Job${selectedJobs.length > 1 ? 's':''}. This action cannot be undone.\n\nAre you sure that you want to continue?`,
+            {
+                confirmTitle: 'Warning',
+                confirmText: 'Yes',
+                rejectText: 'No'
+            }
+        )
 
-        setIsConfirmingDeleteJobs(true)
-    }, [ setIsConfirmingDeleteJobs, isDeletingJobs, isConfirmingDeleteJobs ])
+        if(!doesUserConfirm)
+            return
 
-    const onModalConfirmDeleteJobsDismiss = useCallback(() => {
-        setIsConfirmingDeleteJobs(false)
-    }, [ setIsConfirmingDeleteJobs ])
-
-    const onModalConfirmDeleteJobsOK = useCallback( async () => {
-        setIsConfirmingDeleteJobs(false)
 
         setIsDeletingJobs(true)
         const jobIDs = selectedJobs.map((job)=> job.uid)
@@ -264,26 +226,24 @@ const Jobs = () => {
             setSelectedJobs([])
             showToast(`Job${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
         } catch(ex: unknown) {
-            showModaelAlert(ex instanceof Error ? ex.message : `The was an error deleting the jobs ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
+            showModalAlert(ex instanceof Error ? ex.message : `The was an error deleting the jobs ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
         }
-
         setIsDeletingJobs(false)
-    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobs, setIsDeletingJobs, setJobs, setSelectedJobs, showToast, showModaelAlert ])
+    }, [ jobs, selectedJobs, setIsDeletingJobs, setJobs, setSelectedJobs, showToast, showModalAlert, showModalConfirm ])
 
 
-    const onDeleteJobsFilesClick = useCallback(() => {
-        if(isDeletingJobsFiles || isConfirmingDeleteJobsFiles)
-            return // and never come back
+    const onDeleteJobsFilesClick = useCallback(async () => {
+        const doesUserConfirm = await showModalConfirm(
+            `You are about to *permanenetly* delete PDF file${selectedJobs.length > 1 ? 's':''} for the selected job${selectedJobs.length > 1 ? 's':''}. This action cannot be undone.\n\nAre you sure that you want to continue?`,
+            {
+                confirmTitle: 'Warning',
+                confirmText: 'Yes',
+                rejectText: 'No'
+            }
+        )
 
-        setIsConfirmingDeleteJobsFiles(true)
-    }, [ setIsConfirmingDeleteJobsFiles, isDeletingJobsFiles, isConfirmingDeleteJobsFiles ])
-
-    const onModalConfirmDeleteJobsFilesDismiss = useCallback(() => {
-        setIsConfirmingDeleteJobsFiles(false)
-    }, [ setIsConfirmingDeleteJobsFiles ])    
-
-    const onModalConfirmDeleteJobsFilesOK = useCallback( async () => {
-        setIsConfirmingDeleteJobsFiles(false)
+        if(!doesUserConfirm)
+            return
 
         setIsDeletingJobsFiles(true)
         const jobIDs = selectedJobs.map((job)=> job.uid)
@@ -295,11 +255,13 @@ const Jobs = () => {
             setSelectedJobs([])
             showToast(`Job${selectedJobs.length > 1 ?'s':''} file${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
         } catch(ex: unknown) {
-            showModaelAlert(ex instanceof Error ? ex.message : `The was an error deleting the jobs files for ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
+            showModalAlert(ex instanceof Error ? ex.message : `The was an error deleting the jobs files for ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
         }
-
         setIsDeletingJobsFiles(false)
-    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobsFiles, setIsDeletingJobsFiles,  showModaelAlert, setJobs, setSelectedJobs, showToast ])
+
+
+    }, [ jobs, selectedJobs, showToast, showModalAlert, showModalConfirm ])
+
 
 
     // and now for some stickiness
@@ -335,7 +297,7 @@ const Jobs = () => {
                 async () => {
                     const currentJobsInProgress = jobs.filter((job) => job.status === JobStatus.JobInProgress)
                     try {
-                        const jobUpdates = await hummusClientService.getJobs({ in: currentJobsInProgress.map((job)=> job.uid) })
+                        const jobUpdates = await hummusClientService.getJobs({ in: currentJobsInProgress.map((job)=> job.uid), full: true })
                         const jobUpdatesDict = jobUpdates.reduce((acc:{[key:string]: GenerationJobResponse}, job) => {acc[job.uid] = job; return acc}, {})
                         setJobs(theJobs => theJobs.map((job)=> jobUpdatesDict[job.uid] ? jobUpdatesDict[job.uid]: job))                    
                         setSelectedJobs(theJobs => theJobs.map((job)=> jobUpdatesDict[job.uid] ? jobUpdatesDict[job.uid]: job))
@@ -433,34 +395,7 @@ const Jobs = () => {
                     </>
                 )}
                 <JobsList jobs={jobs.slice(currentPage*ITEMS_PER_PAGE, (currentPage+1)*ITEMS_PER_PAGE)} onSelectionChanged={onJobSelectionChanged} onJobFileDeleteRequest={onJobFileDeleteRequest} selectedJobs={selectedJobs}/>
-            </Container>
-            <ModalConfirm 
-                show={isConfirmingDeleteJobFile}  
-                onReject={onModalConfirmDeleteJobFileDismiss} 
-                onConfirm={onModalConfirmDeleteJobFileOK} 
-                title="Confirming File Delete" 
-                body="You are about to permanently delete the file for this job. This action **may not** be undone. You good with that?" 
-                confirmText="Sure" 
-                rejectText="Nope"
-            />
-            <ModalConfirm 
-                show={isConfirmingDeleteJobs}  
-                onReject={onModalConfirmDeleteJobsDismiss} 
-                onConfirm={onModalConfirmDeleteJobsOK} 
-                title="Warning" 
-                body={`You are about to *permanenetly* delete the selected Job${selectedJobs.length > 1 ? 's':''}. This action cannot be undone.\n\nAre you sure that you want to continue?`}
-                confirmText="Yes" 
-                rejectText="No"
-            />        
-            <ModalConfirm 
-                show={isConfirmingDeleteJobsFiles}  
-                onReject={onModalConfirmDeleteJobsFilesDismiss} 
-                onConfirm={onModalConfirmDeleteJobsFilesOK} 
-                title="Warning" 
-                body={`You are about to *permanenetly* delete PDF file${selectedJobs.length > 1 ? 's':''} for the selected job${selectedJobs.length > 1 ? 's':''}. This action cannot be undone.\n\nAre you sure that you want to continue?`}
-                confirmText="Yes" 
-                rejectText="No"
-            />    
+            </Container>  
         </JobsPage>
     </ConsoleBase>
 }

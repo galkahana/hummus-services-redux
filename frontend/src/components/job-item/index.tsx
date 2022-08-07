@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
 import moment from 'moment'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -6,13 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faRemove, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 
 import { GenerationJobResponse, JobStatus } from 'lib/hummus-client/types'
-
-import { ItemContainer } from './job-item.styles'
 import hummusClient from 'lib/hummus-client'
 import ButtonWithSpinner from 'components/waiting/button-with-spinner'
 import { PrettyClickableAnchor } from 'components/common.styles'
-import { useMemo } from 'react'
+import { useModalConfirm } from 'components/modal-confirm/context'
 
+import { ItemContainer } from './job-item.styles'
 
 const STATUS_CLASSES = [
     'status-success',
@@ -22,7 +21,7 @@ const STATUS_CLASSES = [
 
 const STATUS_TEXT = [ 'Done', 'In Progress', 'Failed' ]
 
-const DEFAULT_DATE_TIME_FILTER  = 'MMM d, y HH:mm:ss:SSS'
+const DEFAULT_DATE_TIME_FILTER  = 'MMM Do, y HH:mm:ss:SSS'
 
 const getDefaultDateDisplay = (date: Date) => date ? `${moment(date).format(DEFAULT_DATE_TIME_FILTER)}ms` : 'N/A'
 
@@ -39,6 +38,8 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
     const [ waitingForPDFDelete, setWaitingForPDFDelete ] = useState<boolean>(false)
     const [ jobStatusStyle, setJobStatusStyle ] = useState<string>(STATUS_CLASSES[job.status])
     const jobRef = useRef<GenerationJobResponse>(job)
+
+    const showModalConfirm = useModalConfirm()
 
     useEffect(()=> {
         // tracking job status change to allow for very neat and important animation
@@ -69,9 +70,19 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
         return JSON.stringify(job.ticket, null, 2)
     }, [ job ])
 
-    const onPDFDeleteClick = () => {
-        if(waitingForPDFDelete)
+    const onPDFDeleteClick = async () => {
+
+        const doesUserConfirm = await showModalConfirm(
+            'You are about to permanently delete the file for this job. This action **may not** be undone. You good with that?',
+            {
+                confirmTitle: 'Warning',
+                confirmText: 'Sure',
+                rejectText: 'Nope'
+            })
+
+        if(!doesUserConfirm)
             return
+
         setWaitingForPDFDelete(true)
         onJobFileDeleteRequest(job).then(() => setWaitingForPDFDelete(false))
     }

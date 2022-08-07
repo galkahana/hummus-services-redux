@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from 'react'
 import ModalAlert from './index'
 
 
-type ModalAlertMethod = (alertMessage: string, alertTitle?: string) => Promise<unknown>
+type ModalAlertMethod = (alertMessage: string, alertTitle?: string) => Promise<void>
 
 
 export const ModalAlertContext = React.createContext<ModalAlertMethod>(null!)
@@ -11,10 +11,10 @@ export const ModalAlertContext = React.createContext<ModalAlertMethod>(null!)
 export function ModalAlertProvider({ children }: { children: React.ReactNode }) {
     const [ alertMessage, setAlertMessage ] = useState<string>('')
     const [ alertTitle, setAlertTitle ] = useState<string>()
-    const alertResolve = useRef<Nullable<(value: unknown)=> void>>(null)
+    const alertResolve = useRef<Nullable<()=> void>>(null)
 
     const onAlertShow = useCallback((alertMessage: string, alertTitle?: string) => {
-        const alertPromise = new Promise((resolve) => {alertResolve.current = resolve})
+        const alertPromise = new Promise<void>((resolve) => {alertResolve.current = resolve})
 
         setAlertMessage(alertMessage)
         setAlertTitle(alertTitle)
@@ -24,7 +24,7 @@ export function ModalAlertProvider({ children }: { children: React.ReactNode }) 
     const onDismiss = useCallback(()=> {
         setAlertMessage('')
         if(alertResolve.current) {
-            alertResolve.current(true)
+            alertResolve.current()
             alertResolve.current = null
         }
     }, [])

@@ -9,20 +9,22 @@ type ModalAlertProps = {
     show: boolean
     confirmText?: string
     rejectText?: string
-    onReject: () => void| Promise<void>
+    onReject: () => void | Promise<void>
     onConfirm: () => void | Promise<void>
 }
 
 
-const ModalConfirm = ({ title, body, show, onReject, onConfirm, confirmText, rejectText }: ModalAlertProps) => (
+const ModalConfirm = ({ title, body, show, onReject, onConfirm, confirmText = 'OK', rejectText = 'Cancel' }: ModalAlertProps) => (
     <Modal show={show}  onHide={onReject}>
-        <Modal.Header closeButton>
-            <Modal.Title>{title}</Modal.Title>
-        </Modal.Header>
+        {title &&
+            <Modal.Header closeButton>
+                <Modal.Title>{title}</Modal.Title>
+            </Modal.Header>
+        }
         <Modal.Body><ReactMarkdown children={body}/></Modal.Body>
         <Modal.Footer>
-            <Button variant="primary" onClick={onConfirm}>{confirmText || 'OK'}</Button>
-            <Button variant="secondary" onClick={onReject}>{rejectText || 'Cancel'}</Button>
+            <Button variant="primary" onClick={onConfirm}>{confirmText}</Button>
+            <Button variant="secondary" onClick={onReject}>{rejectText}</Button>
         </Modal.Footer>
     </Modal>  
 )
