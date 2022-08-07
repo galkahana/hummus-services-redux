@@ -11,7 +11,7 @@ import { usePrincipal } from 'lib/principal'
 import {
     LoginFormContainer,
 } from './login.styles'
-import ModalAlert from 'components/modal-alert'
+import { useModalAlert } from 'components/modal-alert/context'
 
 // Something missing in history def...and we don't have to just take it.
 class Location {
@@ -26,11 +26,11 @@ class Location {
 const Login = () => {
     const [ username, setUsername ] = useState<string>('')
     const [ password, setPassword ] = useState<string>('')
-    const [ loginError, setLoginError ] = useState<string>('')
     const [ waiting, setWaiting ] = useState<boolean>(false)
     const navigate = useNavigate()
     const principal = usePrincipal()
     const location = useLocation() as Location
+    const showModalAlert = useModalAlert()
 
     const to = location.state?.from?.pathname || '/console'
 
@@ -55,13 +55,9 @@ const Login = () => {
         }).catch((ex: unknown) => {
             setWaiting(false)
             if(ex instanceof Error) {
-                setLoginError(ex.message)
+                showModalAlert(ex.message)
             }
         })
-    }
-
-    const onModalClose = () => {
-        setLoginError('')
     }
 
     return <PublicBase>         
@@ -80,7 +76,6 @@ const Login = () => {
                         Log In
                     </ButtonWithSpinner>                        
                 </Form>
-                <ModalAlert body={loginError} title="Login Error" show={Boolean(loginError)} onDismiss={onModalClose}/>
             </LoginFormContainer>
         </Container>
     </PublicBase>

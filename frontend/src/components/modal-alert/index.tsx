@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import ReactMarkdown from 'react-markdown'
 
-type ModalAlertProps = {
+export type ModalAlertProps = {
     title?: string
     body: string
     show: boolean

@@ -14,9 +14,9 @@ import { GenerationJobsQuery, GenerationJobResponse, JobStatus } from 'lib/hummu
 import { executeForAtLeast } from 'lib/async'
 import ConsoleBase from 'components/console-base'
 import JobsList from 'components/jobs-list'
-import ModalAlert from 'components/modal-alert'
 import ModalConfirm from 'components/modal-confirm'
 import { useToast } from 'components/toast'
+import { useModalAlert } from 'components/modal-alert/context'
 
 import deletePDFImage from 'assets/delete-pdf.png'
 
@@ -41,7 +41,6 @@ const Jobs = () => {
     const [ isRefreshing, setIsRefreshing ] = useState<Boolean>(false)
     const [ searchTerm, setSearchTerm ] = useState<string>('')
     const [ dateRange, setDateRange ] = useState<[Nullable<Date>, Nullable<Date>]>([ getLastMonth(), getToday() ])
-    const [ modalErrorMessage, setModalErrorMessage ] = useState<string>('')
     const [ isConfirmingDeleteJobFile, setIsConfirmingDeleteJobFile ] = useState<boolean>(false)
     const [ selectedJobs, setSelectedJobs ] = useState<GenerationJobResponse[]>([])
     const [ jobs, setJobs ] = useState<GenerationJobResponse[]>([])
@@ -67,6 +66,7 @@ const Jobs = () => {
     const didEdit = useRef<boolean>(false)
 
     const showToast = useToast()
+    const showModaelAlert = useModalAlert()
     
 
     const loadData = useCallback(async () => {
@@ -179,10 +179,6 @@ const Jobs = () => {
         })
     }, [])
 
-    const onModalAlertDismiss = useCallback(() => {
-        setModalErrorMessage('')
-    }, [ setModalErrorMessage ])
-
     const onJobFileDeleteRequest = useCallback((job: GenerationJobResponse) => {
         // create new promise to resolve this guy later when done with delete
         const completePromise = new Promise((resolve) => {deleteFileResolve.current = resolve})
@@ -225,12 +221,12 @@ const Jobs = () => {
             updateJobWithNewData(targetJob.current, { ...targetJob.current, generatedFile: null })
             showToast('Job file deleted', 'Jobs')
         } catch(ex: unknown) {
-            setModalErrorMessage(ex instanceof Error ? ex.message : `The was an error deleting the file for job ${targetJob.current.uid} but it won't tell us what it was.`)
+            showModaelAlert(ex instanceof Error ? ex.message : `The was an error deleting the file for job ${targetJob.current.uid} but it won't tell us what it was.`, 'Job Page Error')
         }
         targetJob.current = null
 
         resolveDeleteFile()
-    }, [ targetJob, resolveDeleteFile, setModalErrorMessage, updateJobWithNewData, setIsConfirmingDeleteJobFile, showToast ])
+    }, [ targetJob, resolveDeleteFile, updateJobWithNewData, setIsConfirmingDeleteJobFile, showToast, showModaelAlert ])
 
     const onCancelSelectionClick = useCallback(()=> {
         setSelectedJobs([])
@@ -268,11 +264,11 @@ const Jobs = () => {
             setSelectedJobs([])
             showToast(`Job${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
         } catch(ex: unknown) {
-            setModalErrorMessage(ex instanceof Error ? ex.message : `The was an error deleting the jobs ${jobIDs} but it won't tell us what it was.`)
+            showModaelAlert(ex instanceof Error ? ex.message : `The was an error deleting the jobs ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
         }
 
         setIsDeletingJobs(false)
-    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobs, setIsDeletingJobs,  setModalErrorMessage, setJobs, setSelectedJobs, showToast ])
+    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobs, setIsDeletingJobs, setJobs, setSelectedJobs, showToast, showModaelAlert ])
 
 
     const onDeleteJobsFilesClick = useCallback(() => {
@@ -299,11 +295,11 @@ const Jobs = () => {
             setSelectedJobs([])
             showToast(`Job${selectedJobs.length > 1 ?'s':''} file${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
         } catch(ex: unknown) {
-            setModalErrorMessage(ex instanceof Error ? ex.message : `The was an error deleting the jobs files for ${jobIDs} but it won't tell us what it was.`)
+            showModaelAlert(ex instanceof Error ? ex.message : `The was an error deleting the jobs files for ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
         }
 
         setIsDeletingJobsFiles(false)
-    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobsFiles, setIsDeletingJobsFiles,  setModalErrorMessage, setJobs, setSelectedJobs, showToast ])
+    }, [ jobs, selectedJobs, setIsConfirmingDeleteJobsFiles, setIsDeletingJobsFiles,  showModaelAlert, setJobs, setSelectedJobs, showToast ])
 
 
     // and now for some stickiness
@@ -438,7 +434,6 @@ const Jobs = () => {
                 )}
                 <JobsList jobs={jobs.slice(currentPage*ITEMS_PER_PAGE, (currentPage+1)*ITEMS_PER_PAGE)} onSelectionChanged={onJobSelectionChanged} onJobFileDeleteRequest={onJobFileDeleteRequest} selectedJobs={selectedJobs}/>
             </Container>
-            <ModalAlert show={Boolean(modalErrorMessage)}  onDismiss={onModalAlertDismiss} title="Job Page Error" body={modalErrorMessage}/>
             <ModalConfirm 
                 show={isConfirmingDeleteJobFile}  
                 onReject={onModalConfirmDeleteJobFileDismiss} 

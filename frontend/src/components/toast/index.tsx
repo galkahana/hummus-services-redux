@@ -5,7 +5,7 @@ import { TopToast } from './toast.styles'
 
 type ToastMethod = (toastMessage: string, toastTitle?: string, toastOptions?: ToastProps) => void
 
-export const ToastContext = React.createContext<ToastMethod>(null!)
+const ToastContext = React.createContext<ToastMethod>(null!)
 
 const defaultToastProps = {
     delay: 2000,
@@ -14,10 +14,10 @@ const defaultToastProps = {
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
     const [ toastMessage, setToastMessage ] = useState<string>('')
-    const [ toastTitle, setToastTitle ] = useState<Nullable<string>>(null)
-    const [ toastOptions, setToastOptions ] = useState<Nullable<ToastProps>>(null)
+    const [ toastTitle, setToastTitle ] = useState<string>()
+    const [ toastOptions, setToastOptions ] = useState<ToastProps>()
 
-    const onToastLaunch = useCallback((toastMessage: string, toastTitle: Nullable<string> = null, toastOptions: Nullable<ToastProps> = null) => {
+    const onToastLaunch = useCallback((toastMessage: string, toastTitle?: string, toastOptions?: ToastProps) => {
         setToastMessage(toastMessage)
         setToastTitle(toastTitle)
         setToastOptions(toastOptions)

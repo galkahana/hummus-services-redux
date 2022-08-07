@@ -1,6 +1,7 @@
 import { PrincipalProvider } from 'lib/principal'
 import React, { Suspense, lazy } from 'react'
 import { Routes, Route } from 'react-router-dom'
+import { ModalAlertProvider } from './modal-alert/context'
 import { ToastProvider } from './toast'
 
 const NoMatch = lazy(() => import('components/no-match'))
@@ -18,18 +19,20 @@ const RootNavigator = () => (
     <Suspense fallback={<div>Loading...</div>}>
         <PrincipalProvider>
             <ToastProvider>
-                <Routes>
-                    <Route path="/" element={<Welcome/>}/>
-                    <Route path="about" element={<About/>}/>
-                    <Route path="contact" element={<Contact/>}/>
-                    <Route path="login" element={<Login/>}/>
-                    <Route path="console">
-                        <Route index element={<ProtectedPage><Home/></ProtectedPage>}/>
-                        <Route path="playground" element={<ProtectedPage><Playground/></ProtectedPage>}/>
-                        <Route path="jobs" element={<ProtectedPage><Jobs/></ProtectedPage>}/>
-                    </Route>
-                    <Route path="*" element={<NoMatch/>}/>
-                </Routes>
+                <ModalAlertProvider>
+                    <Routes>
+                        <Route path="/" element={<Welcome/>}/>
+                        <Route path="about" element={<About/>}/>
+                        <Route path="contact" element={<Contact/>}/>
+                        <Route path="login" element={<Login/>}/>
+                        <Route path="console">
+                            <Route index element={<ProtectedPage><Home/></ProtectedPage>}/>
+                            <Route path="playground" element={<ProtectedPage><Playground/></ProtectedPage>}/>
+                            <Route path="jobs" element={<ProtectedPage><Jobs/></ProtectedPage>}/>
+                        </Route>
+                        <Route path="*" element={<NoMatch/>}/>
+                    </Routes>
+                </ModalAlertProvider>
             </ToastProvider>
         </PrincipalProvider>
     </Suspense>

@@ -9,7 +9,6 @@ import Split from 'react-split'
 import moment from 'moment'
 
 
-import ModalAlert from 'components/modal-alert'
 import ConsoleBase from 'components/console-base'
 import hummusClientService from 'lib/hummus-client'
 import { GetTokensAPIResponse } from 'lib/hummus-client/types'
@@ -19,6 +18,7 @@ import ButtonWithSpinner from 'components/waiting/button-with-spinner'
 
 
 import { PlaygroundPage } from './playground.styles'
+import { useModalAlert } from 'components/modal-alert/context'
 
 const siteUrlRoot = window.location.protocol + '//' + window.location.host
 const apiUrl = `${process.env.REACT_APP_API_URL || siteUrlRoot}/api`
@@ -132,8 +132,9 @@ const Playground = () => {
     const [ embedLink, setEmbedLink ] = useState<string>('')
     const [ code, setCode ] = useState<string>(SAMPLE_CODE)
     const [ waiting, setWaiting ] = useState<boolean>(false)
-    const [ jobError, setJobError ] = useState<string>('')
     const [ apiTokens, setAPITokens ] = useState<GetTokensAPIResponse>({})
+
+    const showModalAlert = useModalAlert()
 
     useEffect(()=>{
         // ignore if fails...it's for show and tell only anyways
@@ -149,7 +150,7 @@ const Playground = () => {
         try {
             parsedCode = JSON.parse(code)
         } catch(ex: unknown) {
-            setJobError( ex instanceof Error ? ex.message: 'Something went wrong in attempting to parse the code to json...and it wont tell us what happened')
+            showModalAlert( ex instanceof Error ? ex.message: 'Something went wrong in attempting to parse the code to json...and it wont tell us what happened', 'File Creation Error')
             return
         }
 
@@ -158,15 +159,11 @@ const Playground = () => {
             setDownloadLink(download)
             setEmbedLink(embed)
         }).catch((ex: unknown) => {
-            setJobError( ex instanceof Error ? ex.message: 'Something went wrong in attempting to run the job...and it wont tell us what happened')
+            showModalAlert( ex instanceof Error ? ex.message: 'Something went wrong in attempting to run the job...and it wont tell us what happened', 'File Creation Error')
         }).then(() => {
             setWaiting(false)
         })
-    }, [ setDownloadLink, setEmbedLink, code ])
-
-    const onErrorModalClose = useCallback(() => {
-        setJobError('')
-    }, [ setJobError ])
+    }, [ setDownloadLink, setEmbedLink, code, showModalAlert ])
 
     const getKeyForBrowser = () => {
         return trimToSize(apiTokens.public || '/* Your public API key */', 50)
@@ -319,7 +316,6 @@ const Playground = () => {
                         </Tabs>
                     </div>
                 </div>
-                <ModalAlert show={Boolean(jobError)}  onDismiss={onErrorModalClose} title="File Creation Error" body={jobError}/>
             </Container>
         </PlaygroundPage>
     </ConsoleBase>)
