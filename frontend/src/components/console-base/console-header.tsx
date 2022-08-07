@@ -46,7 +46,6 @@ const ConsoleHeader = () => {
                 <InlineListItem><Link to="/console/playground"><button type="button">Playground</button></Link></InlineListItem>
                 <InlineListItem><Link to="/console/jobs"><button type="button">Jobs</button></Link></InlineListItem>
                 <InlineListItem><Link to="/console/account"><button type="button">Account</button></Link></InlineListItem>
-                <InlineListItem><Link to="/signup"><button type="button">Sign Up</button></Link></InlineListItem>
                 <InlineListItem><Link to="/documentation"><button type="button">Documentation</button></Link></InlineListItem>
                 <InlineListItem><Link to="/contact"><button type="button">Contact us</button></Link></InlineListItem>
             </HeaderTools>
