@@ -112,6 +112,7 @@ export async function changeUsername(req: Request<Record<string, never>, OKRespo
         // handle duplicate username
         if(_isErrorWithCode(err) && err.code == '11000') {
             res.locals.errInfo = { duplicateUsername: true }
+            res.locals.errStatus = 400
             throw new Error('A user with this username already exists')
         }
 
@@ -150,6 +151,7 @@ export async function changePassword(req: Request<Record<string, never>, OKRespo
         
     }, oldPassword)) {
         res.locals.errInfo = { oldPasswordMismatch: true }
+        res.locals.errStatus = 400
         throw new Error('old password does not match')
     }    
 
@@ -191,6 +193,7 @@ async function _create(req: Request<Record<string, never>, unknown, UserCreateIn
     } catch(err: unknown) {
         if(_isErrorWithCode(err) && err.code == '11000') {
             res.locals.errInfo = { duplicateUsername: true }
+            res.locals.errStatus = 400
             throw new Error('A user with this username already exists')
         }
 

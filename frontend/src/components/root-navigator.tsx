@@ -15,6 +15,7 @@ const Login = lazy(() => import('pages/login'))
 const Home = lazy(() => import('pages/home'))
 const Playground = lazy(()=> import('pages/playground'))
 const Jobs = lazy(() => import('pages/jobs'))
+const Account = lazy(() => import('pages/account'))
 
 const RootNavigator = () => (
     <Suspense fallback={<div>Loading...</div>}>
@@ -31,6 +32,7 @@ const RootNavigator = () => (
                                 <Route index element={<ProtectedPage><Home/></ProtectedPage>}/>
                                 <Route path="playground" element={<ProtectedPage><Playground/></ProtectedPage>}/>
                                 <Route path="jobs" element={<ProtectedPage><Jobs/></ProtectedPage>}/>
+                                <Route path="account" element={<ProtectedPage><Account/></ProtectedPage>}/>
                             </Route>
                             <Route path="*" element={<NoMatch/>}/>
                         </Routes>

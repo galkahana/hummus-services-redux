@@ -18,6 +18,7 @@ export async function checkCapcha(req: Request, res: Response, next: NextFunctio
     if(!capchaResponse) {
         const err = new Error('Missing Capcha, Try Again')
         res.locals.errInfo = { noCapcha : true }
+        res.locals.errStatus = 400
         return next(err)
     }    
 
@@ -34,6 +35,7 @@ export async function checkCapcha(req: Request, res: Response, next: NextFunctio
         else {
             const errorCode = _firstErrorCode(responseData['error-codes'])
             res.locals.errInfo = { capchaError : errorCode ? ERROR_TO_MESSAGE[errorCode] || errorCode : null }
+            res.locals.errStatus = 400
             return next(new Error('Capcha Error, Try Again'))
         }    
     } catch(err: unknown) {

@@ -13,6 +13,7 @@ export function setup() {
     
     winston.configure({
         format: combine(
+            format.errors({ stack: true }),
             timestamp({
                 format: 'YYYY-MM-DD HH:mm:ss.SSS ZZ'
             }),

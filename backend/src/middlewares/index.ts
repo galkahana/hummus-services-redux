@@ -15,7 +15,7 @@ export async function setup(app: Express) {
     app.use(bodyParser.json())
     app.use(cors({
         origin: '*',
-        methods: 'GET,PUT,POST,DELETE',
+        methods: 'GET,PUT,POST,DELETE,PATCH',
         allowedHeaders: 'access-control-allow-origin, accept, content-type, Authorization, hmscpa'
     }))
 

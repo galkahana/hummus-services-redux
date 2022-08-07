@@ -55,6 +55,10 @@ export async function create(req: Request<Record<string, never>, CreateTokenResp
         return res.badRequest('Trial user is not authorized to create API tokens. Become a full user to create API token')
     }
 
+    // destroy existing tokens of the input role
+    await destroyAll({ sub: user.uid, role:req.body.role })
+
+    // create new token of the input role
     const token = await createTokenValue(user.uid, { role: req.body.role })
     res.status(201).json({ token })
 }

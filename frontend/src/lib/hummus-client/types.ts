@@ -28,6 +28,12 @@ export type UserResponse = {
     updatedAt: Date
 }
 
+export type UserPatchInput = {
+    email?: string
+    name?: string
+}
+
+
 export enum JobStatus {
     JobDone = 0,
     JobInProgress = 1,
@@ -55,9 +61,13 @@ export type GeneratedFileResponse = {
     updatedAt: Date    
 }
 
-export type GetTokensAPIResponse = {
+export type TokensAPIResponse = {
     public?: string,
     private?: string
+}
+
+export type CreateTokenAPIResponse = {
+    token: string
 }
 
 export type GenerationJobsQuery = {
@@ -66,4 +76,21 @@ export type GenerationJobsQuery = {
     dateRangeTo?: string
     in?: string[]
     full?: boolean
+}
+
+export type ResponseOK = {
+    ok: Boolean
+}
+
+export type PlanUsageQuery = {
+    to?: string
+    from?: string
+}
+
+export type PlanUsageResult = {
+    generation: {size: number, count: number},
+    download: {size: number, count: number},
+    totalStorageSize: number,
+    from: Date,
+    to: Date
 }

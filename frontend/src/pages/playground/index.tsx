@@ -11,7 +11,7 @@ import moment from 'moment'
 
 import ConsoleBase from 'components/console-base'
 import hummusClientService from 'lib/hummus-client'
-import { GetTokensAPIResponse } from 'lib/hummus-client/types'
+import { TokensAPIResponse } from 'lib/hummus-client/types'
 import PDFPreview from 'components/pdf-preview'
 import { PrettyClickableLink } from 'components/common.styles'
 import ButtonWithSpinner from 'components/waiting/button-with-spinner'
@@ -132,7 +132,7 @@ const Playground = () => {
     const [ embedLink, setEmbedLink ] = useState<string>('')
     const [ code, setCode ] = useState<string>(SAMPLE_CODE)
     const [ waiting, setWaiting ] = useState<boolean>(false)
-    const [ apiTokens, setAPITokens ] = useState<GetTokensAPIResponse>({})
+    const [ apiTokens, setAPITokens ] = useState<TokensAPIResponse>({})
 
     const showModalAlert = useModalAlert()
 
@@ -214,6 +214,7 @@ const Playground = () => {
                     <div>
                         <Tabs
                             defaultActiveKey="browser"
+                            className="tab-pane"
                         >
                             <Tab eventKey="browser" title="Browser">
                                 <p>Create A PDF file directly in the client's browser by following these steps:</p>

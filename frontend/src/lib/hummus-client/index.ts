@@ -4,8 +4,13 @@ import {
     UserResponse, 
     GenerationJobResponse, 
     JobStatus, 
-    GetTokensAPIResponse, 
-    GenerationJobsQuery 
+    TokensAPIResponse, 
+    GenerationJobsQuery, 
+    UserPatchInput,
+    ResponseOK,
+    CreateTokenAPIResponse,
+    PlanUsageQuery,
+    PlanUsageResult
 } from './types'
 import axios, { AxiosResponse } from 'axios'
 import combine from 'lib/api-helpers/combine'
@@ -88,6 +93,11 @@ export class HummusClient {
         () => axios.get<UserResponse>(`${this.apiUrl}/api/users/me`, { headers: this.createAuthorizedHeaders() })
     )
 
+    patchMe = this.authMWs(
+        (userUpdate: UserPatchInput) => axios.patch<UserResponse>(`${this.apiUrl}/api/users/me`, userUpdate, { headers: this.createAuthorizedHeaders() })
+    )
+
+
     idUrl = (url: string) => {
         const accessToken = this.tokensProvider?.getToken()
         // bearer parameter - https://github.com/jaredhanson/passport-http-bearer#issuing-tokens
@@ -120,21 +130,49 @@ export class HummusClient {
     )
 
     getTokens = this.authMWs(
-        () => axios.get<GetTokensAPIResponse>(`${this.apiUrl}/api/tokens`, { headers: this.createAuthorizedHeaders() })
+        () => axios.get<TokensAPIResponse>(`${this.apiUrl}/api/tokens`, { headers: this.createAuthorizedHeaders() })
     )
+
+    createPrivateAPIToken = this.authMWs(
+        () => axios.post<CreateTokenAPIResponse>(`${this.apiUrl}/api/tokens`, { 'role': 'JobManager' }, { headers: this.createAuthorizedHeaders() })
+    )
+
+    createPublicAPIToken = this.authMWs(
+        () => axios.post<CreateTokenAPIResponse>(`${this.apiUrl}/api/tokens`, { 'role': 'JobCreator' }, { headers: this.createAuthorizedHeaders() })
+    )
+
+    deletePrivateAPIToken = this.authMWs(
+        () => axios.post<ResponseOK>(`${this.apiUrl}/api/tokens/revoke`, { 'role': 'JobManager' }, { headers: this.createAuthorizedHeaders() })
+    )
+
+    deletePublicAPIToken = this.authMWs(
+        () => axios.post<ResponseOK>(`${this.apiUrl}/api/tokens/revoke`, { 'role': 'JobCreator' }, { headers: this.createAuthorizedHeaders() })
+    )
+
 
     getJobs = this.authMWs(
         (params: GenerationJobsQuery) => axios.get<GenerationJobResponse[]>(`${this.apiUrl}/api/generation-jobs`, { params,  headers: this.createAuthorizedHeaders() })
     )
 
     deleteFilesForJobs = this.authMWs(
-        (jobIDs: string[]) => axios.post(`${this.apiUrl}/api/generation-jobs/delete-files`, { items: jobIDs }, { headers: this.createAuthorizedHeaders() })
+        (jobIDs: string[]) => axios.post<ResponseOK>(`${this.apiUrl}/api/generation-jobs/delete-files`, { items: jobIDs }, { headers: this.createAuthorizedHeaders() })
     )
         
     deleteJobs = this.authMWs(
-        (jobIDs: string[]) => axios.post(`${this.apiUrl}/api/generation-jobs/delete-jobs`, { items: jobIDs }, { headers: this.createAuthorizedHeaders() })
+        (jobIDs: string[]) => axios.post<ResponseOK>(`${this.apiUrl}/api/generation-jobs/delete-jobs`, { items: jobIDs }, { headers: this.createAuthorizedHeaders() })
     )
 
+    getUserPlanUsage = this.authMWs(
+        (params: PlanUsageQuery) => axios.get<PlanUsageResult>(`${this.apiUrl}/api/users/me/plan-usage`, { params,  headers: this.createAuthorizedHeaders() })
+    )
+
+    changeUsername = this.authMWs(
+        (username: string) => axios.post<ResponseOK>(`${this.apiUrl}/api/users/me/change-username`, { username }, { headers: this.createAuthorizedHeaders() })
+    )
+
+    changePassword = this.authMWs(
+        (oldPassword: string, newPassword) => axios.post<ResponseOK>(`${this.apiUrl}/api/users/me/change-password`, { oldPassword, newPassword }, { headers: this.createAuthorizedHeaders() })
+    )    
 
     async generatePDFDocument(ticket: object) { // at some point i'll want to type it more seriously...i do have this useful definition in the backend after all
         let generationJob = await this.createJob(ticket)

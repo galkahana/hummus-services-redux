@@ -4,6 +4,6 @@ import styled from 'styled-components'
 
 export const TopToast = styled(Toast)`
     z-index: 5000;
-    position: absolute;
+    position: fixed;
     margin: 1em;
 `

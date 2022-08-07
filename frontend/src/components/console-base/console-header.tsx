@@ -35,7 +35,7 @@ const ConsoleHeader = () => {
         })
         
         // navigate already now and reset identity. can do two things in par...and i don't mind failing
-        principal.resetIdentity()
+        principal.setIdentity(null)
         navigate('/')
     }
 
