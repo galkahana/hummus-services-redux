@@ -1,54 +1,17 @@
-import axios from 'axios'
-import FromData from 'form-data'
-import config from 'config'
+import { checkCaptcha as checkCaptchaLib } from '@lib/google-captcha'
 import { NextFunction, Request, Response } from 'express'
-
-const ERROR_TO_MESSAGE: Record<string, string> = {
-    'missing-input-secret':'The secret parameter is missing.',
-    'invalid-input-secret':'The secret parameter is invalid or malformed.',
-    'missing-input-response':'The response parameter is missing.',
-    'invalid-input-response':'The response parameter is invalid or malformed.'   
-}
-
-const GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
-
 
 export async function checkCaptcha(req: Request, res: Response, next: NextFunction) {
     const captchaResponse = req.headers['hmscpa']
-    if(!captchaResponse) {
-        const err = new Error('Missing Captcha, Try Again')
-        res.locals.errInfo = { noCaptcha : true }
-        res.locals.errStatus = 400
-        return next(err)
-    }    
-
-    const form = new FromData()
-    form.append('secret', config.get<string>('recaptcha.secret'))
-    form.append('response', captchaResponse)
-
-    try {
-        const response = await axios.post(GOOGLE_VERIFY_URL, form, { headers: form.getHeaders() })
-        const responseData: {success: boolean, 'error-codes'?: string[]} = response.data
-        if(responseData.success) {
-            return next()
-        }
-        else {
-            const errorCode = _firstErrorCode(responseData['error-codes'])
-            res.locals.errInfo = { captchaError : errorCode ? ERROR_TO_MESSAGE[errorCode] || errorCode : null }
-            res.locals.errStatus = 400
-            return next(new Error('Captcha Error, Try Again'))
-        }    
-    } catch(err: unknown) {
-        return next(err || new Error('Bad response, Try Again'))
+    const result = await checkCaptchaLib(captchaResponse)
+    if(!result) {
+        // all good
+        return next()
     }
-}
-
-function _firstErrorCode(errorCodes?: string[]) {
-    if(!errorCodes)
-        return null
-    if(errorCodes.length == 0)
-        return null
-    
-    return errorCodes[0]
+    else {
+        res.locals.errInfo = result.errInfo
+        res.locals.errStatus = result.errStatus
+        return next(result.err)
+    }
 
 }

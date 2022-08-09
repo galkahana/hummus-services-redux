@@ -18,10 +18,13 @@ import { UploadedFileData } from '@models/generated-files/types'
 import { logJobRanAccountingEvent } from '@lib/accounting'
 import { TokenPayload } from '@lib/tokens/types'
 import { AuthResponse } from '@lib/express/types'
+import { Roles } from '@lib/authorization/rbac'
 
 import { OKResponse } from '@middlewares/responses/200'
 
 const fs = _fs.promises
+
+const MAX_TIME_TO_DELETE_SITE_GENERATED_FILE = 5*60*1000 // 5mts
 
 // Actually in the below commands, IGenerationJob is not whats returned cause the GeneratedFile is populated...fix this sometimes
 
@@ -229,9 +232,18 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
             // Job data updates
             job.generatedFile = generatedFile._id
             job.status = JobStatus.JobDone
-            if(ticket.meta && ticket.meta.deleteFileAfter) {
-                // setting job delete time from when job is actually finished...which is now
-                job.deleteFileAt = moment().add({ ms:ticket.meta.deleteFileAfter }).toDate()
+            job.finishedAt = new Date()
+            
+            const userSelectedDeleteFileAfter = ticket.meta && ticket.meta.deleteFileAfter
+            // setting job delete time from when job is actually finished...which is now
+            if(tokenData.role === Roles.SiteUser) {
+                // force maximum time to hold a file if file was created on the site playground
+                const forceDeleteFileAfter = userSelectedDeleteFileAfter ? Math.min(MAX_TIME_TO_DELETE_SITE_GENERATED_FILE, userSelectedDeleteFileAfter) : MAX_TIME_TO_DELETE_SITE_GENERATED_FILE
+                job.deleteFileAt = moment().add({ ms:forceDeleteFileAfter }).toDate()
+            }
+            else if(userSelectedDeleteFileAfter) {
+                // or if used chose a certain time to delete the file
+                job.deleteFileAt = moment().add({ ms:userSelectedDeleteFileAfter }).toDate()
             }
             job.save()
 

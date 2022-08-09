@@ -29,7 +29,8 @@ const generationJobSchema = new Schema<IGenerationJob>({
         type: Schema.Types.ObjectId,
         ref: 'GeneratedFile'
     }, 
-    deleteFileAt: Date
+    deleteFileAt: Date,
+    finishedAt: Date
 },    
 {
     timestamps: true
@@ -40,6 +41,7 @@ generationJobSchema.index({ status: 1 })
 generationJobSchema.index({ user: 1 })
 generationJobSchema.index({ generatedFile: 1 })
 generationJobSchema.index({ deleteFileAt: -1 })
+generationJobSchema.index({ finishedAt: -1 })
 
 const GENERATION_JOB_PRIVATE_FIELDS = [ 'user', '_id', '__v' ]
 generationJobSchema.set('toJSON', { 

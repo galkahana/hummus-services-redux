@@ -46,6 +46,7 @@ export type GenerationJobResponse = {
     label?: string
     ticket: object
     deleteFileAt?: Date
+    finishedAt?: Date
     createdAt: Date
     updatedAt: Date
     generatedFile?: Nullable<GeneratedFileResponse>

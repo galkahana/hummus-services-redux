@@ -19,15 +19,13 @@ import { useModalAlert } from 'components/modal-alert/context'
 import { siteUrlRoot, apiUrl } from 'lib/urls'
 
 import { PlaygroundPage } from './playground.styles'
+import { getDefaultDateDisplay } from 'lib/dates'
 
 
 const SAMPLE_CODE = `{
     "title": "Sample.pdf",
     "meta": {
-        "label": "Sample Job ${moment().format('MMMM Do YYYY, h:mm:ss a')}",
-        "deleteFileAfter": "1000000",
-        "public": true
-
+        "label": "Sample Job ${moment().format('MMMM Do YYYY, h:mm:ss a')}"
     },
     "externals": {
             "gaLogo":"${siteUrlRoot}/profileImage.jpg"
@@ -131,6 +129,7 @@ const Playground = () => {
     const [ code, setCode ] = useState<string>(SAMPLE_CODE)
     const [ waiting, setWaiting ] = useState<boolean>(false)
     const [ apiTokens, setAPITokens ] = useState<TokensAPIResponse>({})
+    const [ deleteFileAt, setFileDeleteAt ] = useState<string>('')
 
     const showModalAlert = useModalAlert()
 
@@ -153,9 +152,10 @@ const Playground = () => {
         }
 
         setWaiting(true)
-        hummusClientService.generatePDFDocument(parsedCode).then(({ embed, download }) => {
+        hummusClientService.generatePDFDocument(parsedCode).then(({ embed, download, jobData }) => {
             setDownloadLink(download)
             setEmbedLink(embed)
+            setFileDeleteAt(getDefaultDateDisplay(jobData.deleteFileAt))
         }).catch((ex: unknown) => {
             showModalAlert( ex instanceof Error ? ex.message: 'Something went wrong in attempting to run the job...and it wont tell us what happened', 'File Creation Error')
         }).then(() => {
@@ -184,7 +184,9 @@ const Playground = () => {
                             Preview PDF
                         </ButtonWithSpinner>
                         {
-                            downloadLink && <a target="_blank"  className="pdf-download" href={downloadLink} rel="noreferrer">Download Preview</a>
+                            downloadLink && ( 
+                                <span><a target="_blank"  className="pdf-download" href={downloadLink} rel="noreferrer">Download Preview</a> (File will be deleted at {deleteFileAt})</span>
+                            )
                         }
                     </div>                
                     <div className="editor-split-screen">

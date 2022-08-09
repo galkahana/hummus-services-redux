@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
-import moment from 'moment'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -10,6 +9,7 @@ import hummusClient from 'lib/hummus-client'
 import ButtonWithSpinner from 'components/waiting/button-with-spinner'
 import { PrettyClickableAnchor } from 'components/common.styles'
 import { useModalConfirm } from 'components/modal-confirm/context'
+import { getDefaultDateDisplay } from 'lib/dates'
 
 import { ItemContainer } from './job-item.styles'
 
@@ -20,10 +20,6 @@ const STATUS_CLASSES = [
 ]
 
 const STATUS_TEXT = [ 'Done', 'In Progress', 'Failed' ]
-
-const DEFAULT_DATE_TIME_FILTER  = 'MMM Do, y HH:mm:ss:SSS'
-
-const getDefaultDateDisplay = (date: Date) => date ? `${moment(date).format(DEFAULT_DATE_TIME_FILTER)}ms` : 'N/A'
 
 export type JobItemProps = {
     job: GenerationJobResponse
@@ -89,7 +85,8 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
 
     const title = job.label  || `'Item #${job.uid}`
     const startDateDisplay = getDefaultDateDisplay(job.createdAt)
-    const endDateDisplay = job.status === JobStatus.JobInProgress ? 'N/A' : getDefaultDateDisplay(job.updatedAt)
+    const endDateDisplay =   job.finishedAt ? getDefaultDateDisplay(job.finishedAt) : 'N/A'
+    const deletefileAtDisplay = getDefaultDateDisplay(job.deleteFileAt)
 
     return <ItemContainer>
         <h4 className="item-title" onClick={onToggleItemMainclick}>
@@ -120,6 +117,10 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
                     <Col sm={10} className={`status ${STATUS_CLASSES[job.status]}`}>{STATUS_TEXT[job.status]}</Col>
                 </Row>
                 <Row>
+                    <Col sm={2} className="item-label">Automatic file delete set to:</Col>
+                    <Col sm={10} className="item-label">{deletefileAtDisplay}</Col>
+                </Row>                
+                <Row>
                     <Col sm={2} className="item-label">PDF File:</Col>
                     <Col sm={10}>
                         {job.generatedFile ? (
@@ -133,7 +134,6 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
                             <span>N/A</span>
                         )
                         }
-
                     </Col>
                 </Row>
                 <Row>

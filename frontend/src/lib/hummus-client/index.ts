@@ -206,12 +206,14 @@ export class HummusClient {
             // just for kicks, use public url if the file is public. otherwise use download with active access token
             return {
                 embed: this.getPublicGeneratedFileEmbedUrl(generatedFile.publicDownloadId),
-                download: this.getPublicGeneratedFileDownloadUrl(generatedFile.publicDownloadId)
+                download: this.getPublicGeneratedFileDownloadUrl(generatedFile.publicDownloadId),
+                jobData: generationJob
             }
         } else {
             return {
                 embed: this.getGeneratedFileEmbedUrl(generatedFile.uid),
-                download: this.getGeneratedFileDownloadUrl(generatedFile.uid)
+                download: this.getGeneratedFileDownloadUrl(generatedFile.uid),
+                jobData: generationJob
             }
         }
     }

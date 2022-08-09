@@ -16,8 +16,9 @@ export interface IUser {
     hash?: string
     iterations?: number
     status: UserStatus
+    latestFailedLogin?: Nullable<Date>
     createdAt: Date
     updatedAt: Date
   }
 
-export type IUserInput = Omit<IUser, 'uid'|'createdAt'|'updatedAt'|'_id'>;
+export type IUserInput = Omit<IUser, 'uid'|'createdAt'|'updatedAt'|'_id'|'latestFailedLogin'>;

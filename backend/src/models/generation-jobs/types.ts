@@ -15,9 +15,10 @@ export interface IGenerationJob {
     label?: string
     ticket: Ticket
     deleteFileAt?: Date
+    finishedAt?: Date
     createdAt: Date
     updatedAt: Date
     generatedFile?: ObjectId
   }
 
-export type IGenerationJobInput = Omit<IGenerationJob, 'uid'|'createdAt'|'updatedAt'|'deleteFileAt'|'generatedFile'|'_id'>;
+export type IGenerationJobInput = Omit<IGenerationJob, 'uid'|'createdAt'|'updatedAt'|'deleteFileAt'|'finishedAt'|'generatedFile'|'_id'>;
