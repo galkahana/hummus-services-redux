@@ -15,13 +15,11 @@ import { TokensAPIResponse } from 'lib/hummus-client/types'
 import PDFPreview from 'components/pdf-preview'
 import { PrettyClickableLink } from 'components/common.styles'
 import ButtonWithSpinner from 'components/waiting/button-with-spinner'
-
+import { useModalAlert } from 'components/modal-alert/context'
+import { siteUrlRoot, apiUrl } from 'lib/urls'
 
 import { PlaygroundPage } from './playground.styles'
-import { useModalAlert } from 'components/modal-alert/context'
 
-const siteUrlRoot = window.location.protocol + '//' + window.location.host
-const apiUrl = `${process.env.REACT_APP_API_URL || siteUrlRoot}/api`
 
 const SAMPLE_CODE = `{
     "title": "Sample.pdf",
@@ -32,7 +30,7 @@ const SAMPLE_CODE = `{
 
     },
     "externals": {
-            "fbLogo":"${siteUrlRoot}/profileImage.jpg"
+            "gaLogo":"${siteUrlRoot}/profileImage.jpg"
         },
     "document" : {
         "embedded" : {
@@ -56,7 +54,7 @@ const SAMPLE_CODE = `{
                         {
                             "bottom": 600,
                             "left": 10,
-                            "image": {"source":"fbLogo"}
+                            "image": {"source":"gaLogo"}
                         }
                     ]
                 }

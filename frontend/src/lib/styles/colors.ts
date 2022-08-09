@@ -5,7 +5,7 @@
     DEFAULT_BLACK as hovering
 */
 export const DEFAULT_BLACK = 'rgb(33,33,33)'
-export const DEFAULT_BLACK_TRANSPARENT = 'rgba(33,33,33,0.6)'
+export const DEFAULT_BLACK_TRANSPARENT = 'rgba(33,33,33,0.5)'
 export const HUMMUS_COLOR = '#CBAB53'
 
 
