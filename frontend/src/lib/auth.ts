@@ -22,21 +22,10 @@ class Auth implements HummusClientTokensProvider {
         return this.tokens.accessToken
     }
 
-    async signin(username: string, password: string) {
-        try {
-            const { accessToken, refreshToken } = await this.api.signin(username, password)
-            this.tokens.accessToken = accessToken
-            this.tokens.refreshToken = refreshToken
-        } catch (ex: unknown) {
-            if (ex instanceof AxiosError) {
-                if(ex.response?.status === 401)
-                    throw Error('Incorrect Credentials, please correct the login information and try again')
-                throw Error('Connection error, please try again')
-            }
-            else {
-                throw Error('Unkown Error')
-            }
-        }
+    async signin(username: string, password: string, captcha: string) {
+        const { accessToken, refreshToken } = await this.api.signin(username, password, captcha)
+        this.tokens.accessToken = accessToken
+        this.tokens.refreshToken = refreshToken
     }
 
     async signout() {

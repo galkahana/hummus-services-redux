@@ -56,7 +56,7 @@ router.route('/tokens/revoke')
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Update), asyncHandler(tokensController.revoke))
 
 router.route('/authenticate/sign-in')
-    .post(authenticate.login, asyncHandler(authenticationController.signIn))
+    .post(checkCaptcha, authenticate.login, asyncHandler(authenticationController.signIn))
 router.route('/authenticate/sign-out')
     .delete(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Delete), asyncHandler(authenticationController.signOut))
 router.route('/authenticate/sign-up')

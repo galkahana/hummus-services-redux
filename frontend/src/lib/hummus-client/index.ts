@@ -67,10 +67,13 @@ export class HummusClient {
     }
 
     signin = unauthMWs(
-        (username: string, password: string) => axios.post<TokensResponse>(
+        (username: string, password: string, captcha: string) => axios.post<TokensResponse>(
             `${this.apiUrl}/api/authenticate/sign-in`, 
-            { username, password }, 
-            { headers: this.createUnauthorizedHeaders() }
+            { username, password },
+            { headers: {
+                ...this.createUnauthorizedHeaders(),
+                hmscpa: captcha
+            } }
         )
     )
 

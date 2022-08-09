@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import Form from 'react-bootstrap/Form'
 import Container from 'react-bootstrap/Container'
 import { AxiosError } from 'axios'
@@ -19,14 +19,19 @@ const Signup = () => {
     const [ email, setEmail ] = useState<string>('')
     const [ password, setPassword ] = useState<string>('')
     const [ passwordRepeat, setPasswordRepeat ] = useState<string>('')
-    const [ captcha, setCaptcha ] = useState<Nullable<string>>(null)
+    const [ captcha, setCaptcha ] = useState<string>()
     const [ formSubmitted, setFormSubmitted ] = useState(false)
     const [ waitingOnSignup, setWaitingOnSignup ] = useState(false)
+    const catpchaElement = useRef<Reaptcha>()
 
     const showModalAlert = useModalAlert()
     const showToast = useToast()
     const principal = usePrincipal()
     const navigate = useNavigate()
+
+    const onSetCaptchaRef = (element: Reaptcha) => {
+        catpchaElement.current = element
+    }    
     
     const onUsernameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>)=> {
         setUsername(event.target.value)
@@ -41,7 +46,7 @@ const Signup = () => {
         setPasswordRepeat(event.target.value)
     }, [])    
 
-    const onCaptchaChange = useCallback((value: Nullable<string>) => {
+    const onCaptchaChange = useCallback((value: string) => {
         setCaptcha(value)
     }, [])
 
@@ -62,6 +67,8 @@ const Signup = () => {
             setWaitingOnSignup(false)
             navigate('console')
         }).catch((ex: unknown) => {
+            if(catpchaElement.current) // reset captcha for next round
+                catpchaElement.current.reset()
             setWaitingOnSignup(false)
             if(ex instanceof AxiosError && ex.response?.data?.info?.duplicateUsername) {
                 showModalAlert('A user with this username exists already, please select a different username', 'User Signup')
@@ -111,9 +118,8 @@ const Signup = () => {
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
-
-                            <Reaptcha sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY as string} onVerify={onCaptchaChange}/>
-                            <Form.Control isInvalid={(!captcha) && formSubmitted} type="hidden"/>
+                            <Reaptcha ref={onSetCaptchaRef} sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY as string} onVerify={onCaptchaChange}/>
+                            <Form.Control required isInvalid={(!captcha) && formSubmitted} value={captcha || ''} type="hidden"/>
                             <Form.Control.Feedback type="invalid">
                                     Please mark that you are <strong>not</strong> a robot
                             </Form.Control.Feedback>                            
