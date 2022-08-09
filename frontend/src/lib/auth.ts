@@ -45,7 +45,11 @@ class Auth implements HummusClientTokensProvider {
         this.tokens.clearTokens()
     }
 
-    // signup?
+    async signup(username: string, email: string, password: string, captcha: string) {
+        const { accessToken, refreshToken } = await this.api.signup(username, email, password, captcha)
+        this.tokens.accessToken = accessToken
+        this.tokens.refreshToken = refreshToken
+    }
 
     // HummusClientTokensProvider implementation
     

@@ -9,6 +9,7 @@ import { faRefresh, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import hummusClientService from 'lib/hummus-client'
 import { useModalAlert } from 'components/modal-alert/context'
+import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 
 import { PlanPanelContainer } from './api-keys-panel.styles'
 
@@ -27,7 +28,7 @@ const ApiKeysPanel = () => {
             setPublicKey(tokens.public)
             setPrivateKey(tokens.private)
         }).catch((ex: unknown) => {
-            showModalAlert(ex instanceof Error ? ex.message : 'The was an error fetching the tokens but it won\'t tell us what it was.', 'Tokens Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error fetching the tokens but it won\'t tell us what it was.', 'Tokens Error')
         })
     }, [ showModalAlert ])
 
@@ -38,7 +39,7 @@ const ApiKeysPanel = () => {
             setCreatingPublicKey(false)
         }).catch((ex: unknown) => {
             setCreatingPublicKey(false)
-            showModalAlert(ex instanceof Error ? ex.message : 'The was an error creating public key but it won\'t tell us what it was.', 'Tokens Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error creating public key but it won\'t tell us what it was.', 'Tokens Error')
         })
     }, [ showModalAlert ])
 
@@ -49,7 +50,7 @@ const ApiKeysPanel = () => {
             setDeletingPublicKey(false)
         }).catch((ex: unknown) => {
             setDeletingPublicKey(false)
-            showModalAlert(ex instanceof Error ? ex.message : 'The was an error deleting public key but it won\'t tell us what it was.', 'Tokens Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error deleting public key but it won\'t tell us what it was.', 'Tokens Error')
         })        
     }, [ showModalAlert ])
 
@@ -60,7 +61,7 @@ const ApiKeysPanel = () => {
             setCreatingPrivateKey(false)
         }).catch((ex: unknown) => {
             setCreatingPrivateKey(false)
-            showModalAlert(ex instanceof Error ? ex.message : 'The was an error creating private key but it won\'t tell us what it was.', 'Tokens Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error creating private key but it won\'t tell us what it was.', 'Tokens Error')
         })
     }, [ showModalAlert ])
 
@@ -71,7 +72,7 @@ const ApiKeysPanel = () => {
             setDeletingPrivateKey(false)
         }).catch((ex: unknown) => {
             setDeletingPrivateKey(false)
-            showModalAlert(ex instanceof Error ? ex.message : 'The was an error deleting private key but it won\'t tell us what it was.', 'Tokens Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error deleting private key but it won\'t tell us what it was.', 'Tokens Error')
         })        
     }, [ showModalAlert ])    
 

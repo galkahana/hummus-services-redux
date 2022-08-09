@@ -5,6 +5,7 @@ import { PlanUsageResult } from 'lib/hummus-client/types'
 import { useModalAlert } from 'components/modal-alert/context'
 import { Container } from 'react-bootstrap'
 import Waiting from 'components/waiting/all-screen-waiting'
+import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 
 const DEFAULT_DATE_FILTER  = 'MMM DD, YYYY'
 
@@ -27,7 +28,7 @@ const PlanPanel = () => {
         }).then(
             setPlanUsage
         ).catch((ex:unknown) => {
-            showModalAlert(ex instanceof Error ? ex.message : 'The was an error fetching plan usage data but it won\'t tell us what it was.', 'Plan Usage Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error fetching plan usage data but it won\'t tell us what it was.', 'Plan Usage Error')
         })
     }, [ showModalAlert ])
 

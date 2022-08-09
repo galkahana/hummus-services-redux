@@ -81,6 +81,21 @@ export class HummusClient {
         )
     )
 
+    signup = this.authMWs(
+        (username: string, email: string, password: string, captcha: string) => axios.post<TokensResponse>(
+            `${this.apiUrl}/api/authenticate/sign-up`,
+            {
+                username,
+                email,
+                password
+            },
+            { headers: {
+                ...this.createUnauthorizedHeaders(),
+                hmscpa: captcha
+            } }
+        )
+    )
+
     refreshToken = unauthMWs(
         (refreshToken: string) => axios.post<TokensResponse>(
             `${this.apiUrl}/api/tokens/refresh`, 

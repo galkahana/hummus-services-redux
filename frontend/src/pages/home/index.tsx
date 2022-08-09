@@ -17,7 +17,7 @@ const Home = () => {
                             <PrettyClickableLink to='playground'>Design new PDF jobs</PrettyClickableLink>
                         </li>
                         <li>
-                            <PrettyClickableLink to='job'>Review jobs history</PrettyClickableLink>
+                            <PrettyClickableLink to='jobs'>Review jobs history</PrettyClickableLink>
                         </li>
                         <li>
                             <PrettyClickableLink to='account'>Create API keys and review your account data</PrettyClickableLink>

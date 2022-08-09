@@ -1,11 +1,11 @@
 import winston from 'winston'
-import mustache from 'mustache'
 import _fs from 'fs'
 import { File } from 'temporary'
 import { PDFWStreamForFile } from 'hummus'
 import { PDFEngine, ExternalsMap, PDFEngineDocument } from 'hummus-reports'
 import { v1 } from 'uuid'
 
+import mustache from '@lib/mustache'
 import { ExternalFiles } from './external-files'
 import { ExternalsMapDriver } from './externals-map-driver'
 import { Ticket } from './types'

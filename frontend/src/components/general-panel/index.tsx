@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Form from 'react-bootstrap/Form'
+import { AxiosError } from 'axios'
 
 import ButtonWithSpinner from 'components/waiting/button-with-spinner'
 import { useModalAlert } from 'components/modal-alert/context'
 import { useToast } from 'components/toast'
 import { usePrincipal } from 'lib/principal'
 import hummusClientService from 'lib/hummus-client'
+import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 
 import { GeneralPanelContainer } from './general-panel.styles'
-import { AxiosError } from 'axios'
 
 const GeneralPanel = () => {
     const [ meName, setMeName ] = useState<string>('')
@@ -103,12 +104,8 @@ const GeneralPanel = () => {
             setUpdatingUsername(false)
             if(ex instanceof AxiosError && ex.response?.data?.info?.duplicateUsername) {
                 showModalAlert('A user with this username exists already, please select a different username', 'Username Update')
-            } else if(ex instanceof Error) {
-                showModalAlert(ex.message, 'Password Update')
-            }
-
-            if(ex instanceof Error) {
-                showModalAlert(ex.message, 'Username Update')
+            } else {
+                showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error updating the username but it won\'t tell us what it was.', 'Username Update')
             }
         })
 
@@ -143,8 +140,8 @@ const GeneralPanel = () => {
             setUpdatingPassword(false)
             if(ex instanceof AxiosError && ex.response?.data?.info?.oldPasswordMismatch) {
                 showModalAlert('Password does not match old user password', 'Password Update')
-            } else if(ex instanceof Error) {
-                showModalAlert(ex.message, 'Password Update')
+            } else {
+                showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error updating the password but it won\'t tell us what it was.', 'Password Update')
             }
         })
 
@@ -159,7 +156,7 @@ const GeneralPanel = () => {
                 <Form onSubmit={onProfileFormSubmit} noValidate validated={profileValidated}>
                     <Form.Group>
                         <Form.Label>Name</Form.Label>
-                        <Form.Control required type="text" autoCorrect="off" value={meName} onChange={onMeNameChange}/>
+                        <Form.Control type="text" autoCorrect="off" value={meName} onChange={onMeNameChange}/>
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Email </Form.Label>
@@ -188,7 +185,6 @@ const GeneralPanel = () => {
                         </ButtonWithSpinner>                        
                     </Form>
                 </div>
-
                 <div className="section-content password">
                     <Form onSubmit={onPasswordFormSubmit} noValidate>
                         <Form.Group>
@@ -202,11 +198,9 @@ const GeneralPanel = () => {
                         <Form.Group>
                             <Form.Label>Repeat new Password</Form.Label>
                             <Form.Control isInvalid={(!newPasswordRepeat || newPassword !== newPasswordRepeat) && passwordFormSubmitted} type="password" value={newPasswordRepeat} onChange={onNewPasswordRepeat}/>
-                            {newPassword !== newPasswordRepeat &&
-                                <Form.Control.Feedback type="invalid">
-                                    New Password and New Password Repeat do not match
-                                </Form.Control.Feedback>
-                            }
+                            <Form.Control.Feedback type="invalid">
+                                New Password and New Password Repeat do not match
+                            </Form.Control.Feedback>
                         </Form.Group>
                         <ButtonWithSpinner variant="primary" type="submit" className='mt-3' waiting={updatingPassword}>
                             Change Password

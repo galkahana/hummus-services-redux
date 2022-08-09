@@ -37,6 +37,7 @@ const Playground = lazy(()=> import('pages/playground'))
 const Jobs = lazy(() => import('pages/jobs'))
 const Account = lazy(() => import('pages/account'))
 const DocumentationPage = lazy(() => import('pages/documentation-page'))
+const Signup = lazy(() => import('pages/signup'))
 
 
 const RootNavigator = () => {
@@ -70,6 +71,7 @@ const RootNavigator = () => {
                                 <Route path="about" element={<About/>}/>
                                 <Route path="contact" element={<Contact/>}/>
                                 <Route path="login" element={<Login/>}/>
+                                <Route path="signup" element={<Signup/>}/>
                                 <Route path="console">
                                     <Route index element={<ProtectedPage><Home/></ProtectedPage>}/>
                                     <Route path="playground" element={<ProtectedPage><Playground/></ProtectedPage>}/>

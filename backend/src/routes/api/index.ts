@@ -11,7 +11,7 @@ import * as accountingController from '@controllers/accounting'
 import { Resources, Actions } from '@lib/authorization/rbac'
 import * as authenticate from '@middlewares/authenticate'
 import { authorizeOwn } from '@middlewares/authorize'
-import { checkCapcha } from '@middlewares/google-capcha'
+import { checkCaptcha } from '@middlewares/google-captcha'
 
 
 const router = express.Router()
@@ -60,7 +60,7 @@ router.route('/authenticate/sign-in')
 router.route('/authenticate/sign-out')
     .delete(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Delete), asyncHandler(authenticationController.signOut))
 router.route('/authenticate/sign-up')
-    .post(checkCapcha, usersController.create, asyncHandler(authenticationController.signIn)) // userController.create handles asyncs internally cause is array
+    .post(checkCaptcha, usersController.create, asyncHandler(authenticationController.signIn)) // userController.create handles asyncs internally cause is array
 
 router.route('/public/:publicDownloadId/download')
     .get(asyncHandler(generatedFilesController.downloadPublic))

@@ -8,7 +8,7 @@ User data:
 4. **uid** - {{uid}}
 
 
-mailto via [mailto that person](mailto:{{email}}?subject=Welcome To PDFHummus Services).
+mailto via [mailto that person](mailto:{{email}}?subject=Welcome%20To%20PDFHummus%20Services).
 
 GoodDay,    
 You faithful admin

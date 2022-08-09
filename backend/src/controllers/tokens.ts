@@ -52,7 +52,7 @@ export async function create(req: Request<Record<string, never>, CreateTokenResp
     }
 
     if(user.status == UserStatus.Trial) {
-        return res.badRequest('Trial user is not authorized to create API tokens. Become a full user to create API token')
+        return res.badRequest('Trial user is not authorized to create API tokens. Become a full user to create API tokens')
     }
 
     // destroy existing tokens of the input role

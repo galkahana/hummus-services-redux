@@ -1,10 +1,10 @@
 import config from 'config'
 import sg from '@sendgrid/mail'
-import mustache from 'mustache'
 import fs from 'fs'
 import path from 'path'
 import MarkdownIt from 'markdown-it'
 
+import mustache from '@lib/mustache'
 import { IUser } from '@models/users/types'
 
 const assetsPath = path.resolve(__dirname, '../../assets/')
@@ -47,7 +47,12 @@ export function sendUserJoinedAdminEmail(user: IUser) {
         ADMIN_EMAIL,
         JOIN_EMAIL,
         'User ' + user.uid + ' Joined',
-        markdown.render(mustache.render(JOINED_USER_EMAIL, user)),
+        markdown.render(mustache.render(JOINED_ADMIN_EMAIL, {
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            uid: user.uid
+        })),
 
     )
 }
@@ -57,7 +62,7 @@ export function sendUserJoinedWelcomeEmail(user: IUser) {
         JOIN_EMAIL,
         user.email,
         'Welcome to PDFHummus Services',
-        markdown.render(mustache.render(JOINED_ADMIN_EMAIL, {
+        markdown.render(mustache.render(JOINED_USER_EMAIL, {
             name: user.name,
             username: user.username,
             supportEmail: SUPPORT_EMAIL,

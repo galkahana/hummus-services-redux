@@ -17,6 +17,7 @@ import JobsList from 'components/jobs-list'
 import { useToast } from 'components/toast'
 import { useModalAlert } from 'components/modal-alert/context'
 import { useModalConfirm } from 'components/modal-confirm/context'
+import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 
 import deletePDFImage from 'assets/delete-pdf.png'
 
@@ -186,7 +187,7 @@ const Jobs = () => {
 
             showToast('Job file deleted', 'Jobs')
         } catch(ex: unknown) {
-            showModalAlert(ex instanceof Error ? ex.message : `The was an error deleting the file for job ${theJob.uid} but it won't tell us what it was.`, 'Job Page Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || `The was an error deleting the file for job ${theJob.uid} but it won't tell us what it was.`, 'Job Page Error')
         }
     }, [ jobs, selectedJobs, showToast, showModalAlert ])
 
@@ -226,7 +227,7 @@ const Jobs = () => {
             setSelectedJobs([])
             showToast(`Job${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
         } catch(ex: unknown) {
-            showModalAlert(ex instanceof Error ? ex.message : `The was an error deleting the jobs ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || `The was an error deleting the jobs ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
         }
         setIsDeletingJobs(false)
     }, [ jobs, selectedJobs, setIsDeletingJobs, setJobs, setSelectedJobs, showToast, showModalAlert, showModalConfirm ])
@@ -255,7 +256,7 @@ const Jobs = () => {
             setSelectedJobs([])
             showToast(`Job${selectedJobs.length > 1 ?'s':''} file${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
         } catch(ex: unknown) {
-            showModalAlert(ex instanceof Error ? ex.message : `The was an error deleting the jobs files for ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
+            showModalAlert(createEnhancedError(ex).getErrorMessage() || `The was an error deleting the jobs files for ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
         }
         setIsDeletingJobsFiles(false)
 

@@ -13,18 +13,18 @@ const ERROR_TO_MESSAGE: Record<string, string> = {
 const GOOGLE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify'
 
 
-export async function checkCapcha(req: Request, res: Response, next: NextFunction) {
-    const capchaResponse = req.headers['hmscpa']
-    if(!capchaResponse) {
-        const err = new Error('Missing Capcha, Try Again')
-        res.locals.errInfo = { noCapcha : true }
+export async function checkCaptcha(req: Request, res: Response, next: NextFunction) {
+    const captchaResponse = req.headers['hmscpa']
+    if(!captchaResponse) {
+        const err = new Error('Missing Captcha, Try Again')
+        res.locals.errInfo = { noCaptcha : true }
         res.locals.errStatus = 400
         return next(err)
     }    
 
     const form = new FromData()
     form.append('secret', config.get<string>('recaptcha.secret'))
-    form.append('response', capchaResponse)
+    form.append('response', captchaResponse)
 
     try {
         const response = await axios.post(GOOGLE_VERIFY_URL, form, { headers: form.getHeaders() })
@@ -34,9 +34,9 @@ export async function checkCapcha(req: Request, res: Response, next: NextFunctio
         }
         else {
             const errorCode = _firstErrorCode(responseData['error-codes'])
-            res.locals.errInfo = { capchaError : errorCode ? ERROR_TO_MESSAGE[errorCode] || errorCode : null }
+            res.locals.errInfo = { captchaError : errorCode ? ERROR_TO_MESSAGE[errorCode] || errorCode : null }
             res.locals.errStatus = 400
-            return next(new Error('Capcha Error, Try Again'))
+            return next(new Error('Captcha Error, Try Again'))
         }    
     } catch(err: unknown) {
         return next(err || new Error('Bad response, Try Again'))

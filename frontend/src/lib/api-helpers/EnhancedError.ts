@@ -30,6 +30,19 @@ export default class EnhancedError {
         if(this.ex instanceof Error)
             logger.error(this.ex.stack)
     }
+
+    getErrorMessage(): Nullable<string> {
+        if(this.ex instanceof AxiosError && this.ex.response?.data.message) {
+            return this.ex.response.data.message
+        }
+        
+        if(this.ex instanceof Error)
+            return this.ex.message
+
+        return null
+    }
 }
+
+export const createEnhancedError = (ex: unknown) => new EnhancedError(ex)
 
 
