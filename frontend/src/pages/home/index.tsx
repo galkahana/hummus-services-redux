@@ -7,7 +7,7 @@ import { Container } from 'react-bootstrap'
 import { UnstyledList, PrettyClickableLink } from 'components/common.styles'
 
 const Home = () => {
-    return <ConsoleBase>
+    return <ConsoleBase title="Welcome!">
         <HomePage>
             <Container>
                 <div>

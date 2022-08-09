@@ -76,7 +76,7 @@ const Signup = () => {
     }, [ username, email, password, passwordRepeat, captcha, showToast, showModalAlert, principal, navigate ])
 
 
-    return <PublicBase>
+    return <PublicBase title="Sign Up">
         <SignupPage>
             <Container>
                 <div className="signup-form">

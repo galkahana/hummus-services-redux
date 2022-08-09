@@ -318,7 +318,7 @@ const Jobs = () => {
         setCurrentPage(value)
     }, [ setCurrentPage ])
 
-    return <ConsoleBase>
+    return <ConsoleBase title="Jobs" subtitle="Manage your PDF jobs">
         <JobsPage>
             <Container>
                 <div className={`toolbar ${selectedJobs.length > 0 ? 'selection':''} ${isDetachingToolbar ? 'detached container': ''}`}>

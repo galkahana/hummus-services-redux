@@ -175,7 +175,7 @@ const Playground = () => {
         return trimToSize(apiTokens.private ||  '/* Your private API key */', 50)
     }
 
-    return (<ConsoleBase>
+    return (<ConsoleBase title="Playground" subtitle="Create & Test Job Tickets">
         <PlaygroundPage>
             <Container>
                 <div className="section editor">

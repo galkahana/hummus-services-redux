@@ -60,7 +60,7 @@ const Login = () => {
         })
     }
 
-    return <PublicBase>         
+    return <PublicBase title="Log in to Console">         
         <Container>
             <LoginFormContainer>
                 <Form  onSubmit={onSubmit}>
