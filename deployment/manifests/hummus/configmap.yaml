@@ -7,4 +7,4 @@ data:
   ADMIN_EMAIL: "admin@pdfhummus.com"
   JOIN_EMAIL: "join@pdfhummus.com"
   SUPPORT_EMAIL: "support@pdfhummus.com"
-  EMAIL_SERVICE_URL: "http://localhost:8080"
+  EMAIL_SERVICE_URL: "http://hummus"
