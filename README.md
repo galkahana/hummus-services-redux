@@ -1,6 +1,6 @@
 Welcome to hummus services. A simple SAAS service over [hummus-reports](https://github.com/galkahana/hummus-reports), A layout engine using [hummus](https://github.com/galkahana/hummusjs) module to generate PDF files.
 
-The server API allows for generate PDF jobs and later downloading the resultant files. There's also job management, accounting information and other useful stuff.
+The server API allows to generate PDF jobs and later download the resultant files. All with api tokens. There's also job management, accounting information and other useful stuff.
 
 # Structure
 There's `backend` folder for the server and `frontend` for the web app. 
