@@ -5,7 +5,7 @@ The server API allows for generate PDF jobs and later downloading the resultant 
 # Structure
 There's `backend` folder for the server and `frontend` for the web app. 
 
-The `backend` folder has the hummus server backend code, as well as several scripts, including ./scripts/delete-timedout-files which can be used as cronjob to occasionally delete files that were marked with expiration date.
+The `backend` folder has the hummus server backend code, as well as several scripts, including ./scripts/delete-timedout-files which is used as a cronjob to occasionally delete files that were marked with expiration date.
 
 
 `frontend` is a react application (created with create-react-app) implementing a console application for users to test jobs, review job history and their account details.
@@ -53,11 +53,13 @@ This should suffice for minimal running with jobs generation and downloads.
 
 There are also additional variables required for specific functionality.
 
-- For signup, you'll want the following
-    - Signup functionality requires google recaptcha setup. use `RECAPTCHA_KEY` and `RECAPTCHA_SECRET` to provide the recaptcha credentials
-    - Also for signup there's some email setup:
-        - `SENDGRID_API_KEY` - is the sendgrid api key to allow sending keys
-        - `ADMIN_EMAIL` and `JOIN_EMAIL` are from emails used by the service to send email to the service join email, and the service join email to the signed up user, telling that a user joined, and welcoming them, respectively. In the email to the user `SUPPORT_EMAIL` is used for letting the user know who to send email to for questions. `SERVICE_URL` is used as the root url of the service for providing urls in the email, to let user know where to got to to sign in to the site, and to read the online documentation.
+For login and signup you'll need to provide google recaptcha credentials. Use `RECAPTCHA_KEY` and `RECAPTCHA_SECRET`. Note that this will render direct api calls to the relevant apis of login and signup disfunctional and only UI operation will be available (cause you need to do the captcha). If you want to avoid captcha, especially while developing, then adding an env var named `NO_RECAPTCHA` with the value of `true` should disable it and neither the client will show it, or the backend require it.
+
+
+For signup there's some email setup, so the server greets newcommers and lets the admin know someone joined:
+    - `SENDGRID_API_KEY` - is the sendgrid api key to allow sending keys
+    - `ADMIN_EMAIL` and `JOIN_EMAIL` are from emails used by the service to send email to the service join email, and the service join email to the signed up user, telling that a user joined, and welcoming them, respectively. In the email to the user `SUPPORT_EMAIL` is used for letting the user know who to send email to for questions. `SERVICE_URL` is used as the root url of the service for providing urls in the email, to let user know where to got to to sign in to the site, and to read the online documentation.
+
 
 
 ## Running dev service
@@ -116,13 +118,24 @@ npm run build-on-backend
 ```
 This will build the frontend and copy it to a destination on the backend folder which will allow its serving via the root of the url. For example, if running the backend via dev, use http://localhost:8080 from the browser to view the UI.
 
-Note that you can also view the build content running independently via the frontend with:
+Note that you can also view the built content running independently via the frontend with:
 ```bash
 cd frontend
 npm run build
 npx serve -s build
 ```
 (this uses the "serve" program installed as dev dependency in the frontend folder).
+
+## Env vars on client
+There's no env vars that you need to define on the client code. Nothing. 
+So this section is about what you may see and interpret as env vars and how client side configuration is achieved anyways.
+
+The frontend project defines a single env var in either it's `.env` or `.env.development` files and it is `REACT_APP_API_URL`. It's intended to allow the frontend to work with the backend while devleoping. so in `.env.development` it's value is `"http://127.0.0.1:8080"`, pointing to your backend service, and in `.env` it's set to `""` cause the frontend is served from backend and so they share the url.
+
+That's it.
+Any other configuration is provided by the `index.html` page including a `config.js` script which is rendered (as a mustache rendering engine view) on the server side providing what configuration is necessary. Note that anything you put in here is visible to anyone...so don't expose here what shouldn't be exposed.
+
+Doing the env vars injection this way for the client code, as opposed to requiring actual env vars allows building a docker image for the whole server without build vars, which were otherwise required while building the frontend part. So it's the same image for all environments, and you only need to provide env vars for running it. makes it easy to reuse it.
 
 # Build a docker image
 
@@ -209,6 +222,8 @@ to access the service go port forwarding...or go ingress, in which case:
 Now `curl http://hummus/api/health` should provide you with a friendly message.
 When using the postman collection, make sure to change the `hummus_server_url` value to `http://hummus`.
 
+And yeah, the UI should be available via `http://hummus` in yr browser.
+
 
 ### Installing with helm
 
@@ -231,6 +246,7 @@ to access the service go port forwarding...or go ingress, in which case:
 
 Now `curl http://hummus/api/health` should provide you with a friendly message.
 When using the postman collection, make sure to change the `hummus_server_url` value to `http://hummus`.
+And yeah, the UI should be available via `http://hummus` in yr browser.
 
 Now, if you are looking to use logging and/or metrics you will want to also expose kibana (for logging) and grafana (for metrics). actually prometheus is also exposed via ingress by default. So edit your hosts file to also include them. So in total:
 
