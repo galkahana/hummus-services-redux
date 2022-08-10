@@ -38,8 +38,8 @@ You will need:
 1. Mongo instance to work with. it'll be the service db
 2. AWS buckets which will serve for storing the generated files
 
-For signup functionality (still to be implemented here) you will also need a google recaptcha account.
-If you want emails to be triggered from the service, you'll also need a sendgrid account.
+For signup and signin functionality you will also need a google recaptcha account (though you cant turn it off).
+If you want emails to be triggered from the service when a user signs up, you'll also need a sendgrid account.
 
 ## Setting up the envs vars
 
