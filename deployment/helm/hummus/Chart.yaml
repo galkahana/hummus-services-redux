@@ -15,10 +15,6 @@ dependencies:
   version: "6.32.7"
   repository: "https://grafana.github.io/helm-charts"
   condition: metrics.enabled
-- name: metricbeat
-  version: "7.17.3"
-  repository: "https://helm.elastic.co"
-  condition: metrics.enabled
 - name: elasticsearch
   version: "7.17.3"
   repository: "https://helm.elastic.co"
