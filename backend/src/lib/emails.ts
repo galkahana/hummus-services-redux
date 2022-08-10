@@ -19,7 +19,8 @@ const EMAIL_SERVICE_URL = config.get<string>('emails.serviceURL')
 const markdown = new MarkdownIt()
 
 // setup sg with key
-sg.setApiKey(config.get<string>('sendgrid.apiKey'))
+if(config.has('sendgrid.apiKey'))
+    sg.setApiKey(config.get<string>('sendgrid.apiKey'))
 
 
 function _sendEmail(from: string, to: string, subject: string, html: string) {
