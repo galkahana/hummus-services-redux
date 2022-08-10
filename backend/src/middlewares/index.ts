@@ -5,11 +5,18 @@ import { ErrorRequestHandler, Express, NextFunction, Request, Response } from 'e
 import _fs from 'fs'
 import path from 'path'
 import winston from 'winston'
+import mustacheExpress from 'mustache-express'
 import { logRequest, logResponse } from './log-request'
 
 const fs = _fs.promises
 
 export async function setup(app: Express) {
+    // mustache engine, for when i want to generated from backend
+    app.set('views', path.resolve(__dirname, '../views'))
+    app.set('view engine', 'mustache')
+    app.engine('mustache', mustacheExpress())
+
+
     // body parsing
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())

@@ -25,7 +25,7 @@ Once you setup your account with PDFHummus services you can start creating PDFs 
 4. Where the applications is to create the PDF, plant the API call for generating the PDF.
 
 For specific instructions for each platform go to [Getting Started](/documentation/getting-started).  
-To setup an account with PDFHummus services, mail us at [join@pdfhummus.com](mailto:join@pdfhummus.com).
+To setup an account with PDFHummus services, mail us at [{{joinEmail}}](mailto:{{joinEmail}}).
 
 # PDF Features
 

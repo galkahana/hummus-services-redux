@@ -13,6 +13,7 @@ import { usePrincipal } from 'lib/principal'
 import PublicBase from 'components/public-base'
 import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 import { SignupPage } from './signup.styles'
+import config from 'lib/config'
 
 const Signup = () => {
     const [ username, setUsername ] = useState<string>('')
@@ -28,6 +29,8 @@ const Signup = () => {
     const showToast = useToast()
     const principal = usePrincipal()
     const navigate = useNavigate()
+
+    const captchaAvailable = Boolean(config.captchaSiteKey)
 
     const onSetCaptchaRef = (element: Reaptcha) => {
         catpchaElement.current = element
@@ -54,7 +57,7 @@ const Signup = () => {
     const onFormSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         // Did you know? !!XXX isType for non Falsy, while Boolean(XXX) does not. and i got convinced to use Boolean. unbelievable. 
-        const formValid = !!captcha && Boolean(username) && Boolean(email) && Boolean(password) && Boolean(passwordRepeat) && (password === passwordRepeat)
+        const formValid = (!!captcha || !captchaAvailable) && Boolean(username) && Boolean(email) && Boolean(password) && Boolean(passwordRepeat) && (password === passwordRepeat)
         setFormSubmitted(true)
         if(!formValid) {
             return
@@ -80,7 +83,7 @@ const Signup = () => {
                 showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error creating the user but it won\'t tell us what it was.', 'User Signup')
             }
         })
-    }, [ username, email, password, passwordRepeat, captcha, showToast, showModalAlert, principal, navigate ])
+    }, [ username, email, password, passwordRepeat, captcha, captchaAvailable, showToast, showModalAlert, principal, navigate ])
 
 
     return <PublicBase title="Sign Up">
@@ -117,13 +120,15 @@ const Signup = () => {
                                     Password and Repeat password fields mismatch. Please repeat the password.
                             </Form.Control.Feedback>
                         </Form.Group>
-                        <Form.Group>
-                            <Reaptcha ref={onSetCaptchaRef} sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY as string} onVerify={onCaptchaChange}/>
-                            <Form.Control required isInvalid={(!captcha) && formSubmitted} value={captcha || ''} type="hidden"/>
-                            <Form.Control.Feedback type="invalid">
-                                    Please mark that you are <strong>not</strong> a robot
-                            </Form.Control.Feedback>                            
-                        </Form.Group>
+                        {captchaAvailable &&
+                            <Form.Group>
+                                <Reaptcha ref={onSetCaptchaRef} sitekey={config.captchaSiteKey} onVerify={onCaptchaChange}/>
+                                <Form.Control required isInvalid={(!captcha) && formSubmitted} value={captcha || ''} type="hidden"/>
+                                <Form.Control.Feedback type="invalid">
+                                        Please mark that you are <strong>not</strong> a robot
+                                </Form.Control.Feedback>                            
+                            </Form.Group>
+                        }
                         <ButtonWithSpinner variant="primary" type="submit" className='mt-3' waiting={waitingOnSignup}>
                             Create Account
                         </ButtonWithSpinner>                         

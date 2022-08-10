@@ -6,8 +6,11 @@ import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 
-import { Content } from './documentation-page.styles'
 import { siteUrlRoot, apiUrl } from 'lib/urls'
+import config from 'lib/config'
+
+import { Content } from './documentation-page.styles'
+
 
 const DocumentationPage = () => {
     return (
@@ -45,7 +48,7 @@ const DocumentationPage = () => {
                     
                     </Navbar>
                     <div className="documentation-content">
-                        <Outlet context={{ values:{ siteUrlRoot, apiUrl } }}/>
+                        <Outlet context={{ values:{ siteUrlRoot, apiUrl, joinEmail: config.joinEmail } }}/>
                     </div>
                 </Container>
             </Content>

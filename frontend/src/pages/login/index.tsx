@@ -13,6 +13,7 @@ import {
     LoginFormContainer,
 } from './login.styles'
 import { useModalAlert } from 'components/modal-alert/context'
+import config from 'lib/config'
 
 // Something missing in history def...and we don't have to just take it.
 class Location {
@@ -35,6 +36,8 @@ const Login = () => {
     const principal = usePrincipal()
     const location = useLocation() as Location
     const showModalAlert = useModalAlert()
+
+    const captchaAvailable = Boolean(config.captchaSiteKey)
 
     const to = location.state?.from?.pathname || '/console'
 
@@ -107,13 +110,15 @@ const Login = () => {
                                 A password would be nice
                         </Form.Control.Feedback>   
                     </Form.Group>
-                    <Form.Group>
-                        <Reaptcha ref={onSetCaptchaRef} sitekey={process.env.REACT_APP_CAPTCHA_SITE_KEY as string} onVerify={onCaptchaChange}/>
-                        <Form.Control required value={captcha} type="text" className="d-none"/>
-                        <Form.Control.Feedback type="invalid">
-                                Please mark that you are <strong>not</strong> a robot
-                        </Form.Control.Feedback>                           
-                    </Form.Group>                    
+                    {captchaAvailable &&
+                        <Form.Group>
+                            <Reaptcha ref={onSetCaptchaRef} sitekey={config.captchaSiteKey} onVerify={onCaptchaChange}/>
+                            <Form.Control required value={captcha} type="text" className="d-none"/>
+                            <Form.Control.Feedback type="invalid">
+                                    Please mark that you are <strong>not</strong> a robot
+                            </Form.Control.Feedback>                           
+                        </Form.Group>                    
+                    }
                     <ButtonWithSpinner variant="primary" type="submit" className='mt-3' waiting={waiting}>
                         Log In
                     </ButtonWithSpinner>                        

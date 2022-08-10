@@ -1,5 +1,4 @@
 
-import { AxiosError } from 'axios'
 import storedTokensService, { StoredTokens } from './stored-tokens'
 import hummusClientService, { HummusClient } from './hummus-client'
 import { HummusClientTokensProvider } from './hummus-client/types'
@@ -22,7 +21,7 @@ class Auth implements HummusClientTokensProvider {
         return this.tokens.accessToken
     }
 
-    async signin(username: string, password: string, captcha: string) {
+    async signin(username: string, password: string, captcha?: string) {
         const { accessToken, refreshToken } = await this.api.signin(username, password, captcha)
         this.tokens.accessToken = accessToken
         this.tokens.refreshToken = refreshToken
@@ -34,7 +33,7 @@ class Auth implements HummusClientTokensProvider {
         this.tokens.clearTokens()
     }
 
-    async signup(username: string, email: string, password: string, captcha: string) {
+    async signup(username: string, email: string, password: string, captcha?: string) {
         const { accessToken, refreshToken } = await this.api.signup(username, email, password, captcha)
         this.tokens.accessToken = accessToken
         this.tokens.refreshToken = refreshToken

@@ -18,6 +18,9 @@ type CaptchaError = {
 }
 
 export async function checkCaptcha(captchaResponse: string | string[] | undefined): Promise<Nullable<CaptchaError>> {
+    if(config.get<boolean>('recaptcha.disabled'))
+        return null
+
     if(!captchaResponse) {
         return { // return error data
             err: new Error('Missing Captcha, Try Again'),

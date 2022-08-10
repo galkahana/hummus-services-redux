@@ -67,12 +67,12 @@ export class HummusClient {
     }
 
     signin = unauthMWs(
-        (username: string, password: string, captcha: string) => axios.post<TokensResponse>(
+        (username: string, password: string, captcha?: string) => axios.post<TokensResponse>(
             `${this.apiUrl}/api/authenticate/sign-in`, 
             { username, password },
             { headers: {
                 ...this.createUnauthorizedHeaders(),
-                hmscpa: captcha
+                ...(captcha ? { hmscpa: captcha } : {})
             } }
         )
     )
@@ -85,7 +85,7 @@ export class HummusClient {
     )
 
     signup = this.authMWs(
-        (username: string, email: string, password: string, captcha: string) => axios.post<TokensResponse>(
+        (username: string, email: string, password: string, captcha?: string) => axios.post<TokensResponse>(
             `${this.apiUrl}/api/authenticate/sign-up`,
             {
                 username,
@@ -94,7 +94,7 @@ export class HummusClient {
             },
             { headers: {
                 ...this.createUnauthorizedHeaders(),
-                hmscpa: captcha
+                ...(captcha ? { hmscpa: captcha } : {})
             } }
         )
     )

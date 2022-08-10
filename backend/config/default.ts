@@ -32,7 +32,8 @@ module.exports = {
     },
     recaptcha: {
         key: process.env.RECAPTCHA_KEY,
-        secret: process.env.RECAPTCHA_SECRET
+        secret: process.env.RECAPTCHA_SECRET,
+        disabled: process.env.NO_RECAPTCHA || false
     },
     jwtToken: {
         secret: process.env.JWT_KEY,
