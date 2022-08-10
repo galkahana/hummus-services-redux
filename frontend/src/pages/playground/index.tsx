@@ -10,7 +10,7 @@ import moment from 'moment'
 
 
 import ConsoleBase from 'components/console-base'
-import hummusClientService from 'lib/hummus-client'
+import hummusClientService from 'lib/hummus-client/service'
 import { TokensAPIResponse } from 'lib/hummus-client/types'
 import PDFPreview from 'components/pdf-preview'
 import { PrettyClickableLink } from 'components/common.styles'
@@ -28,7 +28,7 @@ const SAMPLE_CODE = `{
         "label": "Sample Job ${moment().format('MMMM Do YYYY, h:mm:ss a')}"
     },
     "externals": {
-            "gaLogo":"${siteUrlRoot}/profileImage.jpg"
+            "gaLogo":"https://github.com/galkahana/hummus-services/blob/master/src/public/images/profileImage.jpg?raw=true"
         },
     "document" : {
         "embedded" : {

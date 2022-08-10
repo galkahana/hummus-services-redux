@@ -8,7 +8,7 @@ import {  useNavigate } from 'react-router-dom'
 import ButtonWithSpinner from 'components/waiting/button-with-spinner'
 import { useModalAlert } from 'components/modal-alert/context'
 import { useToast } from 'components/toast'
-import auth from 'lib/auth'
+import authService from 'lib/auth/service'
 import { usePrincipal } from 'lib/principal'
 import PublicBase from 'components/public-base'
 import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
@@ -64,7 +64,7 @@ const Signup = () => {
         }
 
         setWaitingOnSignup(true)
-        auth.signup(username, email, password, captcha).then( async () => {
+        authService.signup(username, email, password, captcha).then( async () => {
             showToast('User created successfully :)')
             await principal.identity(true) // force identity update based on login
             setWaitingOnSignup(false)

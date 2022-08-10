@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faRefresh, faArrowLeft, faTrash, faCheckDouble } from '@fortawesome/free-solid-svg-icons'
 import DatePicker from 'react-datepicker'
 
-import hummusClientService from 'lib/hummus-client'
+import hummusClientService from 'lib/hummus-client/service'
 import { GenerationJobsQuery, GenerationJobResponse, JobStatus } from 'lib/hummus-client/types'
 import { executeForAtLeast } from 'lib/async'
 import ConsoleBase from 'components/console-base'

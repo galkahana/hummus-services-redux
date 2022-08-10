@@ -12,6 +12,7 @@ export interface IGenerationJob {
     _id: ObjectId // internal id
     uid: string // public id
     status: JobStatus
+    statusMessage?: string
     user: ObjectId
     label?: string
     ticket: Ticket

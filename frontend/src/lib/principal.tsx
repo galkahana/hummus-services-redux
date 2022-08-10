@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback } from 'react'
-import hummusClientService from 'lib/hummus-client'
+import hummusClientService from 'lib/hummus-client/service'
 import { UserResponse } from 'lib/hummus-client/types'
 
 interface IPrincipal {

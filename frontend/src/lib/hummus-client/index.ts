@@ -201,7 +201,7 @@ export class HummusClient {
         }
 
         if(generationJob.status === JobStatus.JobFailed || !generationJob.generatedFileObject) {
-            throw Error('Job failed (and there\'s probably a good explanation somewhere)')
+            throw Error(generationJob.statusMessage || 'Job failed (and there\'s probably a good explanation somewhere)')
         }
 
         const generatedFile = generationJob.generatedFileObject
@@ -221,9 +221,3 @@ export class HummusClient {
         }
     }
 }
-
-
-
-// for now create instance here, later lets think of services strategy
-
-export default new HummusClient(process.env.REACT_APP_API_URL || '')

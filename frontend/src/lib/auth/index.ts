@@ -1,11 +1,11 @@
 
-import storedTokensService, { StoredTokens } from './stored-tokens'
-import hummusClientService, { HummusClient } from './hummus-client'
-import { HummusClientTokensProvider } from './hummus-client/types'
-import history from './history'
+import { StoredTokens } from '../stored-tokens'
+import { HummusClient } from '../hummus-client'
+import { HummusClientTokensProvider } from '../hummus-client/types'
+import history from '../history'
 
 
-class Auth implements HummusClientTokensProvider {
+export class Auth implements HummusClientTokensProvider {
     tokens: StoredTokens
     api: HummusClient
 
@@ -55,8 +55,3 @@ class Auth implements HummusClientTokensProvider {
     }    
 }
 
-// for now create instance here, later lets think of services strategy
-
-const instance = new Auth(storedTokensService, hummusClientService)
-hummusClientService.setTokensProvider(instance)
-export default instance

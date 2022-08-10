@@ -12,7 +12,7 @@ const fs = _fs.promises
 
 export async function setup(app: Express) {
     // mustache engine, for when i want to generated from backend
-    app.set('views', path.resolve(__dirname, '../views'))
+    app.set('views', path.resolve(__dirname, '../../assets/views'))
     app.set('view engine', 'mustache')
     app.engine('mustache', mustacheExpress())
 

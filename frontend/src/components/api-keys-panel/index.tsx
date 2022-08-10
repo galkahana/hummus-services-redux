@@ -7,7 +7,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRefresh, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-import hummusClientService from 'lib/hummus-client'
+import hummusClientService from 'lib/hummus-client/service'
 import { useModalAlert } from 'components/modal-alert/context'
 import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 

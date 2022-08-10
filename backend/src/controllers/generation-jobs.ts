@@ -261,6 +261,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
 
             // set job status to failure
             job.status = JobStatus.JobFailed
+            job.statusMessage = ex instanceof Error ? ex.message : 'N/A'
             job.save()
 
             // accounting
@@ -277,6 +278,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
         
         // set job status to failure
         job.status = JobStatus.JobFailed
+        job.statusMessage = error instanceof Error ? error.message : 'N/A'
         job.save()
         
         // accounting

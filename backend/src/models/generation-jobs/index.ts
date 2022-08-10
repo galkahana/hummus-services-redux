@@ -13,7 +13,10 @@ const generationJobSchema = new Schema<IGenerationJob>({
         type: Number,
         enum: JobStatus,
         required: true
-    },  
+    }, 
+    statusMessage: {
+        type: String
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',

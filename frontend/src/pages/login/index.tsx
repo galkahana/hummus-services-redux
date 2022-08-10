@@ -6,7 +6,7 @@ import { AxiosError } from 'axios'
 import Reaptcha from 'reaptcha'
 import PublicBase from 'components/public-base'
 import ButtonWithSpinner from 'components/waiting/button-with-spinner'
-import auth from 'lib/auth'
+import authService from 'lib/auth/service'
 import { usePrincipal } from 'lib/principal'
 import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 import {
@@ -72,7 +72,7 @@ const Login = () => {
         }                
 
         setWaiting(true)
-        auth.signin(username, password, captcha || '').then( async () => {
+        authService.signin(username, password, captcha || '').then( async () => {
             await principal.identity(true) // force identity update based on login
             setWaiting(false)
             navigate(to, { replace: true })

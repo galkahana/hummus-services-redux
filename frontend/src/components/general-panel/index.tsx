@@ -6,7 +6,7 @@ import ButtonWithSpinner from 'components/waiting/button-with-spinner'
 import { useModalAlert } from 'components/modal-alert/context'
 import { useToast } from 'components/toast'
 import { usePrincipal } from 'lib/principal'
-import hummusClientService from 'lib/hummus-client'
+import hummusClientService from 'lib/hummus-client/service'
 import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 
 import { GeneralPanelContainer } from './general-panel.styles'

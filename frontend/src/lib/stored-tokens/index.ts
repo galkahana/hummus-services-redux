@@ -45,6 +45,3 @@ export class StoredTokens {
 }
 
 
-// for now create instance here, later lets think of services strategy
-
-export default new StoredTokens()

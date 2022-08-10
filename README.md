@@ -156,7 +156,7 @@ Here's some setup instructions for minikube to get the most of hummus
 
 Addons:
     - `minikube addons enable ingress` to setup the ngynx ingress controller for hummus ingress (and kibana and grafana for logging and metrics for the helm setup)
-    - `minikube addons enable metrics-servicer` to show up cpu and memory consumption in minikube dashboard
+    - `minikube addons enable metrics-server` to show up cpu and memory consumption in minikube dashboard
 If you will be wanting to use the centralized logging capability then to have elasticsearch functioning properly there's two more addons:
     - `minikube addons enable default-storageclass`
     - `minikube addons enable storage-provisioner`
@@ -164,7 +164,7 @@ If you will be wanting to use the centralized logging capability then to have el
 Also for elasticsearch you'll want to make sure there's sufficient memory and CPU for your minikube instance. 4 cpus and 8gbs is what's normally recommended. So prior to starting minikube go:
     - `minikube config set memory 8192`
     - `minikube config set cpus 4`
-(they can also be provided on the first `minikube start` as `minikube start --memory 8192 --cpus 2` with some drivers allowing you to do so also post the first start).
+(they can also be provided on the first `minikube start` as `minikube start --memory 8192 --cpus 4` with some drivers allowing you to do so also post the first start).
 
 Either with or without elastic search it is recommended to speed up kubelet housekeeping so CPU tracking in the minikube dashbaord works properly. So start minikube with:
 `minikube start --extra-config=kubelet.housekeeping-interval=10s`.

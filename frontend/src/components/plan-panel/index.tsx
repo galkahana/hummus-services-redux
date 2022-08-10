@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
-import hummusClientService from 'lib/hummus-client'
+import hummusClientService from 'lib/hummus-client/service'
 import { PlanUsageResult } from 'lib/hummus-client/types'
 import { useModalAlert } from 'components/modal-alert/context'
 import { Container } from 'react-bootstrap'

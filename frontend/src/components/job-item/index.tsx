@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faRemove, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 
 import { GenerationJobResponse, JobStatus } from 'lib/hummus-client/types'
-import hummusClient from 'lib/hummus-client'
+import hummusClientService from 'lib/hummus-client/service'
 import ButtonWithSpinner from 'components/waiting/button-with-spinner'
 import { PrettyClickableAnchor } from 'components/common.styles'
 import { useModalConfirm } from 'components/modal-confirm/context'
@@ -116,6 +116,12 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
                     <Col sm={2} className="item-label">Status:</Col>
                     <Col sm={10} className={`status ${STATUS_CLASSES[job.status]}`}>{STATUS_TEXT[job.status]}</Col>
                 </Row>
+                {job.statusMessage &&
+                    <Row>
+                        <Col sm={2} className="item-label">Status Message:</Col>
+                        <Col sm={10} className="item-label">{job.statusMessage}</Col>
+                    </Row>
+                }
                 <Row>
                     <Col sm={2} className="item-label">Automatic file delete set to:</Col>
                     <Col sm={10} className="item-label">{deletefileAtDisplay}</Col>
@@ -125,7 +131,7 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
                     <Col sm={10}>
                         {job.generatedFile ? (
                             <span>
-                                <a target="_blank" className="pdf-download" href={hummusClient.getGeneratedFileDownloadUrl(job.generatedFile)} rel="noreferrer">Download</a>
+                                <a target="_blank" className="pdf-download" href={hummusClientService.getGeneratedFileDownloadUrl(job.generatedFile)} rel="noreferrer">Download</a>
                                 <ButtonWithSpinner className='pdf-remove' variant="danger" onClick={onPDFDeleteClick} waiting={waitingForPDFDelete}>
                                     <div className="delete"><FontAwesomeIcon icon={faRemove}/> Delete</div>
                                 </ButtonWithSpinner>

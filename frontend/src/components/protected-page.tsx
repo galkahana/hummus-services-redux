@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
 import Waiting from 'components/waiting/all-screen-waiting'
-import auth from 'lib/auth'
+import authService from 'lib/auth/service'
 import history from 'lib/history'
 import { usePrincipal } from 'lib/principal'
 
@@ -28,7 +28,7 @@ const ProtectedPage = ({ children }: ChildrenProps) => {
         )
     }, [ principal, setHasIdentity ])
 
-    if(!auth.isLoggedin())
+    if(!authService.isLoggedin())
         return <Navigate to="/login" state={{ from: location }} replace />
 
 

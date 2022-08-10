@@ -8,7 +8,7 @@ import SiteTitle from 'components/site-title'
 import Avatar from 'components/avatar'
 import { InlineListItem, PrettyClickableDiv } from 'components/common.styles'
 import { HeaderTools, HeaderRoot, HeaderToolsContainer } from 'components/header.styles'
-import auth from 'lib/auth'
+import authService from 'lib/auth/service'
 
 import { Caret } from './console-header.styles'
 import { usePrincipal } from 'lib/principal'
@@ -30,7 +30,7 @@ const ConsoleHeader = () => {
         event.preventDefault()
         // and now let's do the signout thing
 
-        auth.signout().catch(()=> {
+        authService.signout().catch(()=> {
             console.log('signout failed')
         })
         

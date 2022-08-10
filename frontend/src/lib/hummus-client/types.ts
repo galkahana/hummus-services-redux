@@ -43,6 +43,7 @@ export enum JobStatus {
 export type GenerationJobResponse = {
     uid: string
     status: JobStatus
+    statusMessage?: string
     label?: string
     ticket: object
     deleteFileAt?: Date
