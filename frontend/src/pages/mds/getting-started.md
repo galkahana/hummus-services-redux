@@ -163,14 +163,14 @@ The response body will contain the current job data. For example:
 {
     uid:"The Job ID"
     status:0
-    generatedFile : {
+    generatedFileObject : {
         uid: "The File ID", 
         publicDownloadId: "The Public Download ID"
     }
     /* other items of lesser importance */
 }
 ````
-Status can be either 1 (in progress), 2 (done) or 3 (error). If the status is 2, then an additional property is added - generatedFile. This object _id property is the file ID that can be used for downloading with another rest call. publicDownloadId, if exists can be used with public download url, that does not require a Bearer token.
+Status can be either 1 (in progress), 2 (done) or 3 (error). If the status is 2, then an additional property is added - generatedFileObject. This object uid property is the file ID that can be used for downloading with another rest call. publicDownloadId, if exists can be used with public download url, that does not require a Bearer token.
 
 #### Download ready PDF 
 

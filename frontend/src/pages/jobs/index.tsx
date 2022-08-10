@@ -177,7 +177,7 @@ const Jobs = () => {
     const onJobFileDeleteRequest = useCallback(async (theJob: GenerationJobResponse) => {
         try {
             await hummusClientService.deleteFilesForJobs([ theJob.uid ])
-            const newJob = { ...theJob, generatedFile: null }
+            const newJob = { ...theJob, generatedFile: undefined }
             // update data object. so will update both collections of job with new job object
             const newJobs = jobs.map((aJob) => aJob === theJob ? newJob : aJob)
             const newSelectedJobs = selectedJobs.map((aJob) => aJob === theJob ? newJob : aJob)
@@ -251,7 +251,7 @@ const Jobs = () => {
         try {
             await hummusClientService.deleteFilesForJobs(jobIDs)
             // and update the lists
-            const newJobs = jobs.map((job) => selectedJobs.includes(job) ? { ...job, generatedFile: null }:job)
+            const newJobs = jobs.map((job) => selectedJobs.includes(job) ? { ...job, generatedFile: undefined }:job)
             setJobs(newJobs)
             setSelectedJobs([])
             showToast(`Job${selectedJobs.length > 1 ?'s':''} file${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')

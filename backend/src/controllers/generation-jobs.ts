@@ -230,7 +230,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
 
             
             // Job data updates
-            job.generatedFile = generatedFile._id
+            job.generatedFile = generatedFile.uid
             job.status = JobStatus.JobDone
             job.finishedAt = new Date()
             
@@ -250,7 +250,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
             winston.info('Job succeeded, finished OK', job._id)
 
             // accounting
-            await logJobRanAccountingEvent(job, token, tokenData, resultFileSize)
+            await logJobRanAccountingEvent(job, generatedFile, token, tokenData, resultFileSize)
 
             // cleanup temp file (after accounting record! so can read the file size!)
             await fs.unlink(outputPath)
@@ -264,7 +264,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
             job.save()
 
             // accounting
-            await logJobRanAccountingEvent(job, token, tokenData)
+            await logJobRanAccountingEvent(job, null, token, tokenData)
 
             // cleanup temp file
             await fs.unlink(outputPath)
@@ -280,7 +280,7 @@ async function _startGenerationJob(ticket: Ticket, user: IUser, token: string, t
         job.save()
         
         // accounting
-        await logJobRanAccountingEvent(job, token, tokenData)
+        await logJobRanAccountingEvent(job, null, token, tokenData)
     })
 
     return job

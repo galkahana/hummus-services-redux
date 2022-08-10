@@ -49,7 +49,8 @@ export type GenerationJobResponse = {
     finishedAt?: Date
     createdAt: Date
     updatedAt: Date
-    generatedFile?: Nullable<GeneratedFileResponse>
+    generatedFile?: string
+    generatedFileObject?: Nullable<GeneratedFileResponse>
     
 }
 

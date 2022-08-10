@@ -8,7 +8,7 @@ import { IGeneratedFile } from '@models/generated-files/types'
 import { TokenPayload } from './tokens/types'
 import { ObjectID } from 'bson'
 
-export async function logJobRanAccountingEvent(job: IGenerationJob, token: string, tokenData: TokenPayload, fileSize?: number) {
+export async function logJobRanAccountingEvent(job: IGenerationJob, file: Nullable<IGeneratedFile>, token: string, tokenData: TokenPayload, fileSize?: number) {
 
     return JobRanAccountingEventModel.create({
         user: job.user,
@@ -17,7 +17,7 @@ export async function logJobRanAccountingEvent(job: IGenerationJob, token: strin
         tokenId: tokenData.jti,
         tokenString: token,
         tokenType: tokenData.role,
-        file: job.generatedFile,
+        file: file && file._id,
         fileSize
     })
 }

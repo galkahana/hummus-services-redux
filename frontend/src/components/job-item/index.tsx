@@ -125,7 +125,7 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
                     <Col sm={10}>
                         {job.generatedFile ? (
                             <span>
-                                <a target="_blank" className="pdf-download" href={hummusClient.getGeneratedFileDownloadUrl(job.generatedFile.uid)} rel="noreferrer">Download</a>
+                                <a target="_blank" className="pdf-download" href={hummusClient.getGeneratedFileDownloadUrl(job.generatedFile)} rel="noreferrer">Download</a>
                                 <ButtonWithSpinner className='pdf-remove' variant="danger" onClick={onPDFDeleteClick} waiting={waitingForPDFDelete}>
                                     <div className="delete"><FontAwesomeIcon icon={faRemove}/> Delete</div>
                                 </ButtonWithSpinner>

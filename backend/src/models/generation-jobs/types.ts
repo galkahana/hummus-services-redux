@@ -1,4 +1,5 @@
 import { Ticket } from '@lib/jobs/types'
+import { IGeneratedFile } from '@models/generated-files/types'
 import { ObjectId } from 'bson'
 
 export enum JobStatus {
@@ -18,7 +19,8 @@ export interface IGenerationJob {
     finishedAt?: Date
     createdAt: Date
     updatedAt: Date
-    generatedFile?: ObjectId
+    generatedFile?: string 
+    generatedFileObject?: IGeneratedFile
   }
 
-export type IGenerationJobInput = Omit<IGenerationJob, 'uid'|'createdAt'|'updatedAt'|'deleteFileAt'|'finishedAt'|'generatedFile'|'_id'>;
+export type IGenerationJobInput = Omit<IGenerationJob, 'uid'|'createdAt'|'updatedAt'|'deleteFileAt'|'finishedAt'|'generatedFile'|'generatedFileObject'|'_id'>;

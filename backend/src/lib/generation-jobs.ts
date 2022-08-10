@@ -15,7 +15,7 @@ export const findByUID = (uid: string, limitingQuery?: FilterQuery<IGenerationJo
     })
 
     if(populate) {
-        curser.populate('generatedFile')
+        curser.populate('generatedFileObject')
     }
 
     return curser
@@ -29,7 +29,7 @@ export const findAllDesc = (query: FilterQuery<IGenerationJob>, populate?: boole
     const curser = Model.find(query).sort({ createdAt:-1 })
 
     if(populate) {
-        curser.populate('generatedFile')
+        curser.populate('generatedFileObject')
     }
 
     return curser
@@ -73,19 +73,19 @@ async function _deleteFilesForJobIDsNoUpdate(items: ObjectId[]) {
     winston.info('Fetching job items for IDs for their file records')
     const jobs = await findAllIn(items)
     winston.info('Deleting files')
-    await _deleteFilesForGeneratedFileIDs(jobs.map(jobs => jobs.generatedFile).filter((value): value is ObjectId => Boolean(value)))
+    await _deleteFilesForGeneratedFileIDs(jobs.map(jobs => jobs.generatedFile).filter((value): value is string => Boolean(value)))
     winston.info('Succeeded Deleting files')
 }
 
-async function _deleteFilesForGeneratedFileIDs(generatedFilesIDs: ObjectId[]) {
+async function _deleteFilesForGeneratedFileIDs(generatedFilesIDs: string[]) {
     if(generatedFilesIDs.length == 0)
         return
     /*
         Important! this one does not null geneerated file entries
     */
-    const generatedFiles = await generatedFilesService.findAllIn(generatedFilesIDs)
+    const generatedFiles = await generatedFilesService.findAllUIDsIn(generatedFilesIDs)
     await removeFiles(generatedFiles.map(generatedFile => generatedFile.remoteSource))
     winston.info('Done Removing multiple files from remote storage')
-    await generatedFilesService.destroyIn(generatedFilesIDs)
+    await generatedFilesService.destroyUIDsIn(generatedFilesIDs)
 }
 

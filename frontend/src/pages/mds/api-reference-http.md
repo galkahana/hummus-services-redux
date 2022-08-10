@@ -25,7 +25,7 @@ The job object has the following members:
 - `status` : Job status, 0 for done (good, has a PDF available). 1 for in progress. 2 for finished with failure.
 - `label` : Job label. It is set by the job ticket meta.label member.
 - `ticket`  : Job ticket string used to create this job.
-- `generatedFile` : generated file object. It includes its ID as `uid` member. Using this ID you can access the file via the files management API. 
+- `generatedFileObject` : generated file object. It includes its ID as `uid` member. Using this ID you can access the file via the files management API. 
 
 ### GET /generation-jobs/:id 
 

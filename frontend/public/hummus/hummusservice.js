@@ -28,8 +28,8 @@ var hummusService = {
 			{
                 var baseURL = inServiceUrl + 
                             '/public/' + 
-                            encodeURIComponent(inData.generatedFile.publicDownloadId);
-                successCB(baseURL + '/download',baseURL + '/embed',{generatedFileId:inData.generatedFile.uid});
+                            encodeURIComponent(inData.generatedFileObject.publicDownloadId);
+                successCB(baseURL + '/download',baseURL + '/embed',{generatedFileId:inData.generatedFileObject.uid});
 			}
 			else if(inData.status === 2 && failureCB)
 			{
@@ -79,7 +79,7 @@ var hummusService = {
                         ['Content-type','application/json; charset=utf-8'],
                         ['Authorization', 'Bearer ' + accessToken]
                     ],
-                    data:((typeof inJobTicket == 'string') ? inJobTicket:JSON.stringify(inJobTicket))
+                    data:forcePublic(((typeof inJobTicket == 'string') ? inJobTicket:JSON.stringify(inJobTicket)))
                 },
                 function(responseText){
                     openPDFWhenDone(JSON.parse(responseText),successCB,failureCB);
@@ -89,3 +89,13 @@ var hummusService = {
 }
 
 function noOp(){}
+
+function forcePublic(ticket) {
+    if(!ticket.meta) {
+        ticket.meta = {}
+    }
+
+    ticket.meta.public = true
+
+    return ticket
+}

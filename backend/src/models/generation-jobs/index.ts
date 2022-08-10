@@ -1,7 +1,6 @@
 import { model, Schema } from 'mongoose'
 import { v1 } from 'uuid'
 import { IGenerationJob, JobStatus } from './types'
-import { ObjectId } from 'bson'
 
 const generationJobSchema = new Schema<IGenerationJob>({
     uid: {
@@ -26,9 +25,8 @@ const generationJobSchema = new Schema<IGenerationJob>({
         default: {} 
     },
     generatedFile: {
-        type: Schema.Types.ObjectId,
-        ref: 'GeneratedFile'
-    }, 
+        type: String
+    },
     deleteFileAt: Date,
     finishedAt: Date
 },    
@@ -36,6 +34,12 @@ const generationJobSchema = new Schema<IGenerationJob>({
     timestamps: true
 })
 
+generationJobSchema.virtual('generatedFileObject', {
+    ref: 'GeneratedFile',
+    localField: 'generatedFile',
+    foreignField: 'uid',
+    justOne: true
+})
 
 generationJobSchema.index({ status: 1 })
 generationJobSchema.index({ user: 1 })
@@ -50,10 +54,17 @@ generationJobSchema.set('toJSON', {
             delete ret[fn] 
         })
 
-        // also this...delete unpopulated generatedFile cause i dont want the _id returned
-        if(ret['generatedFile'] instanceof  ObjectId)
-            delete ret['generatedFile']
-    }
+        if(!ret.generatedFileObject) {
+            // if for whatever reason (not populated or just there's nothing there) the object is null, remove
+            // the entry so it wont show up
+            delete ret['generatedFileObject']
+        }
+    },
+    virtuals: true
+})
+
+generationJobSchema.set('toObject', {
+    virtuals: true
 })
 
 export default model<IGenerationJob>('GenerationJob', generationJobSchema)

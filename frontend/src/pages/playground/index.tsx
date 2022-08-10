@@ -109,7 +109,7 @@ const HTTP_CODE_SEGMENT_1 =`{
 const HTTP_CODE_SEGMENT_2 = `{
     uid:"The Job ID"
     status:0
-    generatedFile : {
+    generatedFileObject : {
         uid: "The File ID", 
         publicDownloadId: "The Public Download ID"
     }
@@ -292,7 +292,7 @@ const Playground = () => {
                                         <p>The response body will contain the current job data. For example:</p>
                                         <pre>{HTTP_CODE_SEGMENT_2}</pre>
                                         <p>Status can be either 1 (in progress), 2 (done) or 3 (error). If the status is 2, then an additional property
-                                    is added - <code>generatedFile</code>. This object _id property is the file ID that can be used for downloading with another rest call.
+                                    is added - <code>generatedFileObject</code>. This object uid property is the file ID that can be used for downloading with another rest call.
                                     publicDownloadId, if exists can be used with public download url, that does not require a Bearer token.
                                         </p>
                                     </li>

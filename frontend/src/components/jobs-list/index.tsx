@@ -13,7 +13,6 @@ type JobsListProps = {
 }
 
 const JobsList = ({ jobs, onSelectionChanged, onJobFileDeleteRequest, selectedJobs }: JobsListProps) => {
-
     return <JobsListRoot className="jobs-list">
         <UnstyledList>
             {

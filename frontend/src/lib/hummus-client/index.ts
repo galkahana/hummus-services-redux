@@ -200,11 +200,11 @@ export class HummusClient {
             generationJob = await this.getJob(generationJob.uid, true)
         }
 
-        if(generationJob.status === JobStatus.JobFailed || !generationJob.generatedFile) {
+        if(generationJob.status === JobStatus.JobFailed || !generationJob.generatedFileObject) {
             throw Error('Job failed (and there\'s probably a good explanation somewhere)')
         }
 
-        const generatedFile = generationJob.generatedFile
+        const generatedFile = generationJob.generatedFileObject
         if(generatedFile.publicDownloadId) {
             // just for kicks, use public url if the file is public. otherwise use download with active access token
             return {

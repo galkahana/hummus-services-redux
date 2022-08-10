@@ -13,3 +13,11 @@ export const findByPublicDownloadId = (publicDownloadId: string) => Model.findOn
 export const createFile = (data: IGeneratedFileInput) => Model.create(data)
 export const findAllIn = (ids: ObjectId[]) => Model.find({ _id: { $in:ids } })
 export const destroyIn = (ids: ObjectId[]) => Model.deleteMany({ _id: { $in:ids } })
+export const findAllUIDsIn = (items: string[], query?: FilterQuery<IGeneratedFile>) => Model.find({
+    uid: { $in:items },
+    ...query
+})
+export const destroyUIDsIn = (items: string[], query?: FilterQuery<IGeneratedFile>) => Model.deleteMany({
+    uid: { $in:items },
+    ...query
+})
