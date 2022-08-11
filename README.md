@@ -2,6 +2,8 @@ Welcome to hummus services. A simple SAAS service over [hummus-reports](https://
 
 The server API allows to generate PDF jobs and later download the resultant files. All with api tokens. There's also job management, accounting information and other useful stuff.
 
+The project repo includes the backend code, frontend code and deployment code via helm charts or regular manifests.
+
 # Structure
 There's `backend` folder for the server and `frontend` for the web app. 
 
@@ -9,6 +11,8 @@ The `backend` folder has the hummus server backend code, as well as several scri
 
 
 `frontend` is a react application (created with create-react-app) implementing a console application for users to test jobs, review job history and their account details.
+
+`deployment` holds either `manifests` or `helm` for either deployment methods. 
 
 # Installing
 
