@@ -31,8 +31,8 @@ export async function list(req: Request<Record<string, never>, IGeneratedFile[],
     // add date range
     if(req.query.dateRangeFrom !== undefined ||
         req.query.dateRangeTo !== undefined) {
-        const from = req.query.dateRangeFrom ? moment(req.query.dateRangeFrom).toDate():null
-        const to = req.query.dateRangeTo ? moment(req.query.dateRangeTo).toDate():null
+        const from = req.query.dateRangeFrom ? Date.parse(req.query.dateRangeFrom):null
+        const to = req.query.dateRangeTo ? Date.parse(req.query.dateRangeTo):null
         
         if(to) {
             if(from) {
