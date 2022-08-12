@@ -6,6 +6,33 @@ The project repo includes the backend code, frontend code and k8s deployment cod
 
 And if i didn't take it down yet there's a live demo at [https://services.pdfhummus.com](https://services.pdfhummus.com).
 
+**Table of Contents**
+- [Structure](#structure)
+- [Installing](#installing)
+  * [Installing the backend](#installing-the-backend)
+  * [Installing the frontend](#installing-the-frontend)
+- [Running the backend](#running-the-backend)
+  * [Pre-reqs](#pre-reqs)
+  * [Setting up the envs vars](#setting-up-the-envs-vars)
+  * [Running dev service](#running-dev-service)
+- [Other verbs on the backend](#other-verbs-on-the-backend)
+- [Making API calls](#making-api-calls)
+- [Running the frontend](#running-the-frontend)
+  * [Env vars on client](#env-vars-on-client)
+- [Build a docker image](#build-a-docker-image)
+  * [Building locally](#building-locally)
+  * [Github action](#github-action)
+- [Deployment](#deployment)
+  * [Deploying to k8s, starting with Minikube](#deploying-to-k8s--starting-with-minikube)
+    + [Minikube setup](#minikube-setup)
+    + [Building a docker image and pushing it to minikube](#building-a-docker-image-and-pushing-it-to-minikube)
+    + [Deploying on minikube](#deploying-on-minikube)
+    + [Manifests](#manifests)
+    + [Helm](#helm)
+- [Deploying on GKE](#deploying-on-gke)
+  * [An initial setup](#an-initial-setup)
+  * [Adding ingress](#adding-ingress)
+
 # Structure
 There's `backend` folder for the server and `frontend` for the web app. 
 
