@@ -29,9 +29,9 @@ And if i didn't take it down yet there's a live demo at [https://services.pdfhum
     + [Deploying on minikube](#deploying-on-minikube)
     + [Manifests](#manifests)
     + [Helm](#helm)
-- [Deploying on GKE](#deploying-on-gke)
-  * [An initial setup](#an-initial-setup)
-  * [Adding ingress](#adding-ingress)
+  * [Deploying on GKE](#deploying-on-gke)
+    + [An initial setup](#an-initial-setup)
+    + [Adding ingress](#adding-ingress)
 
 # Structure
 There's `backend` folder for the server and `frontend` for the web app. 
@@ -338,11 +338,11 @@ histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[30m])) by
 (the p95 quantile of http_request_duration_seconds metric for the past 30 minutes, showing measure service, route (handler) and method)
 
 
-# Deploying on GKE
+## Deploying on GKE
 
 You can use the helm chart discussed in "Helm" to also deploy to other k8s clusters, with some adaptations. I'm going to describe below how to deploy on GKE, based on how I did it.
 
-## An initial setup
+### An initial setup
 
 Here's what we'll need:
 - A remote DB. cause we can no longer use our local mongo instance.
@@ -368,7 +368,7 @@ And then:
 
 Testing this is possible even without ingress using port forwarding.
 
-## Adding ingress
+### Adding ingress
 
 To expose the service to the outside world one can setup ingress. The default values for the helm setup are good for minikube, so you'll have to change them to set up on GKE with a proper domain like [services.pdfhummus.com](https://services.pdfhummus.com).
 
