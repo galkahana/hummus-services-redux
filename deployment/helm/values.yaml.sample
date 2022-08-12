@@ -2,12 +2,17 @@
 # use it to provide values for env vars, and maybe decide on replicacount. 
 # then you can do something like this:
 # helm install hummus-local hummus -n hummus-helm --create-namespace  -f ./values.yaml
+# and upgrade later with:
+# helm upgrade hummus-local hummus -n hummus-helm  -f ./values.yaml
 
-# use externalServices if you got wierd setup where mongo is setup to be yr
-# host name, and then you can't just access it with the url provided as mongodbUri
-#externalServices:
-#  - name: mongo
-#    externalName: host.minikube.internal
+# the default values setup is aimed for local minikube where you get to build and deploy your local docker.
+# want to use a built image? the project holds them at ghcr.io/galkahana/hummus-services-redux
+# this should be good for your setup if you are not building by yourself:
+#image:
+#  repository: ghcr.io/galkahana/hummus-services-redux
+#  pullPolicy: IfNotPresent
+#  tag: v0.0.9
+
 
 # default is 1, so you can spoil yrself with sample more
 #replicaCount: 2
@@ -32,6 +37,30 @@
 #supportEmail: 
 #emailServiceUrl: 
 
+# hummus got it's ingress. so if you dont want it turn it off with:
+#ingress:
+#   enabled: false
+#
+#the ingress setup is intended for your local minikube setup. so if you want to setup your own domain, just configure it a bit, like this:
+#ingress:
+#  enabled: true
+#  annotations:
+#      kubernetes.io/ingress.class: nginx
+#      cert-manager.io/issuer: "letsencrypt-prod"
+#  hosts:
+#    - host: services.pdfhummus.com
+#      paths:
+#        - path: /
+#          pathType: Prefix
+#          backendService: hummus
+#          backendPort: 8080
+#  tls:
+#    - secretName: hummus-ingress-tls
+#      hosts:
+#        - services.pdfhummus.com
+# (this setup assumes you got cert manager and ngynx installed. drop whatever you don't need)
+
+
 # you can enable metrics (prometheus and grafana)
 #metrics:
 #  enabled: true
@@ -55,3 +84,10 @@
 # also logging (elasticsearch, fluentd, kibana)
 #logging:
 #    enabled: true
+
+
+# use externalServices if you got wierd setup where mongo is setup to be yr
+# host name, and then you can't just access it with the url provided as mongodbUri
+#externalServices:
+#  - name: mongo
+#    externalName: host.minikube.internal
