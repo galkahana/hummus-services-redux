@@ -4,7 +4,7 @@ Through the server API you can create PDF generation jobs and later download the
 
 The project repo includes the backend code, frontend code and k8s deployment code via helm charts or regular manifests.
 
-And if i didn't take it down yet there's a live demo in [https://services.pdfhummus.com](https://services.pdfhummus.com)
+And if i didn't take it down yet there's a live demo at [https://services.pdfhummus.com](https://services.pdfhummus.com).
 
 # Structure
 There's `backend` folder for the server and `frontend` for the web app. 
@@ -34,9 +34,9 @@ make sure you got [nvm](https://github.com/nvm-sh/nvm) installed with node `16.1
 
 The following setup provides instructions for:
 - being able to run the main hummus services server
-- being able to run the scripts (e.g. deleting timedout files)
+- being able to run the scripts (e.g. deleting timed-out files)
 
-To run also the frontend side from the backend see below under **Runnning the frontend**
+To run also the frontend side from the backend see below under **Running the frontend**
 
 ## Pre-reqs
 
@@ -44,13 +44,13 @@ You will need:
 1. Mongo instance to work with. it'll be the service db
 2. AWS buckets which will serve for storing the generated files
 
-For signup and signin functionality you will also need a google recaptcha account (though you cant turn it off).
+For sign-up and sign-in functionality you will also need a google recaptcha account (though you cant turn it off).
 If you want emails to be triggered from the service when a user signs up, you'll also need a sendgrid account.
 
 ## Setting up the envs vars
 
 You'll need the following env vars to run the service:
-- `MONGODB_URI` - mongo db uri for where to store the site data.
+- `MONGODB_URI` - mongo db URI for where to store the site data.
 - `JWT_KEY` - secret to use for creating the jwt tokens.
 - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` - aws tokens with permissions to upload and download and list a target bucket which will contain all the generated files.
 - Optionally define `AWS_BUCKET` as the target bucket name (by default it's `hummus-services`) and `AWS_REGION` which is the account region (by default it's `us-west-2`)
@@ -59,10 +59,10 @@ This should suffice for minimal running with jobs generation and downloads.
 
 There are also additional variables required for specific functionality.
 
-For login and signup you'll need to provide google recaptcha credentials. Use `RECAPTCHA_KEY` and `RECAPTCHA_SECRET`. Note that this will render direct api calls to the relevant apis of login and signup disfunctional and only UI operation will be available (cause you need to do the captcha). If you want to avoid captcha, especially while developing, then adding an env var named `NO_RECAPTCHA` with the value of `true` should disable it and neither the client will show it, or the backend require it.
+For login and signup you'll need to provide google recaptcha credentials. Use `RECAPTCHA_KEY` and `RECAPTCHA_SECRET`. Note that this will render direct api calls to the relevant apis of login and signup dysfunctional and only UI operation will be available (cause you need to do the captcha). If you want to avoid captcha, especially while developing, then adding an env var named `NO_RECAPTCHA` with the value of `true` should disable it and neither the client will show it, or the backend require it.
 
 
-For signup there's some email setup, so the server greets newcommers and lets the admin know someone joined:
+For signup there's some email setup, so the server greets newcomers and lets the admin know someone joined:
     - `SENDGRID_API_KEY` - is the sendgrid api key to allow sending keys
     - `ADMIN_EMAIL` and `JOIN_EMAIL` are from emails used by the service to send email to the service join email, and the service join email to the signed up user, telling that a user joined, and welcoming them, respectively. In the email to the user `SUPPORT_EMAIL` is used for letting the user know who to send email to for questions. `SERVICE_URL` is used as the root url of the service for providing urls in the email, to let user know where to got to to sign in to the site, and to read the online documentation.
 
@@ -88,11 +88,11 @@ _you will notice that testing is missing. cause i don't. cause i don't have to. 
 
 # Making API calls
 
-There's an available postman collection that you can use to familiarise yourself with the server api and run calls to the server [here](https://www.postman.com/collections/6e41a7902cad96913af2).
+There's an available postman collection that you can use to familiarize yourself with the server api and run calls to the server [here](https://www.postman.com/collections/6e41a7902cad96913af2).
 
 The collection relies on some variables that you can define in your local postman env to get it going:
 - `hummus_server_url` - the server url. if running locally that's be `http://localhost:8080`. When running the below minikube setup and using its ingress, `http://hummus` is the right way to go.
-- `hummus_usename` and `hummus_password` are the login credentials for a user who's on behalf you'd be making api calls. It is useful to run `npm run dummy` to create a dummy user, and then you can use their credentials: `a.a@hotmail.com` and `test`, respectively.
+- `hummus_username` and `hummus_password` are the login credentials for a user who's on behalf you'd be making api calls. It is useful to run `npm run dummy` to create a dummy user, and then you can use their credentials: `a.a@hotmail.com` and `test`, respectively.
 
 Make sure to call `sign in` which will get you tokens, and on occasion go `refresh token` to get a fresh one. The apis' will ask for authentication when it's not fresh, so you'll know when. After you generated a job with `generate job`, use `get job` to retrieve job data and in that file download info that you can later use to download the file. The collection holds tests scripts to keep json output data feeding later apis, which should give you a nice XP when going through them one by one.
 
@@ -136,7 +136,7 @@ npx serve -s build
 There's no env vars that you need to define on the client code. Nothing. 
 So this section is about what you may see and interpret as env vars and how client side configuration is achieved anyways.
 
-The frontend project defines a single env var in either it's `.env` or `.env.development` files and it is `REACT_APP_API_URL`. It's intended to allow the frontend to work with the backend while devleoping. so in `.env.development` it's value is `"http://127.0.0.1:8080"`, pointing to your backend service, and in `.env` it's set to `""` cause the frontend is served from backend and so they share the url.
+The frontend project defines a single env var in either it's `.env` or `.env.development` files and it is `REACT_APP_API_URL`. It's intended to allow the frontend to work with the backend while developing. so in `.env.development` it's value is `"http://127.0.0.1:8080"`, pointing to your backend service, and in `.env` it's set to `""` cause the frontend is served from backend and so they share the url.
 
 That's it.
 Any other configuration is provided by the `index.html` page including a `config.js` script which is rendered (as a mustache rendering engine view) on the server side providing what configuration is necessary. Note that anything you put in here is visible to anyone...so don't expose here what shouldn't be exposed.
@@ -202,7 +202,7 @@ Also for elasticsearch you'll want to make sure there's sufficient memory and CP
     - `minikube config set cpus 4`
 (they can also be provided on the first `minikube start` as `minikube start --memory 8192 --cpus 4` with some drivers allowing you to do so also post the first start).
 
-Either with or without elastic search it is recommended to speed up kubelet housekeeping so CPU tracking in the minikube dashbaord works properly. So start minikube with:
+Either with or without elastic search it is recommended to speed up kubelet housekeeping so CPU tracking in the minikube dashboard works properly. So start minikube with:
 `minikube start --extra-config=kubelet.housekeeping-interval=10s`.
 
 ### Building a docker image and pushing it to minikube
@@ -234,7 +234,7 @@ Then it's just a matter of repeated `kubectl apply -f XXXXX`. For best results d
     - deployment.yaml, cronjob.yaml
     - service.yaml
     - ingress.yaml
-    - (mongo-service.yaml is an example yaml for cases when you want to use "mongo" as service name and the mongo instance is on yr host. you probably dont need it.)
+    - (mongo-service.yaml is an example yaml for cases when you want to use "mongo" as service name and the mongo instance is on yr host. you probably don't need it.)
 The setup will be created wholly in the `hummus` namespace.
 
 you can track the deployment with the minikube dashboard (`minikube dashboard`) or via kubectl.
@@ -370,7 +370,7 @@ ingress:
 
 With all this in place your site should work no problems.
 
-Got too many redirects with cloudflare (if you are running on cloudflare), [this](https://support.cloudflare.com/hc/en-us/articles/115000219871-Troubleshooting-redirect-loop-errors-#h_dfa85774-c19f-4f49-b11b-bf9bacf6e831) might be the problem.
+Got too many redirects with Cloudflare (if you are running on Cloudflare)? [this](https://support.cloudflare.com/hc/en-us/articles/115000219871-Troubleshooting-redirect-loop-errors-#h_dfa85774-c19f-4f49-b11b-bf9bacf6e831) might be the solution to your problem.
 
 
 
