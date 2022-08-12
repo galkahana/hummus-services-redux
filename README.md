@@ -372,7 +372,7 @@ Testing this is possible even without ingress using port forwarding.
 
 To expose the service to the outside world one can setup ingress. The default values for the helm setup are good for minikube, so you'll have to change them to set up on GKE with a proper domain like [services.pdfhummus.com](https://services.pdfhummus.com).
 
-The setup I did for GKE includes Nginx ingress controller and cert manager. The setup is kinda simple and one can pretty much follow the (cert manager instructions](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/) start to end to carry out all the necessary task and end up with a live domain.
+The setup I did for GKE includes Nginx ingress controller and cert manager. The setup is kinda simple and one can pretty much follow the [cert manager instructions](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/) start to end to carry out all the necessary task and end up with a live domain.
 Only note i'd say is that currently one has to adhere to [these](https://github.com/cert-manager/cert-manager/issues/3717#issuecomment-975031637) instructions when first installing cert manager via helm on a cluster created with autopilot. Or else the issuer won't be created.
 
 Going through all this you will end up with something like this for the ingress values file for the helm install:
