@@ -83,7 +83,7 @@ const JobItem = ({ job, onSelectionChanged, selected, onJobFileDeleteRequest }: 
         onJobFileDeleteRequest(job).then(() => setWaitingForPDFDelete(false))
     }
 
-    const title = job.label  || `'Item #${job.uid}`
+    const title = job.label  || `Item #${job.uid}`
     const startDateDisplay = getDefaultDateDisplay(job.createdAt)
     const endDateDisplay =   job.finishedAt ? getDefaultDateDisplay(job.finishedAt) : 'N/A'
     const deletefileAtDisplay = getDefaultDateDisplay(job.deleteFileAt)
