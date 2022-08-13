@@ -79,7 +79,7 @@ var hummusService = {
                         ['Content-type','application/json; charset=utf-8'],
                         ['Authorization', 'Bearer ' + accessToken]
                     ],
-                    data:forcePublic(((typeof inJobTicket == 'string') ? inJobTicket:JSON.stringify(inJobTicket)))
+                    data:JSON.stringify(forcePublic(((typeof inJobTicket == 'string') ? JSON.parse(inJobTicket):inJobTicket)))
                 },
                 function(responseText){
                     openPDFWhenDone(JSON.parse(responseText),successCB,failureCB);
