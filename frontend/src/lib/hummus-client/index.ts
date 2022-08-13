@@ -160,7 +160,7 @@ export class HummusClient {
     )
 
     patchPublicAPIToken = this.authMWs(
-        (restrictedDomains?: Nullable<string[]>) => axios.post<ResponseOK>(`${this.apiUrl}/api/tokens`, { 'role': 'JobCreator', restrictedDomains }, { headers: this.createAuthorizedHeaders() })
+        (restrictedDomains?: Nullable<string[]>) => axios.post<ResponseOK>(`${this.apiUrl}/api/tokens/patch`, { 'role': 'JobCreator', restrictedDomains }, { headers: this.createAuthorizedHeaders() })
     )    
 
     deletePrivateAPIToken = this.authMWs(
