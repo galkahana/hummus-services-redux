@@ -5,6 +5,8 @@ import { PDFWStreamForFile } from 'hummus'
 import { PDFEngine, ExternalsMap, PDFEngineDocument } from 'hummus-reports'
 import { v1 } from 'uuid'
 
+import config from 'config'
+
 import mustache from '@lib/mustache'
 import { ExternalFiles } from './external-files'
 import { ExternalsMapDriver } from './externals-map-driver'
@@ -26,7 +28,7 @@ export class JobPipeline  {
     async run(): Promise<[outpufPath: string, outputTitle: string]> {
         const externalFiles = new ExternalFiles()
         try {
-            await externalFiles.downloadExternals(this.ticket.externals)
+            await externalFiles.downloadExternals(this.ticket.externals, config.get<number>('remoteAssets.downloadTimeout'))
             winston.info('done with download', { downloads: externalFiles.externalsMap })
             const ticketDocument = this._computeDocument(await this._getDocument(externalFiles.externalsMap))
             const pdfOutputPath = await this._generatePDF(ticketDocument, externalFiles.externalsMap)

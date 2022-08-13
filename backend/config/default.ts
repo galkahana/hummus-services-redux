@@ -10,6 +10,9 @@ module.exports = {
     service: {
         name: process.env.SERVICE_NAME || 'hummus',
     },
+    remoteAssets: {
+        downloadTimeout: 5000
+    },
     db: {
         connectionString: process.env.MONGODB_URI,
         connectRetryTimeGap: 5000
