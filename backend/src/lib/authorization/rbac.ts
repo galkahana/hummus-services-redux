@@ -41,12 +41,13 @@ accesscontrol.grant(Roles.SiteUser)
 accesscontrol.grant(Roles.JobManager)
     .createOwn(Resources.Job)
     .readOwn(Resources.Job)
+    .updateOwn(Resources.Job)
     .deleteOwn(Resources.Job)
     .readOwn(Resources.File)
 
 
 // Job Creator access
-accesscontrol.grant(Roles.JobManager)
+accesscontrol.grant(Roles.JobCreator)
     .createOwn(Resources.Job)
     .readOwn(Resources.Job)
     .readOwn(Resources.File)

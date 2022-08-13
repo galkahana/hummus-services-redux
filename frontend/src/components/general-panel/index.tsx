@@ -156,7 +156,7 @@ const GeneralPanel = () => {
                 <Form onSubmit={onProfileFormSubmit} noValidate validated={profileValidated}>
                     <Form.Group>
                         <Form.Label>Name</Form.Label>
-                        <Form.Control type="text" autoCorrect="off" value={meName} onChange={onMeNameChange}/>
+                        <Form.Control type="text" autoCorrect="off" autoCapitalize='off' value={meName} onChange={onMeNameChange}/>
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>Email </Form.Label>
@@ -178,7 +178,7 @@ const GeneralPanel = () => {
                     <Form onSubmit={onUsernameFormSubmit} noValidate validated={usernameValidated}>
                         <Form.Group>
                             <Form.Label>Username</Form.Label>
-                            <Form.Control required type="text" autoCorrect="off" value={meUsername} onChange={onMeUsernameChange}/>
+                            <Form.Control required type="text" autoCorrect="off" autoCapitalize='off' value={meUsername} onChange={onMeUsernameChange}/>
                         </Form.Group>
                         <ButtonWithSpinner variant="primary" type="submit" className='mt-3' waiting={updatingUsername}>
                         Change Username

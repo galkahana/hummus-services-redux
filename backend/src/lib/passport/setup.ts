@@ -12,6 +12,6 @@ export function setup() {
         Providers.JwtProvider, new BearerStrategy.Strategy(jwtBearerStrategyVerify)
     )
     passport.use(
-        Providers.TokenProvider, new BearerStrategy.Strategy(tokenBearerStrategyVerify)
+        Providers.TokenProvider, new BearerStrategy.Strategy({ passReqToCallback: true }, tokenBearerStrategyVerify)
     )
 }

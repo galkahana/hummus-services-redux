@@ -24,6 +24,7 @@ const tokenSchema = new Schema<IToken>({
         enum: Roles,
         required:true
     },
+    restrictedDomains: [ String ],
     refresh: Boolean
 }, {
     timestamps: true

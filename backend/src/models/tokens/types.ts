@@ -10,6 +10,7 @@ export interface IToken {
     exp?: number
     role: Roles
     refresh?: boolean
+    restrictedDomains? : Nullable<string[]>
 
     createdAt: Date
     updatedAt: Date

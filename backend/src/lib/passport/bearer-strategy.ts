@@ -1,10 +1,11 @@
-import { VerifyFunction } from 'passport-http-bearer'
+import { VerifyFunction, VerifyFunctionWithRequest } from 'passport-http-bearer'
 import { verifyJwt } from '@lib/tokens/jwt'
 import { JwtPayload } from 'jsonwebtoken'
-import { Providers } from './types'
 import { findByUID } from '@lib/users'
 import { verifyToken } from '@lib/tokens/db-tokens'
+import { Request } from 'express'
 
+import { Providers } from './types'
 
 export const jwtBearerStrategyVerify: VerifyFunction = async (token, done) => {
     try {
@@ -23,9 +24,10 @@ export const jwtBearerStrategyVerify: VerifyFunction = async (token, done) => {
     }
 }
 
-export const tokenBearerStrategyVerify: VerifyFunction = async (token, done) => {
+export const tokenBearerStrategyVerify: VerifyFunctionWithRequest = async (request: Request, token, done) => {
     try {
-        const tokenData = await verifyToken(token)
+        const originDomain = request.header('Origin') || request.header('Host')
+        const tokenData = await verifyToken(token, originDomain || '')
 
         if (!tokenData.sub) {
             return done(null, false)

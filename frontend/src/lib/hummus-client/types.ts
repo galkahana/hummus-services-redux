@@ -64,9 +64,14 @@ export type GeneratedFileResponse = {
     updatedAt: Date    
 }
 
+export type TokenData = {
+    token: string,
+    restrictedDomains?: Nullable<string[]>
+}
+
 export type TokensAPIResponse = {
-    public?: string,
-    private?: string
+    public?: TokenData,
+    private?: TokenData
 }
 
 export type CreateTokenAPIResponse = {

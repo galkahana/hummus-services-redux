@@ -1,7 +1,7 @@
 import { find } from 'lodash'
 import { AuthResponse } from '@lib/express/types'
 import { Request } from 'express'
-import { findAll, destroyAll, createTokenValue } from '@lib/tokens/db-tokens'
+import { findAll, destroyAll, createTokenValue, patchAll } from '@lib/tokens/db-tokens'
 import { Roles } from '@lib/authorization/rbac'
 import { UserStatus } from '@models/users/types'
 import { enhanceResponse } from '@lib/express/enhanced-response'
@@ -9,10 +9,15 @@ import { createAccessToken } from '@lib/tokens/site-tokens'
 
 import { OKResponse } from '@middlewares/responses/200'
 
+type TokenData = {
+    token: string,
+    restrictedDomains?: Nullable<string[]>
+}
+
 
 type ShowTokensResponse = {
-    public?: string
-    private?: string
+    public?:  TokenData
+    private?: TokenData
 }
 
 export async function show(req: Request<Record<string, never>, ShowTokensResponse>, res: AuthResponse<ShowTokensResponse>) {
@@ -23,9 +28,18 @@ export async function show(req: Request<Record<string, never>, ShowTokensRespons
 
     const tokens = await findAll({ sub: user.uid, role: { $in: [ Roles.JobCreator, Roles.JobManager ] } }) // respectively - public api, private api
 
+    const publicToken = find(tokens, { role: Roles.JobCreator })
+    const privateToken = find(tokens, { role: Roles.JobManager })
+
     res.status(200).json({
-        public: find(tokens, { role: Roles.JobCreator })?.jti,
-        private: find(tokens, { role: Roles.JobManager })?.jti,
+        public: publicToken && {
+            token: publicToken.jti,
+            restrictedDomains: publicToken.restrictedDomains
+        },
+        private: privateToken && {
+            token: privateToken.jti,
+            restrictedDomains: privateToken.restrictedDomains // not really doing this for private tokens...but whatever
+        }
     })
 }
 
@@ -36,6 +50,7 @@ type CreateTokenResponse = {
 
 type CreateTokenBody = {
     role: Roles.JobCreator | Roles.JobManager
+    restrictedDomains?: Nullable<string[]>
 }
 
 export async function create(req: Request<Record<string, never>, CreateTokenResponse, CreateTokenBody>, res: AuthResponse<CreateTokenResponse>) {
@@ -44,10 +59,12 @@ export async function create(req: Request<Record<string, never>, CreateTokenResp
         return res.badRequest('Missing user. should have user for identifying whose tokens are being manipulated')
     }
 
+    const role = req.body.role
+    const restrictedDomains = req.body.restrictedDomains
 
-    if(!req.body.role ||
-        (req.body.role !== Roles.JobCreator  &&
-            req.body.role !== Roles.JobManager )) {
+    if(!role ||
+        (role !== Roles.JobCreator  &&
+            role !== Roles.JobManager )) {
         return res.badRequest('Missing or invalid token type. should be JobCreator (public api) or JobManager (private api).')
     }
 
@@ -56,10 +73,10 @@ export async function create(req: Request<Record<string, never>, CreateTokenResp
     }
 
     // destroy existing tokens of the input role
-    await destroyAll({ sub: user.uid, role:req.body.role })
+    await destroyAll({ sub: user.uid, role })
 
     // create new token of the input role
-    const token = await createTokenValue(user.uid, { role: req.body.role })
+    const token = await createTokenValue(user.uid, { role, restrictedDomains })
     res.status(201).json({ token })
 }
 
@@ -79,6 +96,27 @@ export async function revoke(req: Request<Record<string, never>, OKResponse, Rev
         return res.badRequest('Missing or invalid token type. should be JobCreator (public api) or JobManager (private api).')
     }
     await destroyAll({ sub: user.uid, role:req.body.role })
+
+    res.ok()
+}
+
+type PatchBody = {
+    role: Roles.JobCreator | Roles.JobManager,
+    restrictedDomains?: Nullable<string[]>
+}
+
+export async function patch(req: Request<Record<string, never>, OKResponse, PatchBody>, res: AuthResponse<OKResponse>) {
+    const user = res.locals.user
+    if (!user) {
+        return res.badRequest('Missing user. should have user for identifying whose tokens are being manipulated')
+    }
+
+    if(!req.body.role ||
+        (req.body.role !== Roles.JobCreator  &&
+            req.body.role !== Roles.JobManager )) {
+        return res.badRequest('Missing or invalid token type. should be JobCreator (public api) or JobManager (private api).')
+    }
+    await patchAll({ sub: user.uid, role:req.body.role }, { restrictedDomains: req.body.restrictedDomains })
 
     res.ok()
 }

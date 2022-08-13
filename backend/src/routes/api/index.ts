@@ -50,10 +50,13 @@ router.route('/users/me/change-password')
 router.route('/tokens')
     .get(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Read), asyncHandler(tokensController.show))
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Create), asyncHandler(tokensController.create))
-router.route('/tokens/refresh')
+router.route('/tokens/refresh') // this is the one action here that's actually about the jwts. not sure it belongs here
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Update), asyncHandler(tokensController.refresh))
 router.route('/tokens/revoke')
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Update), asyncHandler(tokensController.revoke))
+router.route('/tokens/patch')
+    .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Update), asyncHandler(tokensController.patch))
+
 
 router.route('/authenticate/sign-in')
     .post(checkCaptcha, authenticate.login, asyncHandler(authenticationController.signIn))

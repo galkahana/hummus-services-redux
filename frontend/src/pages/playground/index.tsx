@@ -164,15 +164,15 @@ const Playground = () => {
     }, [ setDownloadLink, setEmbedLink, code, showModalAlert ])
 
     const getKeyForBrowser = () => {
-        return trimToSize(apiTokens.public || '/* Your public API key */', 50)
+        return trimToSize(apiTokens.public?.token || '/* Your public API key */', 50)
     }
 
     const getKeyForHTTP = () => {
-        return trimToSize(apiTokens.private || apiTokens.public || '/* Your API key */', 50)
+        return trimToSize(apiTokens.private?.token || apiTokens.public?.token || '/* Your API key */', 50)
     }
 
     const getKeyForNode = () => {
-        return trimToSize(apiTokens.private ||  '/* Your private API key */', 50)
+        return trimToSize(apiTokens.private?.token ||  '/* Your private API key */', 50)
     }
 
     return (<ConsoleBase title="Playground" subtitle="Create & Test Job Tickets">

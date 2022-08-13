@@ -94,28 +94,28 @@ const Signup = () => {
                     <Form onSubmit={onFormSubmit} noValidate>
                         <Form.Group>
                             <Form.Label>Username</Form.Label>
-                            <Form.Control isInvalid={(!username) && formSubmitted} type="text" autoCorrect="off" value={username} onChange={onUsernameChange} required/>
+                            <Form.Control isInvalid={(!username) && formSubmitted} type="text" autoCorrect="off" autoCapitalize='off' value={username} onChange={onUsernameChange} required/>
                             <Form.Control.Feedback type="invalid">
                                 Please choose a username
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Email</Form.Label>
-                            <Form.Control isInvalid={(!email) && formSubmitted} type="email" autoCorrect="off" value={email} onChange={onEmailChange} required/>
+                            <Form.Control isInvalid={(!email) && formSubmitted} type="email" autoCorrect="off" autoCapitalize='off' value={email} onChange={onEmailChange} required/>
                             <Form.Control.Feedback type="invalid">
                                 Please enter your email
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Password</Form.Label>
-                            <Form.Control isInvalid={(!password) && formSubmitted} type="password" autoCorrect="off" value={password} onChange={onPasswordChange} required/>
+                            <Form.Control isInvalid={(!password) && formSubmitted} type="password" autoCorrect="off" autoCapitalize='off' value={password} onChange={onPasswordChange} required/>
                             <Form.Control.Feedback type="invalid">
                                 Please enter password
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Repeat Password</Form.Label>
-                            <Form.Control isInvalid={(!passwordRepeat || passwordRepeat !== password) && formSubmitted} type="password" autoCorrect="off" value={passwordRepeat} onChange={onPasswordRepeatChange} required/>
+                            <Form.Control isInvalid={(!passwordRepeat || passwordRepeat !== password) && formSubmitted} type="password" autoCorrect="off" autoCapitalize='off' value={passwordRepeat} onChange={onPasswordRepeatChange} required/>
                             <Form.Control.Feedback type="invalid">
                                     Password and Repeat password fields mismatch. Please repeat the password.
                             </Form.Control.Feedback>

@@ -4,4 +4,5 @@ export interface TokenPayload {
     role?: string| undefined, 
     jti?: string| undefined, 
     refresh?: boolean| undefined
+    restrictedDomains? : Nullable<string[]>
 }

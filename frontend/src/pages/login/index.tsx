@@ -98,7 +98,7 @@ const Login = () => {
                 <Form  onSubmit={onSubmit} noValidate validated={loginValidated}>
                     <Form.Group>
                         <Form.Label>Username</Form.Label>
-                        <Form.Control required type="text" autoCorrect='off' name='username' defaultValue={username} onChange={onChangeUsername}/>
+                        <Form.Control required type="text" autoCorrect='off' autoCapitalize='off' name='username' defaultValue={username} onChange={onChangeUsername}/>
                         <Form.Control.Feedback type="invalid">
                                 We're gonna need a username here
                         </Form.Control.Feedback>   
