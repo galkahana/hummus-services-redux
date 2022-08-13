@@ -11,6 +11,9 @@ supportEmail: ""
 emailServiceUrl: ""
 awsRegion: ""
 awsBucket: ""
+noRecaptcha: ""
+tokenServiceDomains: ""
+
 # secret
 mongodbUri: ""
 sendgridApiKey: ""

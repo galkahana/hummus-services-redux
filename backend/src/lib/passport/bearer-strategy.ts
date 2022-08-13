@@ -1,16 +1,35 @@
-import { VerifyFunction, VerifyFunctionWithRequest } from 'passport-http-bearer'
-import { verifyJwt } from '@lib/tokens/jwt'
+import { VerifyFunctionWithRequest } from 'passport-http-bearer'
 import { JwtPayload } from 'jsonwebtoken'
+import { Request } from 'express'
+import { some } from 'lodash'
+import winston from 'winston'
+
+import { verifyJwt } from '@lib/tokens/jwt'
 import { findByUID } from '@lib/users'
 import { verifyToken } from '@lib/tokens/db-tokens'
-import { Request } from 'express'
-import url from 'url'
 
 import { Providers } from './types'
 
-export const jwtBearerStrategyVerify: VerifyFunction = async (token, done) => {
+function getOriginDomain(request: Request) {
+    const domainHeaderValue = request.header('Origin') || request.header('Host') || ''
+    const originDomain = domainHeaderValue.startsWith('https://') || domainHeaderValue.startsWith('http://') ? new URL(domainHeaderValue).host : domainHeaderValue
+    return originDomain
+}
+
+export const jwtBearerStrategyVerify: VerifyFunctionWithRequest = async (request: Request, token, done) => {
     try {
         const tokenData: JwtPayload = verifyJwt(token) as JwtPayload
+        const domainToRestrict = getOriginDomain(request)
+
+        if(domainToRestrict && tokenData.restrictedDomains && tokenData.restrictedDomains.length > 0 &&
+            !some(tokenData.restrictedDomains, (value: string) => value.endsWith(domainToRestrict))) {
+            winston.info('Failed domain restriction', {
+                domainToRestrict,
+                restrictedDomains: tokenData.restrictedDomains
+            })
+            return done(null, false)
+        }
+   
 
         if (!tokenData.sub) {
             return done(null, false)
@@ -27,9 +46,7 @@ export const jwtBearerStrategyVerify: VerifyFunction = async (token, done) => {
 
 export const tokenBearerStrategyVerify: VerifyFunctionWithRequest = async (request: Request, token, done) => {
     try {
-        const domainHeaderValue = request.header('Origin') || request.header('Host') || ''
-        const originDomain = domainHeaderValue.startsWith('https://') || domainHeaderValue.startsWith('http://') ? new URL(domainHeaderValue).host : domainHeaderValue
-        const tokenData = await verifyToken(token, originDomain || '')
+        const tokenData = await verifyToken(token, getOriginDomain(request) || '')
 
         if (!tokenData.sub) {
             return done(null, false)

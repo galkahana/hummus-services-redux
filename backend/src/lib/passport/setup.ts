@@ -9,7 +9,7 @@ import { Providers } from './types'
 export function setup() {
     passport.use(Providers.UserPasswordLoginProvider, new PassportLocal.Strategy(loginStrategyVerify))
     passport.use(
-        Providers.JwtProvider, new BearerStrategy.Strategy(jwtBearerStrategyVerify)
+        Providers.JwtProvider, new BearerStrategy.Strategy({ passReqToCallback: true }, jwtBearerStrategyVerify)
     )
     passport.use(
         Providers.TokenProvider, new BearerStrategy.Strategy({ passReqToCallback: true }, tokenBearerStrategyVerify)

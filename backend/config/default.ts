@@ -41,6 +41,7 @@ module.exports = {
     jwtToken: {
         secret: process.env.JWT_KEY,
         maxAgeSeconds: 300, // 5 mts
-        maxAgeSecondsRefresh: 3600 * 24 * 365 // 1 year
+        maxAgeSecondsRefresh: 3600 * 24 * 365, // 1 year
+        restrictToDomains: process.env.TOKEN_SERVICE_DOMAINS && process.env.TOKEN_SERVICE_DOMAINS.split(',')  || null
     },    
 }

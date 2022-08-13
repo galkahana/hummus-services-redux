@@ -28,14 +28,22 @@
 # optionally you can also add awsBucket and awsRegion if you wish to override the default
 # bucket name which is hummus-services and region which is us-west-2
 
-# signup stuff, so only needed if you want to run signup
+#login + signup captcha (can skip with noRecaptcha value being a non falsy one)
 #recaptchaKey: 
 #recaptchaSecret: 
+#noRecaptcha:
+
+# signup stuff, so only needed if you want to run signup
 #sendgridApiKey: 
 #adminEmail: 
 #joinEmail: 
 #supportEmail: 
 #emailServiceUrl: 
+
+# this is for restricting the domain for which the site domain is setup in
+# so usage in other sites is avaialble only for api tokens. comma separated list (one is possible as well of course) of the domains
+# to restrict usage on, plz.
+#tokenServiceDomains
 
 # hummus got it's ingress. so if you dont want it turn it off with:
 #ingress:

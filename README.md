@@ -94,6 +94,7 @@ For signup there's some email setup, so the server greets newcomers and lets the
     - `ADMIN_EMAIL` and `JOIN_EMAIL` are from emails used by the service to send email to the service join email, and the service join email to the signed up user, telling that a user joined, and welcoming them, respectively. In the email to the user `SUPPORT_EMAIL` is used for letting the user know who to send email to for questions. `SERVICE_URL` is used as the root url of the service for providing urls in the email, to let user know where to got to to sign in to the site, and to read the online documentation.
 
 
+One last thing. You may want to restrict the usage of the site tokens, which among other things can be used to generate pdfs, to be just used in the site. A simple domain restriction implementation exists. You may want to use it when going online. `TOKEN_SERVICE_DOMAINS` is a comma separated list of hosts (include the port!) to restrict the site token to. It's multiple so you can test it locally where some urls are per the dev frontend (localhost:3000, if you stick to the default) and some are of the backend (127.0.0.1:8080, again if you stick to the default).
 
 ## Running dev service
 
