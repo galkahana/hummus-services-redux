@@ -30,6 +30,7 @@ export const SignupSection = styled(Section)`
         color:#EAEAEA;
         font-size:30px;
         background-color:${HUMMUS_COLOR};
-    }    
+    }  
+      
 `
 

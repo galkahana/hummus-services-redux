@@ -84,12 +84,15 @@ const ApiKeysPanel = () => {
     }, [ showModalAlert ])   
     
     const updateRestrictedDomainsPublic = useCallback((restrictedDomains?: Nullable<string[]>)=> {
+        if(!publicKey)
+            return
+
         hummusClientService.patchPublicAPIToken(restrictedDomains).then(() => {
             showToast('Updated restricted domains for public token')
         }).catch((ex: unknown) => {
             showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error updating public key domains but it won\'t tell us what it was.', 'Tokens Error')
         })
-    }, [ showModalAlert, showToast ])
+    }, [ showModalAlert, showToast, publicKey ])
 
     const onDomainRestrictDeleteClick = useCallback( (i: number) => {
         if(!restrictedDomainsPublic) // not technically possible but lets be nice to typescript

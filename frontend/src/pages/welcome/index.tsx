@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faBolt, faGlobe, faClock } from '@fortawesome/free-solid-svg-icons'
-import { InlineList, InlineListItem } from 'components/common.styles'
+import { InlineList, InlineListItem, UnstyledList } from 'components/common.styles'
 
 import {
     TitleSection,
@@ -42,11 +42,13 @@ const Welcome = () => {
             </InlineList>
         </FeaturesSection>
         <SignupSection>
-            <div>
-                <Link to="/signup">
-                    <Button variant="outline-dark">Sign Up</Button>
-                </Link>
-            </div>
+            <UnstyledList>
+                <li>
+                    <Link to="/signup">
+                        <Button variant="outline-dark">Sign Up</Button>
+                    </Link>
+                </li>
+            </UnstyledList>
         </SignupSection>
     </PublicBase>
 
