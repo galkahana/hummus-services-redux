@@ -57,16 +57,18 @@ export async function deleteFilesForJobs(items: ObjectId[]) {
 
 export async function deleteTimedoutFiles() {
 
-    const timedOutFilesJobs = await findAll({ deleteFileAt:{ $lte:new Date() } })
+    const timedOutFilesJobs = await findAll({ deleteFileAt:{ $lte:new Date() }, generatedFile: { $ne : null } })
 
-    if(!timedOutFilesJobs || timedOutFilesJobs.length == 0)
+    if(!timedOutFilesJobs || timedOutFilesJobs.length == 0) {
+        winston.info('No timedout files to delete')
         return
+    }
+
+    winston.info(`Found ${timedOutFilesJobs} timedout files, will delete them now`)
 
     const timedOutFilesJobsIDs = timedOutFilesJobs.map( item => item._id)
 
-    await deleteFilesForJobs(timedOutFilesJobsIDs)
-    await patchIn(timedOutFilesJobsIDs, { deleteFileAt: null }) // so that it will stop showing up
-    
+    await deleteFilesForJobs(timedOutFilesJobsIDs)   
 }
 
 async function _deleteFilesForJobIDsNoUpdate(items: ObjectId[]) {
