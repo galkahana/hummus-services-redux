@@ -26,7 +26,11 @@ const JOB_STATUS_CHECK_PERIOD = 1000
 
 type MWWithDataFetch = <Args extends any[], S>(call: (...operationParameters: Args) => Promise<AxiosResponse<S>>) => (...operationParameters: Args) => Promise<S>
 
-const unauthMWs: MWWithDataFetch = combine(verboseError(), dataFetch)
+type HummusClientOptions = {
+    tokensProvider?: HummusClientTokensProvider
+    noBackend?: boolean
+    noBackendMessage?: string
+}
 
 const refresh = (self: HummusClient) => async () => {
     await self.tokensProvider?.refresh()
@@ -36,19 +40,31 @@ const renewLogin = (self: HummusClient) => () => {
     self.tokensProvider?.renewLogin()
 }
 
+const assertBackendAvailable = (self: HummusClient) => async<T>(call: () => Promise<T>) => {
+    if(self.noBackend)
+        throw new Error(self.noBackendMessage)
+
+    return await call()
+}
 export class HummusClient {
     apiUrl: string
     tokensProvider?: HummusClientTokensProvider
+    noBackend?: boolean
+    noBackendMessage?: string
     authMWs: MWWithDataFetch = combine(
         verboseError(),
         dataFetch,
         notAuthToLogout(renewLogin(this)),
-        notAuthRefresh(refresh(this))
+        notAuthRefresh(refresh(this)),
+        assertBackendAvailable(this)
     )
+    unauthMWs: MWWithDataFetch = combine(verboseError(), dataFetch, assertBackendAvailable(this))
 
-    constructor(apiUrl: string, tokensProvider?: HummusClientTokensProvider) {
+    constructor(apiUrl: string, options?: HummusClientOptions) {
         this.apiUrl = apiUrl
-        this.tokensProvider = tokensProvider
+        this.tokensProvider = options?.tokensProvider
+        this.noBackend = options?.noBackend
+        this.noBackendMessage = options?.noBackendMessage
     }
 
     private createUnauthorizedHeaders() {
@@ -66,7 +82,7 @@ export class HummusClient {
         this.tokensProvider = tokensProvider
     }
 
-    signin = unauthMWs(
+    signin = this.unauthMWs(
         (username: string, password: string, captcha?: string) => axios.post<TokensResponse>(
             `${this.apiUrl}/api/authenticate/sign-in`, 
             { username, password },
@@ -99,7 +115,7 @@ export class HummusClient {
         )
     )
 
-    refreshToken = unauthMWs(
+    refreshToken = this.unauthMWs(
         (refreshToken: string) => axios.post<TokensResponse>(
             `${this.apiUrl}/api/tokens/refresh`, 
             null, 

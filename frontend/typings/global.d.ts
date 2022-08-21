@@ -5,6 +5,8 @@ type HummusConfigType = {
     captchaSiteKey?: string
     joinEmail?: string
     supportEmail?: string
+    noBackend?: boolean
+    githubProjectUrl?: string
 }
 
 declare var hummusConfig: HummusConfigType?

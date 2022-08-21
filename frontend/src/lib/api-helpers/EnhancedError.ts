@@ -32,7 +32,7 @@ export default class EnhancedError {
     }
 
     getErrorMessage(): Nullable<string> {
-        if(this.ex instanceof AxiosError && this.ex.response?.data.message) {
+        if(this.ex instanceof AxiosError && this.ex.response?.data?.message) {
             return this.ex.response.data.message
         }
         
