@@ -63,7 +63,7 @@ var hummusService = {
             }
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if(xhr.status < 400)
+                    if(xhr.status && xhr.status < 400)
                         success(xhr.responseText);
                     else
                         failure({xhr:xhr});
