@@ -164,12 +164,13 @@ npx serve -s build
 There's no env vars that you need to define on the client code. Nothing. 
 So this section is about what you may see and interpret as env vars and how client side configuration is achieved anyways.
 
-The frontend project defines a single env var in either it's `.env` or `.env.development` files and it is `REACT_APP_API_URL`. It's intended to allow the frontend to work with the backend while developing. so in `.env.development` it's value is `"http://127.0.0.1:8080"`, pointing to your backend service, and in `.env` it's set to `""` cause the frontend is served from backend and so they share the url.
+The frontend project defines a single env var in either it's `.env` or `.env.development` files and it is `REACT_APP_API_URL`. It's intended to allow the frontend to work with the backend while developin, as well as if you decide to separate the backend from the frontend. 
+So in `.env.development` it's value is `"http://127.0.0.1:8080"`, pointing to your backend service, and in `.env` it's set to `""` cause the frontend is served from backend and so they share the url.
 
 That's it.
 Any other configuration is provided by the `index.html` page including a `config.js` script which is rendered (as a mustache rendering engine view) on the server side providing what configuration is necessary. Note that anything you put in here is visible to anyone...so don't expose here what shouldn't be exposed.
 
-Doing the env vars injection this way for the client code, as opposed to requiring actual env vars allows building a docker image for the whole server without build vars, which were otherwise required while building the frontend part. So it's the same image for all environments, and you only need to provide env vars for running it. makes it easy to reuse it.
+Doing the env vars injection this way for the client code, as opposed to requiring actual env vars allows building a docker image for the whole server without build vars, which were otherwise required while building the frontend part. So it's the same image for all environments, and you only need to provide env vars for running it. makes it easy to reuse it. Note that if you are running frontend separately from the backend, you can create an image without the frontend, and so avoid requiring the dynamic config via `config.js` to retain an env-indepentent image.
 
 # Build a docker image
 
