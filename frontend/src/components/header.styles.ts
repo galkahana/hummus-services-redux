@@ -1,7 +1,7 @@
-import { InlineList } from 'components/common.styles'
+import { InlineList } from '@components/common.styles'
 import styled from 'styled-components'
 
-import { DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK, LIGHT_BACKGROUND_COLOR, LIGHT_BORDER_COLOR } from 'lib/styles/colors'
+import { DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK, LIGHT_BACKGROUND_COLOR, LIGHT_BORDER_COLOR } from '@lib/styles/colors'
 
 export const HeaderRoot = styled.div.attrs({ className: 'clearfix' })`
     background-color: ${LIGHT_BACKGROUND_COLOR};

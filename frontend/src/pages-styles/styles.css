@@ -2,6 +2,7 @@
 
 html,
 body,
+#__next,
 #root {
   font-family: Helvetica Neue, Arial, sans-serif;
   font-weight: 400;

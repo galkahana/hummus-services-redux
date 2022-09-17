@@ -1,17 +1,16 @@
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { PositionBase, NoUnderlineEver } from 'components/common.styles'
-import { DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK } from 'lib/styles/colors'
+import { PositionBase, PrettyClickableAnchor } from '@components/common.styles'
+import { DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK } from '@lib/styles/colors'
 
-export const TitleLink = styled(Link)`
+export const TitleLinkContainer = styled(PrettyClickableAnchor)`
     ${PositionBase}
-    ${NoUnderlineEver}
     vertical-alignment: center;
+    
     img {
         float:left;
         margin-right:5px;
-        width:60px;
+        width: 60px;
     }
 
     h1 {
@@ -19,7 +18,7 @@ export const TitleLink = styled(Link)`
         font-size: 20px;
         line-height: 1;
         margin-top:20px;
-        margin-right: 30px;
+        margin-right: 2px;
         color: ${DEFAULT_BLACK_TRANSPARENT};
         
         &:hover {

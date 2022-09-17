@@ -1,6 +1,7 @@
 import React from 'react'
 import ConsoleHeader from './console-header'
-import PageBase from 'components/page-base'
+import PageBase from '@components/page-base'
+import ProtectedPage from '@components/protected-page'
 
 type ConsoleBaseProps = {
     children?: React.ReactNode
@@ -9,7 +10,7 @@ type ConsoleBaseProps = {
 }
 
 const ConsoleBase = ({ children, title, subtitle }: ConsoleBaseProps) => {
-    return <PageBase header={<ConsoleHeader/>} title={title} subtitle={subtitle}>{children}</PageBase>
+    return <ProtectedPage><PageBase header={<ConsoleHeader />} title={title} subtitle={subtitle}>{children}</PageBase></ProtectedPage>
 }
 
 export default ConsoleBase

@@ -1,12 +1,12 @@
 
 import React, { useState, useCallback } from 'react'
-import hummusClientService from 'lib/hummus-client/service'
-import { UserResponse } from 'lib/hummus-client/types'
+import hummusClientService from '@lib/hummus-client/service'
+import { UserResponse } from '@lib/hummus-client/types'
 
 interface IPrincipal {
     identity: (force?: Boolean) => Promise<Nullable<UserResponse>>
     setIdentity: (user: Nullable<UserResponse>) => void
-    hasIdentity: ()=> Boolean
+    hasIdentity: () => Boolean
 }
 
 export const PrincipalContext = React.createContext<IPrincipal>(null!)
@@ -16,7 +16,7 @@ export function PrincipalProvider({ children }: { children: React.ReactNode }) {
     const [ user, setUser ] = useState<Nullable<UserResponse>>(null)
 
     const identity = useCallback(async (force: Boolean = false) => {
-        if(!user || force) {
+        if (!user || force) {
             const newUser = await hummusClientService.getMe()
             setUser(newUser)
             return newUser
@@ -41,7 +41,7 @@ export function PrincipalProvider({ children }: { children: React.ReactNode }) {
     }
     return <PrincipalContext.Provider value={principal}>{children}</PrincipalContext.Provider>
 }
-  
+
 
 export function usePrincipal() {
     return React.useContext(PrincipalContext)

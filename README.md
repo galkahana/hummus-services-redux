@@ -1,3 +1,6 @@
+Note: this branch moved the frontend app to use nextjs instead of create react app. the main excuse is an insurance against create react app vanishing...as its releases
+are becoming scarse. however, nextjs does provide a few new problems which im not happy about...given i was only looking for an infra to deal with the webpack stuff for me...and not something that'll push it's agenda to my face, especially about ho dont run spa and out solution for static site seems like a side effect and actually we prefer that you run you frontend on a _full fledged server_ instead of the cheap option of running it from a damn bucket. plus there's this flicker i still need to solve. So...not merged at this point...but basically working with quirks almost completely sorted out.
+
 Welcome to hummus services. A simple SAAS over [hummus-reports](https://github.com/galkahana/hummus-reports), A layout engine using [hummus](https://github.com/galkahana/hummusjs) module to generate PDF files.
 
 Through the server API you can create PDF generation jobs and later download the resultant files. All with api tokens. There's also job management, accounting information and other useful stuff.
@@ -39,7 +42,7 @@ There's `backend` folder for the server and `frontend` for the web app.
 The `backend` folder has the hummus server backend code, as well as several scripts, including ./scripts/delete-timedout-files which is used as a cronjob to occasionally delete files that were marked with expiration date.
 
 
-`frontend` is a react application (created with create-react-app) implementing a console application for users to test jobs, review job history and their account details. This frontend can either be served from the server or separately as a static site.
+`frontend` is a react application (created with create-react-app and then converted to nextjs) implementing a console application for users to test jobs, review job history and their account details. This frontend can either be served from the server or separately as a static site.
 
 `deployment` holds either `manifests` or `helm` for either deployment methods. 
 
@@ -128,42 +131,45 @@ Make sure to call `sign in` which will get you tokens, and on occasion go `refre
 
 The frontend folder contains the frontend site for hummus services. 
 You can run the frontend either via the server or independently.
-The frontend site is based on create react app and it should be possible to also run it as a static site (ok...with a bit of redirects to index for site urls...as a spa).
+The frontend site is now based on NextJS, and even though such apps may be served from a node server, it should be possible to also run it as a static site, as a more affordable option...which is how the original create react app implementation allow you to run....and  again, is more affordable.
 
 
 When developing you can run the frontend dev server like this:
 
 ```bash
 cd frontend
-npm start
+npm run dev
 ```
 
 This will launch the react app on http://localhost:3000.  
-You can also debug the code from VSCode after this is done, if you are interested, by choosing the "Debug frontend (after npm start)" option.
-There's more options available with the react app, and they are all in the generated create react app documentation [here](./frontend/docs/create-react-app.md).
+You can also debug the code from VSCode after this is done, if you are interested, by choosing the "Debug frontend (after npm run dev)" option.
+There's more options available with the next app, and you can read about them up in next site.
 
-To be able to run the content from the backend, do the following:
+To be able to serve the content from the backend, do the following:
 ```bash
 cd frontend
 npm run build-on-backend
 ```
-This will build the frontend and copy it to a destination on the backend folder which will allow its serving via the root of the url. For example, if running the backend via dev, use http://localhost:8080 from the browser to view the UI.
+This will build the frontend ready to be served by the server and copy it to a destination on the backend folder which will allow its serving via the root of the url. For example, if running the backend via dev, use http://localhost:8080 from the browser to view the UI.
 
-Note that you can also view the built content running independently via the frontend with:
+Note that you can also view the built content in its static form running independently via the frontend with:
 ```bash
 cd frontend
-REACT_APP_API_URL="http://127.0.0.1:8080" npm run build
-npx serve -s build
+NEXT_PUBLIC_API_URL="http://127.0.0.1:8080" npm run build
+npx http-server out -p 3000
 ```
-(this uses the "serve" program installed as dev dependency in the frontend folder).
+
+The `npm run build` command, with the provided env var override, will create a static site from the app in the `out` folder, and later http-server (a dev dependency of this repo) is used to serve the site on port 3000. You should be able to visit this on http://localhost:3000.
+
+(note: originally i used `serve` utility to serve the site however it does not agree with the static nextjs setup and navigation was faulty, moving to the index.html file when intending to go to other links, so switched to `http-server` which behaves better).
 
 ## Env vars on client and special configuration
 The frontend app build is controlled by a small number of env vars that can be used to create a slightly different behavior.
 The default behavior of the app is set up by the .env and .env.development files in the frontend root. You can add .env.local with your own configuration to modify the local behvior prior to making it an official policy. 
 
 Here's a list of the available configuration vars:
-- `REACT_APP_API_URL` - The backend url to use as base for API calls. When developing locally this would be `"http://127.0.0.1:8080"`, which per the definition on `.env.development` is what's going to be on when running `npm start`. When building, unless you override this value, the end result site will assume that the api url is the same as the site url, and the value would be `""`. You can absolutely customize this value, to match where you'll end up running the server from in relation to the frontend site.
-- `REACT_APP_NO_BACKEND`, `REACT_APP_NO_BACKEND_PROJECT_URL` - Those env vars allow one to create a frontend site build that will NOT access the backend. This is useful for when i'm not wishing to pay for the backend run, but still want the documentation part of the site running (i mean the whole site...but the documentaiton is part of it). It will display a useful message pointing to the github repo for more instructions, when not being able to access the server. End result is that the site can be ran with no backend, still serving documentaiton, context, about n such...and providing useful info for what required the server. cool.
+- `NEXT_PUBLIC_API_URL` - The backend url to use as base for API calls. When developing locally this would be `"http://127.0.0.1:8080"`, which per the definition on `.env.development` is what's going to be on when running `npm run dev`. When building, unless you override this value, the end result site will assume that the api url is the same as the site url, and the value would be `""`. You can absolutely customize this value, to match where you'll end up running the server from in relation to the frontend site.
+- `NEXT_PUBLIC_NO_BACKEND`, `NEXT_PUBLIC_NO_BACKEND_PROJECT_URL` - Those env vars allow one to create a frontend site build that will NOT access the backend. This is useful for when i'm not wishing to pay for the backend run, but still want the documentation part of the site running (i mean the whole site...but the documentaiton is part of it). It will display a useful message pointing to the github repo for more instructions, when not being able to access the server. End result is that the site can be ran with no backend, still serving documentaiton, context, about n such...and providing useful info for what required the server. cool.
 
 To deal with configuration variances between environment when running the docker image, the current policy is to move the problem to runtime, and having the config info provided via a config query to the server as the site loads. see usage and definition of of `useConfig` to utilize per your requirements.
 
@@ -197,7 +203,7 @@ Point is to create && push a version tags (e.g. v1.0.3), and this will generate 
 Also - there's a commented out part there that will provide arm64 builds. You'll need that to run the images on your New macs. But it make a build of 3.5mts take an hour. There's some issues reported about this in the push github action...hopefully it'll resolve sometime.
 
 # Deployment
-The "deployment" folder of the project includes code that allows you to deploy the projec to a Kubernetes cluster. You're asking, why bother? well i already got a server here, and a cron job...and it's might nice to be able to just ship it a is.
+The "deployment" folder of the project includes code that allows you to deploy the project to a Kubernetes cluster. You're asking, why bother? well i already got a server here, and a cron job...and it's might nice to be able to just ship it a is.
 Started with manifests, then moved to using helm, and you can choose.
 
 There's instructions for minikube and gke below.

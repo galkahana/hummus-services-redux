@@ -30,12 +30,17 @@ export class StoredTokens {
     }
 
     private loadTokens() {
+        if (typeof localStorage == 'undefined')
+            return
         this._accessToken = localStorage.getItem('accessToken')
         this._refreshToken = localStorage.getItem('refreshToken')
     }
 
     private persistToken(value: Nullable<string>, key: string) {
-        if(value == null) {
+        if (typeof localStorage == 'undefined')
+            return
+
+        if (value == null) {
             localStorage.removeItem(key)
         }
         else {

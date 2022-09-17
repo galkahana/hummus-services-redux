@@ -9,21 +9,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faRefresh, faArrowLeft, faTrash, faCheckDouble } from '@fortawesome/free-solid-svg-icons'
 import DatePicker from 'react-datepicker'
 
-import hummusClientService from 'lib/hummus-client/service'
-import { GenerationJobsQuery, GenerationJobResponse, JobStatus } from 'lib/hummus-client/types'
-import { executeForAtLeast } from 'lib/async'
-import ConsoleBase from 'components/console-base'
-import JobsList from 'components/jobs-list'
-import { useToast } from 'components/toast'
-import { useModalAlert } from 'components/modal-alert/context'
-import { useModalConfirm } from 'components/modal-confirm/context'
-import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
+import hummusClientService from '@lib/hummus-client/service'
+import { GenerationJobsQuery, GenerationJobResponse, JobStatus } from '@lib/hummus-client/types'
+import { executeForAtLeast } from '@lib/async'
+import ConsoleBase from '@components/console-base'
+import JobsList from '@components/jobs-list'
+import { useToast } from '@components/toast'
+import { useModalAlert } from '@components/modal-alert/context'
+import { useModalConfirm } from '@components/modal-confirm/context'
+import { createEnhancedError } from '@lib/api-helpers/EnhancedError'
 
-import deletePDFImage from 'assets/delete-pdf.png'
+import deletePDFImage from '@assets/delete-pdf.png'
 
-import { JobsPage } from './jobs.styles'
-import { PrettyClickableDiv } from 'components/common.styles'
-import DynamicPagination from 'components/dynamic-pagination'
+import { JobsPage } from '../../pages-styles/jobs.styles'
+import { PrettyClickableDiv } from '@components/common.styles'
+import DynamicPagination from '@components/dynamic-pagination'
 
 
 const DOWN_THRESHOLD = 100
@@ -35,7 +35,7 @@ const ITEMS_PER_PAGE = 50
 const SIMPLE_PAGES_LIST_LIMIT = 9
 
 const getLastMonth = () => moment().subtract(1, 'month').toDate()
-const getToday = () => moment().toDate() 
+const getToday = () => moment().toDate()
 
 
 const Jobs = () => {
@@ -62,28 +62,28 @@ const Jobs = () => {
     const showToast = useToast()
     const showModalAlert = useModalAlert()
     const showModalConfirm = useModalConfirm()
-    
+
 
     const loadData = useCallback(async () => {
-        if(isFetchingData.current)
+        if (isFetchingData.current)
             return
         isFetchingData.current = true
         setSelectedJobs([])
 
         const params: GenerationJobsQuery = { full: true }
 
-        if(loadingSearchTerm.current)
+        if (loadingSearchTerm.current)
             params.searchTerm = loadingSearchTerm.current
 
-        if(loadingDateRange.current[0])
+        if (loadingDateRange.current[0])
             params.dateRangeFrom = moment(loadingDateRange.current[0]).startOf('day').toDate().toString() // inclusive on from 
 
-        if(loadingDateRange.current[1])
-            params.dateRangeTo =   moment(loadingDateRange.current[1]).endOf('day').toDate().toString()
+        if (loadingDateRange.current[1])
+            params.dateRangeTo = moment(loadingDateRange.current[1]).endOf('day').toDate().toString()
         try {
             const newJobs = await hummusClientService.getJobs(params)
             setJobs(newJobs)
-        } catch(ex) {
+        } catch (ex) {
             // maybe show something on error? maybe not
             showToast('Jobs fetching failed', 'Jobs')
         }
@@ -92,10 +92,10 @@ const Jobs = () => {
     }, [ showToast ])
 
     // update current per updates on the fields
-    useEffect(()=> {
+    useEffect(() => {
         loadingSearchTerm.current = searchTerm
     }, [ searchTerm ])
-    useEffect(()=> {
+    useEffect(() => {
         loadingDateRange.current = dateRange
     }, [ dateRange ])
 
@@ -106,7 +106,7 @@ const Jobs = () => {
     const refreshWithFormData = useCallback(() => {
         setIsRefreshing(true)
         // give us at least half a spin, so ppl know something was happening
-        executeForAtLeast(loadData(), MINIMAL_REFRESH_TIME).then(() =>{
+        executeForAtLeast(loadData(), MINIMAL_REFRESH_TIME).then(() => {
             setIsRefreshing(false)
         })
     }, [ loadData ])
@@ -118,11 +118,11 @@ const Jobs = () => {
 
     // loading data on date range submit
     useEffect(() => {
-        if(!didEdit.current)
+        if (!didEdit.current)
             return
 
         // only when it's complete (two dates)
-        if(dateRange[0] && dateRange[1])
+        if (dateRange[0] && dateRange[1])
             refreshWithFormData()
     }, [ refreshWithFormData, dateRange ])
 
@@ -136,10 +136,10 @@ const Jobs = () => {
 
     // loading data on search term change, after idle time had passed to avoid multiple refreshes while typing
     useEffect(() => {
-        if(!didEdit.current)
+        if (!didEdit.current)
             return
 
-        if(searchTermTypingIdleTimeout.current) {
+        if (searchTermTypingIdleTimeout.current) {
             clearTimeout(searchTermTypingIdleTimeout.current)
             searchTermTypingIdleTimeout.current = null
         }
@@ -161,15 +161,15 @@ const Jobs = () => {
     const onDatePickerChange = useCallback((newDates: [Nullable<Date>, Nullable<Date>]) => {
         didEdit.current = true
         setDateRange(newDates)
-    }, [ setDateRange ] )
+    }, [ setDateRange ])
 
     const onJobSelectionChanged = useCallback((selected: Boolean, job: GenerationJobResponse) => {
         setSelectedJobs((value) => {
             let newValue = value
-            if(selected && !value.includes(job))
+            if (selected && !value.includes(job))
                 newValue = [ ...value, job ]
-            else if(!selected && value.includes(job))
-                newValue = value.filter((selectedJob) => selectedJob !== job )
+            else if (!selected && value.includes(job))
+                newValue = value.filter((selectedJob) => selectedJob !== job)
             return newValue
         })
     }, [])
@@ -186,17 +186,17 @@ const Jobs = () => {
             setSelectedJobs(newSelectedJobs)
 
             showToast('Job file deleted', 'Jobs')
-        } catch(ex: unknown) {
+        } catch (ex: unknown) {
             showModalAlert(createEnhancedError(ex).getErrorMessage() || `The was an error deleting the file for job ${theJob.uid} but it won't tell us what it was.`, 'Job Page Error')
         }
     }, [ jobs, selectedJobs, showToast, showModalAlert ])
 
-    const onCancelSelectionClick = useCallback(()=> {
+    const onCancelSelectionClick = useCallback(() => {
         setSelectedJobs([])
     }, [ setSelectedJobs ])
 
     const onSelectAllClick = useCallback(() => {
-        if(jobs.length === selectedJobs.length)
+        if (jobs.length === selectedJobs.length)
             // ppl will naturally click it again when there's selected stuff...so just empty and don't argue
             setSelectedJobs([])
         else
@@ -206,7 +206,7 @@ const Jobs = () => {
 
     const onDeleteJobsClick = useCallback(async () => {
         const doesUserConfirm = await showModalConfirm(
-            `You are about to *permanenetly* delete the selected Job${selectedJobs.length > 1 ? 's':''}. This action cannot be undone.\n\nAre you sure that you want to continue?`,
+            `You are about to *permanenetly* delete the selected Job${selectedJobs.length > 1 ? 's' : ''}. This action cannot be undone.\n\nAre you sure that you want to continue?`,
             {
                 confirmTitle: 'Warning',
                 confirmText: 'Yes',
@@ -214,19 +214,19 @@ const Jobs = () => {
             }
         )
 
-        if(!doesUserConfirm)
+        if (!doesUserConfirm)
             return
 
 
         setIsDeletingJobs(true)
-        const jobIDs = selectedJobs.map((job)=> job.uid)
+        const jobIDs = selectedJobs.map((job) => job.uid)
         try {
             await hummusClientService.deleteJobs(jobIDs)
             // and update the lists
             setJobs(difference(jobs, selectedJobs))
             setSelectedJobs([])
-            showToast(`Job${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
-        } catch(ex: unknown) {
+            showToast(`Job${selectedJobs.length > 1 ? 's' : ''} deleted successfully`, 'Jobs')
+        } catch (ex: unknown) {
             showModalAlert(createEnhancedError(ex).getErrorMessage() || `The was an error deleting the jobs ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
         }
         setIsDeletingJobs(false)
@@ -235,7 +235,7 @@ const Jobs = () => {
 
     const onDeleteJobsFilesClick = useCallback(async () => {
         const doesUserConfirm = await showModalConfirm(
-            `You are about to *permanenetly* delete PDF file${selectedJobs.length > 1 ? 's':''} for the selected job${selectedJobs.length > 1 ? 's':''}. This action cannot be undone.\n\nAre you sure that you want to continue?`,
+            `You are about to *permanenetly* delete PDF file${selectedJobs.length > 1 ? 's' : ''} for the selected job${selectedJobs.length > 1 ? 's' : ''}. This action cannot be undone.\n\nAre you sure that you want to continue?`,
             {
                 confirmTitle: 'Warning',
                 confirmText: 'Yes',
@@ -243,19 +243,19 @@ const Jobs = () => {
             }
         )
 
-        if(!doesUserConfirm)
+        if (!doesUserConfirm)
             return
 
         setIsDeletingJobsFiles(true)
-        const jobIDs = selectedJobs.map((job)=> job.uid)
+        const jobIDs = selectedJobs.map((job) => job.uid)
         try {
             await hummusClientService.deleteFilesForJobs(jobIDs)
             // and update the lists
-            const newJobs = jobs.map((job) => selectedJobs.includes(job) ? { ...job, generatedFile: undefined }:job)
+            const newJobs = jobs.map((job) => selectedJobs.includes(job) ? { ...job, generatedFile: undefined } : job)
             setJobs(newJobs)
             setSelectedJobs([])
-            showToast(`Job${selectedJobs.length > 1 ?'s':''} file${selectedJobs.length > 1 ?'s':''} deleted successfully`, 'Jobs')
-        } catch(ex: unknown) {
+            showToast(`Job${selectedJobs.length > 1 ? 's' : ''} file${selectedJobs.length > 1 ? 's' : ''} deleted successfully`, 'Jobs')
+        } catch (ex: unknown) {
             showModalAlert(createEnhancedError(ex).getErrorMessage() || `The was an error deleting the jobs files for ${jobIDs} but it won't tell us what it was.`, 'Job Page Error')
         }
         setIsDeletingJobsFiles(false)
@@ -268,15 +268,15 @@ const Jobs = () => {
     // and now for some stickiness
     const onDocumentScroll = useCallback(() => {
         const jobsListElement = document.querySelector<HTMLDivElement>('.jobs-list')
-        if(!jobsListElement)
+        if (!jobsListElement)
             return
-        if(!isDetachingToolbar) {
-            if(document.documentElement.scrollTop > jobsListElement.offsetTop + DOWN_THRESHOLD) {
+        if (!isDetachingToolbar) {
+            if (document.documentElement.scrollTop > jobsListElement.offsetTop + DOWN_THRESHOLD) {
                 setIsDetachingToolbar(true)
             }
         }
         else {
-            if(document.documentElement.scrollTop <= jobsListElement.offsetTop + DOWN_THRESHOLD) {
+            if (document.documentElement.scrollTop <= jobsListElement.offsetTop + DOWN_THRESHOLD) {
                 setIsDetachingToolbar(false)
             }
         }
@@ -284,25 +284,25 @@ const Jobs = () => {
 
     useEffect(() => {
         document.addEventListener('scroll', onDocumentScroll)
-    
+
         return () => {
             document.removeEventListener('scroll', onDocumentScroll)
         }
-    }, [ onDocumentScroll ])    
+    }, [ onDocumentScroll ])
 
     // tracking jobs progress (not refreshing animation...just updating if there's updates)
     useEffect(() => {
         const jobsInProgress = jobs.filter((job) => job.status === JobStatus.JobInProgress)
-        if(jobsInProgress.length > 0) {
+        if (jobsInProgress.length > 0) {
             setTimeout(
                 async () => {
                     const currentJobsInProgress = jobs.filter((job) => job.status === JobStatus.JobInProgress)
                     try {
-                        const jobUpdates = await hummusClientService.getJobs({ in: currentJobsInProgress.map((job)=> job.uid), full: true })
-                        const jobUpdatesDict = jobUpdates.reduce((acc:{[key:string]: GenerationJobResponse}, job) => {acc[job.uid] = job; return acc}, {})
-                        setJobs(theJobs => theJobs.map((job)=> jobUpdatesDict[job.uid] ? jobUpdatesDict[job.uid]: job))                    
-                        setSelectedJobs(theJobs => theJobs.map((job)=> jobUpdatesDict[job.uid] ? jobUpdatesDict[job.uid]: job))
-                    } catch(ex: unknown) {
+                        const jobUpdates = await hummusClientService.getJobs({ in: currentJobsInProgress.map((job) => job.uid), full: true })
+                        const jobUpdatesDict = jobUpdates.reduce((acc: { [key: string]: GenerationJobResponse }, job) => { acc[job.uid] = job; return acc }, {})
+                        setJobs(theJobs => theJobs.map((job) => jobUpdatesDict[job.uid] ? jobUpdatesDict[job.uid] : job))
+                        setSelectedJobs(theJobs => theJobs.map((job) => jobUpdatesDict[job.uid] ? jobUpdatesDict[job.uid] : job))
+                    } catch (ex: unknown) {
                         // fail silently...nevermind
                         console.log(ex)
                     }
@@ -314,25 +314,25 @@ const Jobs = () => {
 
 
     // pagination list
-    const onPaginationPageChange = useCallback((value: number)=> {
+    const onPaginationPageChange = useCallback((value: number) => {
         setCurrentPage(value)
     }, [ setCurrentPage ])
 
     return <ConsoleBase title="Jobs" subtitle="Manage your PDF jobs">
         <JobsPage>
             <Container>
-                <div className={`toolbar ${selectedJobs.length > 0 ? 'selection':''} ${isDetachingToolbar ? 'detached container': ''}`}>
+                <div className={`toolbar ${selectedJobs.length > 0 ? 'selection' : ''} ${isDetachingToolbar ? 'detached container' : ''}`}>
                     <div className="toolbar-frame">
                         <div className="jobs-query-bar hide-when-selected">
                             <ButtonGroup className="refresh-group">
                                 <Button className="refresh" onClick={onRefreshClick}>
-                                    <FontAwesomeIcon className={isRefreshing ? 'refreshing':''} icon={isRefreshing? faRefresh:faSearch } />
+                                    <FontAwesomeIcon className={isRefreshing ? 'refreshing' : ''} icon={isRefreshing ? faRefresh : faSearch} />
                                 </Button>
                             </ButtonGroup>
                             <ButtonGroup className="search-group">
                                 <form onSubmit={onSearchSubmit}>
                                     <div className="search-bar-text">
-                                        <input type="text" value={searchTerm} placeholder="Search" onChange={onSearchChange}/>
+                                        <input type="text" value={searchTerm} placeholder="Search" onChange={onSearchChange} />
                                     </div>
                                 </form>
                             </ButtonGroup>
@@ -344,38 +344,38 @@ const Jobs = () => {
                                     endDate={dateRange[1]}
                                     todayButton={'Today'}
                                     showMonthDropdown={true}
-                                    showYearDropdown={true}                                
+                                    showYearDropdown={true}
                                     selectsRange
                                     isClearable
                                     placeholderText="jobs date range"
-                                />                
+                                />
                             </ButtonGroup>
                         </div>
                         <div className="selected-jobs-activity-bar hide-when-unselected">
                             <ButtonGroup className="selection-group">
                                 <PrettyClickableDiv className="cancel-selection" onClick={onCancelSelectionClick}>
-                                    <FontAwesomeIcon icon={faArrowLeft} className="icon"/>
-                                    <span>Cancel</span>                    
+                                    <FontAwesomeIcon icon={faArrowLeft} className="icon" />
+                                    <span>Cancel</span>
                                 </PrettyClickableDiv>
                                 <div className="selection-count">
                                     {selectedJobs.length} Selected
-                                </div> 
+                                </div>
                             </ButtonGroup>
-                            <ButtonGroup className="select-all-group">                             
+                            <ButtonGroup className="select-all-group">
                                 <Button className="btn-select-all" onClick={onSelectAllClick} title="select all">
                                     <FontAwesomeIcon icon={faCheckDouble} />
                                 </Button>
                             </ButtonGroup>
                             <ButtonGroup className="deleting-jobs-group">
                                 <Button className="btn-delete" onClick={onDeleteJobsClick}>
-                                    <FontAwesomeIcon className={isDeletingJobs ? 'refreshing':''} icon={isDeletingJobs? faRefresh:faTrash } />
+                                    <FontAwesomeIcon className={isDeletingJobs ? 'refreshing' : ''} icon={isDeletingJobs ? faRefresh : faTrash} />
                                 </Button>
                                 <Button className="btn-delete-files" onClick={onDeleteJobsFilesClick}>
                                     {
                                         isDeletingJobsFiles ? (
                                             <FontAwesomeIcon className="refreshing" icon={faRefresh} />
                                         ) : (
-                                            <span><img src={deletePDFImage} alt="delete pdf"/></span>
+                                            <span><img src={deletePDFImage.src} alt="delete pdf" /></span>
                                         )
                                     }
                                 </Button>
@@ -385,18 +385,18 @@ const Jobs = () => {
                 </div>
                 {jobs.length > ITEMS_PER_PAGE && (
                     <>
-                        <DynamicPagination 
-                            page={currentPage} 
-                            itemsCount={jobs.length} 
-                            onPageChange={onPaginationPageChange} 
-                            itemsPerPage={ITEMS_PER_PAGE} 
+                        <DynamicPagination
+                            page={currentPage}
+                            itemsCount={jobs.length}
+                            onPageChange={onPaginationPageChange}
+                            itemsPerPage={ITEMS_PER_PAGE}
                             simplePagesListLimit={SIMPLE_PAGES_LIST_LIMIT}
                         />
-                        <div>Job {currentPage*ITEMS_PER_PAGE+1} to {Math.min((currentPage+1)*(ITEMS_PER_PAGE), jobs.length)}:</div>
+                        <div>Job {currentPage * ITEMS_PER_PAGE + 1} to {Math.min((currentPage + 1) * (ITEMS_PER_PAGE), jobs.length)}:</div>
                     </>
                 )}
-                <JobsList jobs={jobs.slice(currentPage*ITEMS_PER_PAGE, (currentPage+1)*ITEMS_PER_PAGE)} onSelectionChanged={onJobSelectionChanged} onJobFileDeleteRequest={onJobFileDeleteRequest} selectedJobs={selectedJobs}/>
-            </Container>  
+                <JobsList jobs={jobs.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE)} onSelectionChanged={onJobSelectionChanged} onJobFileDeleteRequest={onJobFileDeleteRequest} selectedJobs={selectedJobs} />
+            </Container>
         </JobsPage>
     </ConsoleBase>
 }

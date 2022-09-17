@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { PrettyClickable } from 'components/common.styles'
+import { PrettyClickable } from '@components/common.styles'
 
 export const Caret = styled('button')`
     ${PrettyClickable}

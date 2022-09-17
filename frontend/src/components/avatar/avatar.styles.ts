@@ -1,4 +1,4 @@
-import { PositionBase } from 'components/common.styles'
+import { PositionBase } from '@components/common.styles'
 import styled from 'styled-components'
 
 

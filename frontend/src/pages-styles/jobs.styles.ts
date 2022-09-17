@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import { DEFAULT_BLACK, DEFAULT_BRIGHT_BLUE } from 'lib/styles/colors'
-import { PrettyClickable } from 'components/common.styles'
+import { DEFAULT_BLACK, DEFAULT_BRIGHT_BLUE } from '@lib/styles/colors'
+import { PrettyClickable } from '@components/common.styles'
 
 
 

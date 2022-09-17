@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { GenerationJobResponse } from 'lib/hummus-client/types'
-import { UnstyledList } from 'components/common.styles'
-import JobItem, { JobItemProps } from 'components/job-item'
+import { GenerationJobResponse } from '@lib/hummus-client/types'
+import { UnstyledList } from '@components/common.styles'
+import JobItem, { JobItemProps } from '@components/job-item'
 import { JobsListRoot } from './jobs-list.styles'
 
 type JobsListProps = {
@@ -20,7 +20,7 @@ const JobsList = ({ jobs, onSelectionChanged, onJobFileDeleteRequest, selectedJo
                     <li className="jobItem" key={job.uid}>
                         <JobItem job={job} onSelectionChanged={onSelectionChanged} onJobFileDeleteRequest={onJobFileDeleteRequest} selected={selectedJobs.includes(job)} />
                     </li>
-                ))   
+                ))
             }
         </UnstyledList>
     </JobsListRoot>

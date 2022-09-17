@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
-import { DEFAULT_GRAY_BORDER, DEFAULT_GRAY_BACKGROUND, DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK } from 'lib/styles/colors'
-import { Link } from 'react-router-dom'
+import { DEFAULT_GRAY_BORDER, DEFAULT_GRAY_BACKGROUND, DEFAULT_BLACK_TRANSPARENT, DEFAULT_BLACK } from '@lib/styles/colors'
+import Link from 'next/link'
 
 
 export const PositionBase = css`
@@ -51,16 +51,8 @@ export const PrettyClickableAnchor = styled.a`
     ${NoUnderlineEver}
 `
 
-export const PrettyClickableLink = styled(Link)`
-    ${PrettyClickable}
-    ${NoUnderlineEver}
-`
-
-
 export const NiceRedBadge = styled.span.attrs({ className: 'nice-red-badge' })`
     position: absolute;
-    top: -14px;
-    right: -14px;
     width: 40px;
     font: 14px/40px Helvetica, Arial, sans-serif;
     color: white;

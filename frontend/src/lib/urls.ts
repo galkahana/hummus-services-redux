@@ -1,2 +1,2 @@
-export const siteUrlRoot = window.location.protocol + '//' + window.location.host
-export const apiUrl = `${process.env.REACT_APP_API_URL || siteUrlRoot}/api`
+export const siteUrlRoot = typeof window !== 'undefined' ? window.location.protocol + '//' + window.location.host : ''
+export const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || siteUrlRoot}/api`

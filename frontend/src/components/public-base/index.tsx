@@ -1,6 +1,6 @@
 import React from 'react'
 import PublicHeader from './public-header'
-import PageBase from 'components/page-base'
+import PageBase from '@components/page-base'
 
 type PublicBaseProps = {
     children?: React.ReactNode
@@ -9,7 +9,7 @@ type PublicBaseProps = {
 }
 
 const PublicBase = ({ children, title, subtitle }: PublicBaseProps) => {
-    return <PageBase header={<PublicHeader/>} title={title} subtitle={subtitle}>{children}</PageBase>
+    return <PageBase header={<PublicHeader />} title={title} subtitle={subtitle}>{children}</PageBase>
 }
 
 export default PublicBase

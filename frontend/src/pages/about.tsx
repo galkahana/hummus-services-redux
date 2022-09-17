@@ -1,6 +1,6 @@
 import React from 'react'
 
-import PublicBase from 'components/public-base'
+import PublicBase from '@components/public-base'
 
 const About = () => {
     return <PublicBase>
@@ -26,7 +26,7 @@ const About = () => {
             <h1>More ...</h1>
 
             <p>PDFHummus services is powered by <a href="https://www.npmjs.com/package/hummus">HummusJS</a>, A NodeJS open source module for PDF generation and parsing. In turn it is dependent on the <a href="https://github.com/galkahana/PDF-Writer">PDFHummus C++ library</a> which has been around since 2011, serving many successful projects. </p>
-                
+
         </div>
     </PublicBase>
 

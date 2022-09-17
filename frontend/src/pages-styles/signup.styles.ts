@@ -1,4 +1,4 @@
-import { DefaultItemContainer } from 'components/common.styles'
+import { DefaultItemContainer } from '@components/common.styles'
 import styled from 'styled-components'
 
 

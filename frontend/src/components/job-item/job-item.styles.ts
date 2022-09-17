@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import { DEFAULT_BLACK, DEFAULT_BLACK_TRANSPARENT } from 'lib/styles/colors'
-import { DefaultItemContainer } from 'components/common.styles'
+import { DEFAULT_BLACK, DEFAULT_BLACK_TRANSPARENT } from '@lib/styles/colors'
+import { DefaultItemContainer } from '@components/common.styles'
 
 export const ItemContainer = styled.div`
     @keyframes waiting-to-error {

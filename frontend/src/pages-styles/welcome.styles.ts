@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { HUMMUS_COLOR } from 'lib/styles/colors'
+import { HUMMUS_COLOR } from '@lib/styles/colors'
 
 const Section = styled.div`
     text-align:center;
@@ -15,7 +15,7 @@ export const TitleSection = styled(Section)`
     }   
 `
 
-export const FeaturesSection =styled(Section)`
+export const FeaturesSection = styled(Section)`
     ul li {
         font-size:20px;
         margin: 0 10px;
