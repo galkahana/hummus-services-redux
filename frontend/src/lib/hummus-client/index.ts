@@ -1,16 +1,17 @@
-import { 
-    HummusClientTokensProvider, 
-    TokensResponse, 
-    UserResponse, 
-    GenerationJobResponse, 
-    JobStatus, 
-    TokensAPIResponse, 
-    GenerationJobsQuery, 
+import {
+    HummusClientTokensProvider,
+    TokensResponse,
+    UserResponse,
+    GenerationJobResponse,
+    JobStatus,
+    TokensAPIResponse,
+    GenerationJobsQuery,
     UserPatchInput,
     ResponseOK,
     CreateTokenAPIResponse,
     PlanUsageQuery,
-    PlanUsageResult
+    PlanUsageResult,
+    ConfigResponse
 } from './types'
 import axios, { AxiosResponse } from 'axios'
 import combine from 'lib/api-helpers/combine'
@@ -41,7 +42,7 @@ const renewLogin = (self: HummusClient) => () => {
 }
 
 const assertBackendAvailable = (self: HummusClient) => async<T>(call: () => Promise<T>) => {
-    if(self.noBackend)
+    if (self.noBackend)
         throw new Error(self.noBackendMessage)
 
     return await call()
@@ -82,20 +83,27 @@ export class HummusClient {
         this.tokensProvider = tokensProvider
     }
 
+    getConfig = this.unauthMWs(() => axios.get<ConfigResponse>(
+        `${this.apiUrl}/api/config`,
+        { headers: this.createUnauthorizedHeaders() }
+    ))
+
     signin = this.unauthMWs(
         (username: string, password: string, captcha?: string) => axios.post<TokensResponse>(
-            `${this.apiUrl}/api/authenticate/sign-in`, 
+            `${this.apiUrl}/api/authenticate/sign-in`,
             { username, password },
-            { headers: {
-                ...this.createUnauthorizedHeaders(),
-                ...(captcha ? { hmscpa: captcha } : {})
-            } }
+            {
+                headers: {
+                    ...this.createUnauthorizedHeaders(),
+                    ...(captcha ? { hmscpa: captcha } : {})
+                }
+            }
         )
     )
 
     signout = this.authMWs(
         (refreshToken: string) => axios.delete(
-            `${this.apiUrl}/api/authenticate/sign-out`, 
+            `${this.apiUrl}/api/authenticate/sign-out`,
             { data: { refreshToken }, headers: this.createAuthorizedHeaders() }
         )
     )
@@ -108,17 +116,19 @@ export class HummusClient {
                 email,
                 password
             },
-            { headers: {
-                ...this.createUnauthorizedHeaders(),
-                ...(captcha ? { hmscpa: captcha } : {})
-            } }
+            {
+                headers: {
+                    ...this.createUnauthorizedHeaders(),
+                    ...(captcha ? { hmscpa: captcha } : {})
+                }
+            }
         )
     )
 
     refreshToken = this.unauthMWs(
         (refreshToken: string) => axios.post<TokensResponse>(
-            `${this.apiUrl}/api/tokens/refresh`, 
-            null, 
+            `${this.apiUrl}/api/tokens/refresh`,
+            null,
             { headers: { ...this.createUnauthorizedHeaders(), 'Authorization': `Bearer ${refreshToken}` } }
         )
     )
@@ -135,8 +145,8 @@ export class HummusClient {
     idUrl = (url: string) => {
         const accessToken = this.tokensProvider?.getToken()
         // bearer parameter - https://github.com/jaredhanson/passport-http-bearer#issuing-tokens
-        return `${url}${accessToken ? ('?access_token=' + accessToken):''}`
-    }   
+        return `${url}${accessToken ? ('?access_token=' + accessToken) : ''}`
+    }
 
     getGeneratedFileDownloadUrl = (generatedFileId: string) => {
         return this.idUrl(`${this.apiUrl}/api/generated-files/${generatedFileId}/download`)
@@ -160,7 +170,7 @@ export class HummusClient {
     )
 
     getJob = this.authMWs(
-        (jobId: string, full: Boolean = false) => axios.get<GenerationJobResponse>(`${this.apiUrl}/api/generation-jobs/${jobId}`, { params:{ full }, headers: this.createAuthorizedHeaders() })
+        (jobId: string, full: Boolean = false) => axios.get<GenerationJobResponse>(`${this.apiUrl}/api/generation-jobs/${jobId}`, { params: { full }, headers: this.createAuthorizedHeaders() })
     )
 
     getTokens = this.authMWs(
@@ -177,7 +187,7 @@ export class HummusClient {
 
     patchPublicAPIToken = this.authMWs(
         (restrictedDomains?: Nullable<string[]>) => axios.post<ResponseOK>(`${this.apiUrl}/api/tokens/patch`, { 'role': 'JobCreator', restrictedDomains }, { headers: this.createAuthorizedHeaders() })
-    )    
+    )
 
     deletePrivateAPIToken = this.authMWs(
         () => axios.post<ResponseOK>(`${this.apiUrl}/api/tokens/revoke`, { 'role': 'JobManager' }, { headers: this.createAuthorizedHeaders() })
@@ -189,19 +199,19 @@ export class HummusClient {
 
 
     getJobs = this.authMWs(
-        (params: GenerationJobsQuery) => axios.get<GenerationJobResponse[]>(`${this.apiUrl}/api/generation-jobs`, { params,  headers: this.createAuthorizedHeaders() })
+        (params: GenerationJobsQuery) => axios.get<GenerationJobResponse[]>(`${this.apiUrl}/api/generation-jobs`, { params, headers: this.createAuthorizedHeaders() })
     )
 
     deleteFilesForJobs = this.authMWs(
         (jobIDs: string[]) => axios.post<ResponseOK>(`${this.apiUrl}/api/generation-jobs/delete-files`, { items: jobIDs }, { headers: this.createAuthorizedHeaders() })
     )
-        
+
     deleteJobs = this.authMWs(
         (jobIDs: string[]) => axios.post<ResponseOK>(`${this.apiUrl}/api/generation-jobs/delete-jobs`, { items: jobIDs }, { headers: this.createAuthorizedHeaders() })
     )
 
     getUserPlanUsage = this.authMWs(
-        (params: PlanUsageQuery) => axios.get<PlanUsageResult>(`${this.apiUrl}/api/users/me/plan-usage`, { params,  headers: this.createAuthorizedHeaders() })
+        (params: PlanUsageQuery) => axios.get<PlanUsageResult>(`${this.apiUrl}/api/users/me/plan-usage`, { params, headers: this.createAuthorizedHeaders() })
     )
 
     changeUsername = this.authMWs(
@@ -210,22 +220,22 @@ export class HummusClient {
 
     changePassword = this.authMWs(
         (oldPassword: string, newPassword) => axios.post<ResponseOK>(`${this.apiUrl}/api/users/me/change-password`, { oldPassword, newPassword }, { headers: this.createAuthorizedHeaders() })
-    )    
+    )
 
     async generatePDFDocument(ticket: object) { // at some point i'll want to type it more seriously...i do have this useful definition in the backend after all
         let generationJob = await this.createJob(ticket)
 
-        while(generationJob.status === JobStatus.JobInProgress) {
+        while (generationJob.status === JobStatus.JobInProgress) {
             await sleep(JOB_STATUS_CHECK_PERIOD)
             generationJob = await this.getJob(generationJob.uid, true)
         }
 
-        if(generationJob.status === JobStatus.JobFailed || !generationJob.generatedFileObject) {
+        if (generationJob.status === JobStatus.JobFailed || !generationJob.generatedFileObject) {
             throw Error(generationJob.statusMessage || 'Job failed (and there\'s probably a good explanation somewhere)')
         }
 
         const generatedFile = generationJob.generatedFileObject
-        if(generatedFile.publicDownloadId) {
+        if (generatedFile.publicDownloadId) {
             // just for kicks, use public url if the file is public. otherwise use download with active access token
             return {
                 embed: this.getPublicGeneratedFileEmbedUrl(generatedFile.publicDownloadId),

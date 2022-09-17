@@ -13,7 +13,7 @@ import { usePrincipal } from 'lib/principal'
 import PublicBase from 'components/public-base'
 import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
 import { SignupPage } from './signup.styles'
-import config from 'lib/config'
+import { useConfig } from 'lib/config'
 
 const Signup = () => {
     const [ username, setUsername ] = useState<string>('')
@@ -24,13 +24,14 @@ const Signup = () => {
     const [ formSubmitted, setFormSubmitted ] = useState(false)
     const [ waitingOnSignup, setWaitingOnSignup ] = useState(false)
     const catpchaElement = useRef<Reaptcha>()
+    const config = useConfig()
 
     const showModalAlert = useModalAlert()
     const showToast = useToast()
     const principal = usePrincipal()
     const navigate = useNavigate()
 
-    const captchaAvailable = Boolean(config.captchaSiteKey)
+    const captchaAvailable = Boolean(config?.captchaSiteKey)
 
     const onSetCaptchaRef = (element: Reaptcha) => {
         catpchaElement.current = element
@@ -122,7 +123,7 @@ const Signup = () => {
                         </Form.Group>
                         {captchaAvailable &&
                             <Form.Group>
-                                <Reaptcha ref={onSetCaptchaRef} sitekey={config.captchaSiteKey} onVerify={onCaptchaChange}/>
+                                <Reaptcha ref={onSetCaptchaRef} sitekey={config?.captchaSiteKey} onVerify={onCaptchaChange}/>
                                 <Form.Control required isInvalid={(!captcha) && formSubmitted} value={captcha || ''} type="hidden"/>
                                 <Form.Control.Feedback type="invalid">
                                         Please mark that you are <strong>not</strong> a robot

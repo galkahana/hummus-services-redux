@@ -8,6 +8,7 @@ import * as generatedFilesController from '@controllers/generated-files'
 import * as tokensController from '@controllers/tokens'
 import * as usersController from '@controllers/users'
 import * as accountingController from '@controllers/accounting'
+import * as configController from '@controllers/config'
 import { Resources, Actions } from '@lib/authorization/rbac'
 import * as authenticate from '@middlewares/authenticate'
 import { authorizeOwn } from '@middlewares/authorize'
@@ -57,6 +58,8 @@ router.route('/tokens/revoke')
 router.route('/tokens/patch')
     .post(authenticate.authenticateOrDie, authorizeOwn(Resources.Token, Actions.Update), asyncHandler(tokensController.patch))
 
+router.route('/config')
+    .get(asyncHandler(configController.show))
 
 router.route('/authenticate/sign-in')
     .post(checkCaptcha, authenticate.login, asyncHandler(authenticationController.signIn))
