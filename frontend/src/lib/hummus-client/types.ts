@@ -15,7 +15,7 @@ export type TokensResponse = {
 
 export enum UserStatus {
     Trial = 'trial',
-    Full =  'full'
+    Full = 'full'
 }
 
 export type UserResponse = {
@@ -52,7 +52,7 @@ export type GenerationJobResponse = {
     updatedAt: Date
     generatedFile?: string
     generatedFileObject?: Nullable<GeneratedFileResponse>
-    
+
 }
 
 export type GeneratedFileResponse = {
@@ -61,7 +61,7 @@ export type GeneratedFileResponse = {
     publicDownloadId?: string
     fileSize: number
     createdAt: Date
-    updatedAt: Date    
+    updatedAt: Date
 }
 
 export type TokenData = {
@@ -96,9 +96,15 @@ export type PlanUsageQuery = {
 }
 
 export type PlanUsageResult = {
-    generation: {size: number, count: number},
-    download: {size: number, count: number},
+    generation: { size: number, count: number },
+    download: { size: number, count: number },
     totalStorageSize: number,
     from: Date,
     to: Date
+}
+
+export type ConfigResponse = {
+    captchaSiteKey: string,
+    joinEmail: string,
+    supportEmail: string
 }

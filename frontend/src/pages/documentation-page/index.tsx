@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PublicBase from 'components/public-base'
 import { Outlet } from 'react-router-dom'
 import Container from 'react-bootstrap/Container'
@@ -7,12 +7,19 @@ import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 
 import { siteUrlRoot, apiUrl } from 'lib/urls'
-import config from 'lib/config'
+import { useConfig } from 'lib/config'
 
 import { Content } from './documentation-page.styles'
 
 
 const DocumentationPage = () => {
+    const [ values, setValues ] = useState({})
+    const config = useConfig()
+
+    useEffect (()=> {
+        setValues({ siteUrlRoot, apiUrl, joinEmail: config?.joinEmail })
+    }, [ config ])
+
     return (
         <PublicBase>
             <Content>
@@ -48,7 +55,7 @@ const DocumentationPage = () => {
                     
                     </Navbar>
                     <div className="documentation-content">
-                        <Outlet context={{ values:{ siteUrlRoot, apiUrl, joinEmail: config.joinEmail } }}/>
+                        <Outlet context={{ values }}/>
                     </div>
                 </Container>
             </Content>

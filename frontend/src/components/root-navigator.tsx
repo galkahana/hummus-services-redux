@@ -23,6 +23,7 @@ import { PrincipalProvider } from 'lib/principal'
 import { ModalAlertProvider } from './modal-alert/context'
 import { ModalConfirmProvider } from './modal-confirm/context'
 import { ToastProvider } from './toast'
+import { ConfigProvider } from 'lib/config'
 
 const NoMatch = lazy(() => import('components/no-match'))
 const ProtectedPage = lazy(() => import('components/protected-page'))
@@ -62,51 +63,53 @@ const RootNavigator = () => {
     
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <PrincipalProvider>
-                <ToastProvider>
-                    <ModalAlertProvider>
-                        <ModalConfirmProvider>
-                            <Routes>
-                                <Route path="/" element={<Welcome/>}/>
-                                <Route path="about" element={<About/>}/>
-                                <Route path="contact" element={<Contact/>}/>
-                                <Route path="login" element={<Login/>}/>
-                                <Route path="signup" element={<Signup/>}/>
-                                <Route path="console">
-                                    <Route index element={<ProtectedPage><Home/></ProtectedPage>}/>
-                                    <Route path="playground" element={<ProtectedPage><Playground/></ProtectedPage>}/>
-                                    <Route path="jobs" element={<ProtectedPage><Jobs/></ProtectedPage>}/>
-                                    <Route path="account" element={<ProtectedPage><Account/></ProtectedPage>}/>
-                                </Route>
-                                <Route path="documentation" element={<DocumentationPage/>}>
-                                    <Route index element={<MarkdownPage src={introduction}/>}/>
-                                    <Route path="getting-started" element={<MarkdownPage src={gettingStarted}/>}/>
-                                    <Route path="api">
-                                        <Route index element={<MarkdownPage src={apiRefrence}/>}/>
-                                        <Route path="browser" element={<MarkdownPage src={apiRefrenceBrowser}/>}/>
-                                        <Route path="nodejs" element={<MarkdownPage src={apiRefrenceNodejs}/>}/>
-                                        <Route path="http" element={<MarkdownPage src={apiRefrenceHTTP}/>}/>
+            <ConfigProvider>
+                <PrincipalProvider>
+                    <ToastProvider>
+                        <ModalAlertProvider>
+                            <ModalConfirmProvider>
+                                <Routes>
+                                    <Route path="/" element={<Welcome/>}/>
+                                    <Route path="about" element={<About/>}/>
+                                    <Route path="contact" element={<Contact/>}/>
+                                    <Route path="login" element={<Login/>}/>
+                                    <Route path="signup" element={<Signup/>}/>
+                                    <Route path="console">
+                                        <Route index element={<ProtectedPage><Home/></ProtectedPage>}/>
+                                        <Route path="playground" element={<ProtectedPage><Playground/></ProtectedPage>}/>
+                                        <Route path="jobs" element={<ProtectedPage><Jobs/></ProtectedPage>}/>
+                                        <Route path="account" element={<ProtectedPage><Account/></ProtectedPage>}/>
                                     </Route>
-                                    <Route path="job-ticket">
-                                        <Route index element={<MarkdownPage src={jobTickt}/>}/>
-                                        <Route path="boxes" element={<MarkdownPage src={hummusReportsJobTicketBoxes}/>}/>
-                                        <Route path="document" element={<MarkdownPage src={hummusReportsJobTicketDocument}/>}/>
-                                        <Route path="images" element={<MarkdownPage src={hummusReportsJobTicketImages}/>}/>
-                                        <Route path="modification" element={<MarkdownPage src={hummusReportsJobTicketModicifation}/>}/>
-                                        <Route path="pages" element={<MarkdownPage src={hummusReportsJobTicketPages}/>}/>
-                                        <Route path="protection" element={<MarkdownPage src={hummusReportsJobTicketProtection}/>}/>
-                                        <Route path="shapes" element={<MarkdownPage src={hummusReportsJobTicketShapes}/>}/>
-                                        <Route path="streams" element={<MarkdownPage src={hummusReportsJobTicketStreams}/>}/>
-                                        <Route path="text" element={<MarkdownPage src={hummusReportsJobTicketText}/>}/>
-                                    </Route>
+                                    <Route path="documentation" element={<DocumentationPage/>}>
+                                        <Route index element={<MarkdownPage src={introduction}/>}/>
+                                        <Route path="getting-started" element={<MarkdownPage src={gettingStarted}/>}/>
+                                        <Route path="api">
+                                            <Route index element={<MarkdownPage src={apiRefrence}/>}/>
+                                            <Route path="browser" element={<MarkdownPage src={apiRefrenceBrowser}/>}/>
+                                            <Route path="nodejs" element={<MarkdownPage src={apiRefrenceNodejs}/>}/>
+                                            <Route path="http" element={<MarkdownPage src={apiRefrenceHTTP}/>}/>
+                                        </Route>
+                                        <Route path="job-ticket">
+                                            <Route index element={<MarkdownPage src={jobTickt}/>}/>
+                                            <Route path="boxes" element={<MarkdownPage src={hummusReportsJobTicketBoxes}/>}/>
+                                            <Route path="document" element={<MarkdownPage src={hummusReportsJobTicketDocument}/>}/>
+                                            <Route path="images" element={<MarkdownPage src={hummusReportsJobTicketImages}/>}/>
+                                            <Route path="modification" element={<MarkdownPage src={hummusReportsJobTicketModicifation}/>}/>
+                                            <Route path="pages" element={<MarkdownPage src={hummusReportsJobTicketPages}/>}/>
+                                            <Route path="protection" element={<MarkdownPage src={hummusReportsJobTicketProtection}/>}/>
+                                            <Route path="shapes" element={<MarkdownPage src={hummusReportsJobTicketShapes}/>}/>
+                                            <Route path="streams" element={<MarkdownPage src={hummusReportsJobTicketStreams}/>}/>
+                                            <Route path="text" element={<MarkdownPage src={hummusReportsJobTicketText}/>}/>
+                                        </Route>
 
-                                </Route>
-                                <Route path="*" element={<NoMatch/>}/>
-                            </Routes>
-                        </ModalConfirmProvider>
-                    </ModalAlertProvider>
-                </ToastProvider>
-            </PrincipalProvider>
+                                    </Route>
+                                    <Route path="*" element={<NoMatch/>}/>
+                                </Routes>
+                            </ModalConfirmProvider>
+                        </ModalAlertProvider>
+                    </ToastProvider>
+                </PrincipalProvider>
+            </ConfigProvider>
         </Suspense>
     )
 }

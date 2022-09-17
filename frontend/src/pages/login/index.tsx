@@ -13,7 +13,7 @@ import {
     LoginFormContainer,
 } from './login.styles'
 import { useModalAlert } from 'components/modal-alert/context'
-import config from 'lib/config'
+import { useConfig } from 'lib/config'
 
 // Something missing in history def...and we don't have to just take it.
 class Location {
@@ -36,8 +36,9 @@ const Login = () => {
     const principal = usePrincipal()
     const location = useLocation() as Location
     const showModalAlert = useModalAlert()
+    const config = useConfig()
 
-    const captchaAvailable = Boolean(config.captchaSiteKey)
+    const captchaAvailable = Boolean(config?.captchaSiteKey)
 
     const to = location.state?.from?.pathname || '/console'
 
@@ -112,7 +113,7 @@ const Login = () => {
                     </Form.Group>
                     {captchaAvailable &&
                         <Form.Group>
-                            <Reaptcha ref={onSetCaptchaRef} sitekey={config.captchaSiteKey} onVerify={onCaptchaChange}/>
+                            <Reaptcha ref={onSetCaptchaRef} sitekey={config?.captchaSiteKey} onVerify={onCaptchaChange}/>
                             <Form.Control required value={captcha} type="text" className="d-none"/>
                             <Form.Control.Feedback type="invalid">
                                     Please mark that you are <strong>not</strong> a robot

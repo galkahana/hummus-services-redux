@@ -39,7 +39,7 @@ There's `backend` folder for the server and `frontend` for the web app.
 The `backend` folder has the hummus server backend code, as well as several scripts, including ./scripts/delete-timedout-files which is used as a cronjob to occasionally delete files that were marked with expiration date.
 
 
-`frontend` is a react application (created with create-react-app) implementing a console application for users to test jobs, review job history and their account details.
+`frontend` is a react application (created with create-react-app) implementing a console application for users to test jobs, review job history and their account details. This frontend can either be served from the server or separately as a static site.
 
 `deployment` holds either `manifests` or `helm` for either deployment methods. 
 
@@ -127,14 +127,11 @@ Make sure to call `sign in` which will get you tokens, and on occasion go `refre
 # Running the frontend
 
 The frontend folder contains the frontend site for hummus services. 
-There are several methods of running the frontend in the dev environment:
-- As an independent app making api calls to the backend server
-- As served content from the backend
+You can run the frontend either via the server or independently.
+The frontend site is based on create react app and it should be possible to also run it as a static site (ok...with a bit of redirects to index for site urls...as a spa).
 
 
-You would normally choose the first option when working on developing the frontend, and the latter option only to make sure the it works when served...which is how it will be in its final built form.
-
-To run as an independent app:
+When developing you can run the frontend dev server like this:
 
 ```bash
 cd frontend
@@ -155,24 +152,24 @@ This will build the frontend and copy it to a destination on the backend folder 
 Note that you can also view the built content running independently via the frontend with:
 ```bash
 cd frontend
-npm run build
+REACT_APP_API_URL="http://127.0.0.1:8080" npm run build
 npx serve -s build
 ```
 (this uses the "serve" program installed as dev dependency in the frontend folder).
 
-## Env vars on client
-There's no env vars that you need to define on the client code. Nothing. 
-So this section is about what you may see and interpret as env vars and how client side configuration is achieved anyways.
+## Env vars on client and special configuration
+The frontend app build is controlled by a small number of env vars that can be used to create a slightly different behavior.
+The default behavior of the app is set up by the .env and .env.development files in the frontend root. You can add .env.local with your own configuration to modify the local behvior prior to making it an official policy. 
 
-The frontend project defines a single env var in either it's `.env` or `.env.development` files and it is `REACT_APP_API_URL`. It's intended to allow the frontend to work with the backend while developin, as well as if you decide to separate the backend from the frontend. 
-So in `.env.development` it's value is `"http://127.0.0.1:8080"`, pointing to your backend service, and in `.env` it's set to `""` cause the frontend is served from backend and so they share the url.
+Here's a list of the available configuration vars:
+- `REACT_APP_API_URL` - The backend url to use as base for API calls. When developing locally this would be `"http://127.0.0.1:8080"`, which per the definition on `.env.development` is what's going to be on when running `npm start`. When building, unless you override this value, the end result site will assume that the api url is the same as the site url, and the value would be `""`. You can absolutely customize this value, to match where you'll end up running the server from in relation to the frontend site.
+- `REACT_APP_NO_BACKEND`, `REACT_APP_NO_BACKEND_PROJECT_URL` - Those env vars allow one to create a frontend site build that will NOT access the backend. This is useful for when i'm not wishing to pay for the backend run, but still want the documentation part of the site running (i mean the whole site...but the documentaiton is part of it). It will display a useful message pointing to the github repo for more instructions, when not being able to access the server. End result is that the site can be ran with no backend, still serving documentaiton, context, about n such...and providing useful info for what required the server. cool.
 
-That's it.
-Any other configuration is provided by the `index.html` page including a `config.js` script which is rendered (as a mustache rendering engine view) on the server side providing what configuration is necessary. Note that anything you put in here is visible to anyone...so don't expose here what shouldn't be exposed.
-
-Doing the env vars injection this way for the client code, as opposed to requiring actual env vars allows building a docker image for the whole server without build vars, which were otherwise required while building the frontend part. So it's the same image for all environments, and you only need to provide env vars for running it. makes it easy to reuse it. Note that if you are running frontend separately from the backend, you can create an image without the frontend, and so avoid requiring the dynamic config via `config.js` to retain an env-indepentent image.
+To deal with configuration variances between environment when running the docker image, the current policy is to move the problem to runtime, and having the config info provided via a config query to the server as the site loads. see usage and definition of of `useConfig` to utilize per your requirements.
 
 # Build a docker image
+
+The default docker image build creates a server that handles both the backend and serving the frontend site. If you want to bulid a server that ONLY serves the backend provide a `FRONTEND_BUILDER_SOURCE` build arg with the value of `none` (`--build-arg FRONTEND_BUILDER_SOURCE=none`).
 
 ## Building locally
 
