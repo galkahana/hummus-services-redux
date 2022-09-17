@@ -61,9 +61,6 @@ router.route('/tokens/patch')
 router.route('/config')
     .get(asyncHandler(configController.show))
 
-router.route('/config')
-    .get(asyncHandler(configController.show))
-
 router.route('/authenticate/sign-in')
     .post(checkCaptcha, authenticate.login, asyncHandler(authenticationController.signIn))
 router.route('/authenticate/sign-out')
