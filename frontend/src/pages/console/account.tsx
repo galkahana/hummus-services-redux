@@ -9,7 +9,7 @@ import GeneralPanel from '@components/general-panel'
 import APIKeysPanel from '@components/api-keys-panel'
 import PlanPanel from '@components/plan-panel'
 
-import { AccountPage } from '../../pages-styles/account.styles'
+import { AccountPage } from '@pages-styles/account.styles'
 
 const Account = () => {
     return (

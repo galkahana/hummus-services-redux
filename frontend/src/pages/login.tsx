@@ -11,16 +11,16 @@ import { usePrincipal } from '@lib/principal'
 import { createEnhancedError } from '@lib/api-helpers/EnhancedError'
 import {
     LoginFormContainer,
-} from '../pages-styles/login.styles'
+} from '@pages-styles/login.styles'
 import { useModalAlert } from '@components/modal-alert/context'
 import { useConfig } from '@lib/config'
 
 const Login = () => {
-    const [username, setUsername] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
-    const [captcha, setCaptcha] = useState<string>()
-    const [waiting, setWaiting] = useState<boolean>(false)
-    const [loginValidated, setLoginValidated] = useState(false)
+    const [ username, setUsername ] = useState<string>('')
+    const [ password, setPassword ] = useState<string>('')
+    const [ captcha, setCaptcha ] = useState<string>()
+    const [ waiting, setWaiting ] = useState<boolean>(false)
+    const [ loginValidated, setLoginValidated ] = useState(false)
     const catpchaElement = useRef<Reaptcha>()
     const router = useRouter()
     const principal = usePrincipal()

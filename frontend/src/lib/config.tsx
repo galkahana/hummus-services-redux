@@ -8,7 +8,7 @@ export const ConfigContext = React.createContext<Nullable<ConfigResponse>>(null!
 
 
 export function ConfigProvider({ children }: { children: React.ReactNode }) {
-    const [config, setConfig] = useState<Nullable<ConfigResponse>>(null)
+    const [ config, setConfig ] = useState<Nullable<ConfigResponse>>(null)
 
     useEffect(() => {
         hummusClientService.getConfig().then((value) => setConfig(value)).catch((ex) => console.log(ex))

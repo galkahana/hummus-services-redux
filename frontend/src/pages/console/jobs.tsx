@@ -21,7 +21,7 @@ import { createEnhancedError } from '@lib/api-helpers/EnhancedError'
 
 import deletePDFImage from '@assets/delete-pdf.png'
 
-import { JobsPage } from '../../pages-styles/jobs.styles'
+import { JobsPage } from '@pages-styles/jobs.styles'
 import { PrettyClickableDiv } from '@components/common.styles'
 import DynamicPagination from '@components/dynamic-pagination'
 

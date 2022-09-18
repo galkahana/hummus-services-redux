@@ -9,12 +9,13 @@ import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import { GetStaticProps, GetStaticPaths } from 'next'
 import { SSRProvider } from 'react-bootstrap'
-import mustache from '@lib/mustache'
+import Link from 'next/link'
 
+import mustache from '@lib/mustache'
 import { siteUrlRoot, apiUrl } from '@lib/urls'
 import { useConfig } from '@lib/config'
 
-import { Content } from '../../pages-styles/documentation-page.styles'
+import { Content } from '@pages-styles/documentation-page.styles'
 import MarkdownPage from '@components/markdown-page'
 
 type DocumentationPageProps = {
@@ -41,25 +42,25 @@ const DocumentationPage = ({ content }: DocumentationPageProps) => {
 
                             <Navbar.Collapse id="responsive-navbar-nav">
                                 <Nav>
-                                    <Nav.Link href="/documentation/">Introduction</Nav.Link>
-                                    <Nav.Link href="/documentation/getting-started">Getting Started</Nav.Link>
-                                    <Nav.Link href="/documentation/api/">API Reference</Nav.Link>
+                                    <Link href="/documentation/" passHref><Nav.Link>Introduction</Nav.Link></Link>
+                                    <Link href="/documentation/getting-started/" passHref><Nav.Link>Getting Started</Nav.Link></Link>
+                                    <Link href="/documentation/api/" passHref><Nav.Link>API Reference</Nav.Link></Link>
                                     <NavDropdown title="" className="api-dropdown">
-                                        <Nav.Link href="/documentation/api/browser">Browser</Nav.Link>
-                                        <Nav.Link href="/documentation/api/nodejs">NodeJS</Nav.Link>
-                                        <Nav.Link href="/documentation/api/http">HTTP</Nav.Link>
+                                        <Link href="/documentation/api/browser/" passHref><Nav.Link>Browser</Nav.Link></Link>
+                                        <Link href="/documentation/api/nodejs/" passHref><Nav.Link>NodeJS</Nav.Link></Link>
+                                        <Link href="/documentation/api/http/" passHref><Nav.Link>HTTP</Nav.Link></Link>
                                     </NavDropdown>
-                                    <Nav.Link href="/documentation/job-ticket/">Job Ticket Reference</Nav.Link>
+                                    <Link href="/documentation/job-ticket/" passHref><Nav.Link>Job Ticket Reference</Nav.Link></Link>
                                     <NavDropdown title="" className="job-ticket-dropdown">
-                                        <Nav.Link href="/documentation/job-ticket/document">Document</Nav.Link>
-                                        <Nav.Link href="/documentation/job-ticket/pages">Pages</Nav.Link>
-                                        <Nav.Link href="/documentation/job-ticket/boxes">Boxes</Nav.Link>
-                                        <Nav.Link href="/documentation/job-ticket/text">Text</Nav.Link>
-                                        <Nav.Link href="/documentation/job-ticket/shapes">Shapes</Nav.Link>
-                                        <Nav.Link href="/documentation/job-ticket/images">Images</Nav.Link>
-                                        <Nav.Link href="/documentation/job-ticket/streams">Streams</Nav.Link>
-                                        <Nav.Link href="/documentation/job-ticket/protection">Password Protection</Nav.Link>
-                                        <Nav.Link href="/documentation/job-ticket/modification">Modify Existing PDFs</Nav.Link>
+                                        <Link href="/documentation/job-ticket/document/" passHref><Nav.Link>Document</Nav.Link></Link>
+                                        <Link href="/documentation/job-ticket/pages/" passHref><Nav.Link>Pages</Nav.Link></Link>
+                                        <Link href="/documentation/job-ticket/boxes/" passHref><Nav.Link>Boxes</Nav.Link></Link>
+                                        <Link href="/documentation/job-ticket/text/" passHref><Nav.Link>Text</Nav.Link></Link>
+                                        <Link href="/documentation/job-ticket/shapes/" passHref><Nav.Link>Shapes</Nav.Link></Link>
+                                        <Link href="/documentation/job-ticket/images/" passHref><Nav.Link>Images</Nav.Link></Link>
+                                        <Link href="/documentation/job-ticket/streams/" passHref><Nav.Link>Streams</Nav.Link></Link>
+                                        <Link href="/documentation/job-ticket/protection/" passHref><Nav.Link>Password Protection</Nav.Link></Link>
+                                        <Link href="/documentation/job-ticket/modification/" passHref><Nav.Link>Modify Existing PDFs</Nav.Link></Link>
                                     </NavDropdown>
                                 </Nav>
                             </Navbar.Collapse>
@@ -88,7 +89,7 @@ const PATHES_TO_MDS: { [key: string]: string } = {
     'job-ticket/boxes': 'hummus-reports/job-ticket-boxes.md',
     'job-ticket/document': 'hummus-reports/job-ticket-document.md',
     'job-ticket/images': 'hummus-reports/job-ticket-images.md',
-    'job-ticket/modificaiton': 'hummus-reports/job-ticket-modification.md',
+    'job-ticket/modification': 'hummus-reports/job-ticket-modification.md',
     'job-ticket/pages': 'hummus-reports/job-ticket-pages.md',
     'job-ticket/protection': 'hummus-reports/job-ticket-protection.md',
     'job-ticket/shapes': 'hummus-reports/job-ticket-shapes.md',

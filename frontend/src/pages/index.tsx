@@ -11,7 +11,7 @@ import {
     TitleSection,
     FeaturesSection,
     SignupSection,
-} from '../pages-styles/welcome.styles'
+} from '@pages-styles/welcome.styles'
 
 
 
@@ -44,7 +44,7 @@ const Welcome = () => {
         <SignupSection>
             <UnstyledList>
                 <li>
-                    <Link href="/signup">
+                    <Link href="/signup/">
                         <Button variant="outline-dark">Sign Up</Button>
                     </Link>
                 </li>

@@ -36,6 +36,9 @@
       "@pages/*": [
         "pages/*"
       ],
+      "@pages-styles/*": [
+        "pages-styles/*"
+      ],
       "@components/*": [
         "components/*"
       ],

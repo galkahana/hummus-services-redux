@@ -1,6 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-datepicker/dist/react-datepicker.css'
-import '../pages-styles/styles.css'
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
+import '@pages-styles/styles.css'
 
 import Head from 'next/head'
 import { AppProps } from 'next/app'

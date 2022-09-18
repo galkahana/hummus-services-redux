@@ -40,12 +40,12 @@ const ConsoleHeader = () => {
     }
 
     return (<HeaderRoot>
-        <SiteTitle href="/console" />
+        <SiteTitle href="/console/" />
         <HeaderToolsContainer>
             <HeaderTools>
-                <InlineListItem><Link href="/console/playground"><a><button type="button">Playground</button></a></Link></InlineListItem>
-                <InlineListItem><Link href="/console/jobs"><a><button type="button">Jobs</button></a></Link></InlineListItem>
-                <InlineListItem><Link href="/console/account"><a><button type="button">Account</button></a></Link></InlineListItem>
+                <InlineListItem><Link href="/console/playground/"><a><button type="button">Playground</button></a></Link></InlineListItem>
+                <InlineListItem><Link href="/console/jobs/"><a><button type="button">Jobs</button></a></Link></InlineListItem>
+                <InlineListItem><Link href="/console/account/"><a><button type="button">Account</button></a></Link></InlineListItem>
                 <InlineListItem><Link href="/documentation/"><a><button type="button">Documentation</button></a></Link></InlineListItem>
                 <InlineListItem><Link href="/contact"><a><button type="button">Contact us</button></a></Link></InlineListItem>
             </HeaderTools>

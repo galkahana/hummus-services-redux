@@ -12,17 +12,17 @@ import authService from '@lib/auth/service'
 import { usePrincipal } from '@lib/principal'
 import PublicBase from '@components/public-base'
 import { createEnhancedError } from '@lib/api-helpers/EnhancedError'
-import { SignupPage } from '../pages-styles/signup.styles'
+import { SignupPage } from '@pages-styles/signup.styles'
 import { useConfig } from '@lib/config'
 
 const Signup = () => {
-    const [username, setUsername] = useState<string>('')
-    const [email, setEmail] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
-    const [passwordRepeat, setPasswordRepeat] = useState<string>('')
-    const [captcha, setCaptcha] = useState<string>()
-    const [formSubmitted, setFormSubmitted] = useState(false)
-    const [waitingOnSignup, setWaitingOnSignup] = useState(false)
+    const [ username, setUsername ] = useState<string>('')
+    const [ email, setEmail ] = useState<string>('')
+    const [ password, setPassword ] = useState<string>('')
+    const [ passwordRepeat, setPasswordRepeat ] = useState<string>('')
+    const [ captcha, setCaptcha ] = useState<string>()
+    const [ formSubmitted, setFormSubmitted ] = useState(false)
+    const [ waitingOnSignup, setWaitingOnSignup ] = useState(false)
     const catpchaElement = useRef<Reaptcha>()
     const config = useConfig()
 
@@ -84,7 +84,7 @@ const Signup = () => {
                 showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error creating the user but it won\'t tell us what it was.', 'User Signup')
             }
         })
-    }, [username, email, password, passwordRepeat, captcha, captchaAvailable, showToast, showModalAlert, principal, router])
+    }, [ username, email, password, passwordRepeat, captcha, captchaAvailable, showToast, showModalAlert, principal, router ])
 
 
     return <PublicBase title="Sign Up">
