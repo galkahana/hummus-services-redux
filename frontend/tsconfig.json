@@ -22,7 +22,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "outDir": "./dist",
     "typeRoots": [
       "./typings",
@@ -30,18 +30,25 @@
     ],
     "baseUrl": "./src",
     "paths": {
-      "lib/*": [
+      "@lib/*": [
         "lib/*"
       ],
-      "components/*": [
-        "components/*"
-      ],
-      "pages/*": [
+      "@pages/*": [
         "pages/*"
       ],
-      "assets/*": [
-        "assets/*"
+      "@pages-styles/*": [
+        "pages-styles/*"
       ],
-    }
+      "@components/*": [
+        "components/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ]
+    },
+    "incremental": true
   },
+  "exclude": [
+    "node_modules"
+  ]
 }

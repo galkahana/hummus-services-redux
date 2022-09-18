@@ -1,9 +1,8 @@
+import Router from 'next/router'
 
 import { StoredTokens } from '../stored-tokens'
 import { HummusClient } from '../hummus-client'
 import { HummusClientTokensProvider } from '../hummus-client/types'
-import history from '../history'
-
 
 export class Auth implements HummusClientTokensProvider {
     tokens: StoredTokens
@@ -28,7 +27,7 @@ export class Auth implements HummusClientTokensProvider {
     }
 
     async signout() {
-        if(this.tokens.refreshToken)
+        if (this.tokens.refreshToken)
             await this.api.signout(this.tokens.refreshToken)
         this.tokens.clearTokens()
     }
@@ -40,18 +39,18 @@ export class Auth implements HummusClientTokensProvider {
     }
 
     // HummusClientTokensProvider implementation
-    
-    async refresh()  {
+
+    async refresh() {
         const { accessToken, refreshToken } = await this.api.refreshToken(this.tokens.refreshToken || '')
         this.tokens.accessToken = accessToken
         this.tokens.refreshToken = refreshToken
     }
     renewLogin(): void | Promise<void> {
         this.tokens.clearTokens()
-        history.push('/login') // renewLogin uncharachteristically also navigates...and let's keep it this one instance. 
+        Router.push('/login') // renewLogin uncharachteristically also navigates...and let's keep it this one instance. 
     }
     getToken(): string {
         return this.tokens.accessToken || ''
-    }    
+    }
 }
 

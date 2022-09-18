@@ -1,19 +1,19 @@
 import React, { useState, useCallback, useRef } from 'react'
+import { useRouter } from 'next/router'
 import Form from 'react-bootstrap/Form'
 import Container from 'react-bootstrap/Container'
 import { AxiosError } from 'axios'
 import Reaptcha from 'reaptcha'
-import {  useNavigate } from 'react-router-dom'
 
-import ButtonWithSpinner from 'components/waiting/button-with-spinner'
-import { useModalAlert } from 'components/modal-alert/context'
-import { useToast } from 'components/toast'
-import authService from 'lib/auth/service'
-import { usePrincipal } from 'lib/principal'
-import PublicBase from 'components/public-base'
-import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
-import { SignupPage } from './signup.styles'
-import { useConfig } from 'lib/config'
+import ButtonWithSpinner from '@components/waiting/button-with-spinner'
+import { useModalAlert } from '@components/modal-alert/context'
+import { useToast } from '@components/toast'
+import authService from '@lib/auth/service'
+import { usePrincipal } from '@lib/principal'
+import PublicBase from '@components/public-base'
+import { createEnhancedError } from '@lib/api-helpers/EnhancedError'
+import { SignupPage } from '@pages-styles/signup.styles'
+import { useConfig } from '@lib/config'
 
 const Signup = () => {
     const [ username, setUsername ] = useState<string>('')
@@ -29,26 +29,26 @@ const Signup = () => {
     const showModalAlert = useModalAlert()
     const showToast = useToast()
     const principal = usePrincipal()
-    const navigate = useNavigate()
+    const router = useRouter()
 
     const captchaAvailable = Boolean(config?.captchaSiteKey)
 
     const onSetCaptchaRef = (element: Reaptcha) => {
         catpchaElement.current = element
-    }    
-    
-    const onUsernameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>)=> {
+    }
+
+    const onUsernameChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setUsername(event.target.value)
-    }, [])    
-    const onEmailChange = useCallback((event: React.ChangeEvent<HTMLInputElement>)=> {
+    }, [])
+    const onEmailChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value)
-    }, [])    
-    const onPasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>)=> {
+    }, [])
+    const onPasswordChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value)
-    }, [])    
-    const onPasswordRepeatChange = useCallback((event: React.ChangeEvent<HTMLInputElement>)=> {
+    }, [])
+    const onPasswordRepeatChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setPasswordRepeat(event.target.value)
-    }, [])    
+    }, [])
 
     const onCaptchaChange = useCallback((value: string) => {
         setCaptcha(value)
@@ -60,21 +60,21 @@ const Signup = () => {
         // Did you know? !!XXX isType for non Falsy, while Boolean(XXX) does not. and i got convinced to use Boolean. unbelievable. 
         const formValid = (!!captcha || !captchaAvailable) && Boolean(username) && Boolean(email) && Boolean(password) && Boolean(passwordRepeat) && (password === passwordRepeat)
         setFormSubmitted(true)
-        if(!formValid) {
+        if (!formValid) {
             return
         }
 
         setWaitingOnSignup(true)
-        authService.signup(username, email, password, captcha).then( async () => {
+        authService.signup(username, email, password, captcha).then(async () => {
             showToast('User created successfully :)')
             await principal.identity(true) // force identity update based on login
             setWaitingOnSignup(false)
-            navigate('console')
+            router.push('console/')
         }).catch((ex: unknown) => {
-            if(catpchaElement.current) // reset captcha for next round
+            if (catpchaElement.current) // reset captcha for next round
                 catpchaElement.current.reset()
             setWaitingOnSignup(false)
-            if(ex instanceof AxiosError && ex.response?.data?.info?.duplicateUsername) {
+            if (ex instanceof AxiosError && ex.response?.data?.info?.duplicateUsername) {
                 showModalAlert('A user with this username exists already, please select a different username', 'User Signup')
             } else if (ex instanceof AxiosError && ex.response?.data?.info?.noCaptcha) {
                 showModalAlert('Human identification data was not sent, Please confirm that you are human', 'User Signup')
@@ -84,7 +84,7 @@ const Signup = () => {
                 showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error creating the user but it won\'t tell us what it was.', 'User Signup')
             }
         })
-    }, [ username, email, password, passwordRepeat, captcha, captchaAvailable, showToast, showModalAlert, principal, navigate ])
+    }, [ username, email, password, passwordRepeat, captcha, captchaAvailable, showToast, showModalAlert, principal, router ])
 
 
     return <PublicBase title="Sign Up">
@@ -95,44 +95,44 @@ const Signup = () => {
                     <Form onSubmit={onFormSubmit} noValidate>
                         <Form.Group>
                             <Form.Label>Username</Form.Label>
-                            <Form.Control isInvalid={(!username) && formSubmitted} type="text" autoCorrect="off" autoCapitalize='off' value={username} onChange={onUsernameChange} required/>
+                            <Form.Control isInvalid={(!username) && formSubmitted} type="text" autoCorrect="off" autoCapitalize='off' value={username} onChange={onUsernameChange} required />
                             <Form.Control.Feedback type="invalid">
                                 Please choose a username
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Email</Form.Label>
-                            <Form.Control isInvalid={(!email) && formSubmitted} type="email" autoCorrect="off" autoCapitalize='off' value={email} onChange={onEmailChange} required/>
+                            <Form.Control isInvalid={(!email) && formSubmitted} type="email" autoCorrect="off" autoCapitalize='off' value={email} onChange={onEmailChange} required />
                             <Form.Control.Feedback type="invalid">
                                 Please enter your email
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Password</Form.Label>
-                            <Form.Control isInvalid={(!password) && formSubmitted} type="password" autoCorrect="off" autoCapitalize='off' value={password} onChange={onPasswordChange} required/>
+                            <Form.Control isInvalid={(!password) && formSubmitted} type="password" autoCorrect="off" autoCapitalize='off' value={password} onChange={onPasswordChange} required />
                             <Form.Control.Feedback type="invalid">
                                 Please enter password
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Repeat Password</Form.Label>
-                            <Form.Control isInvalid={(!passwordRepeat || passwordRepeat !== password) && formSubmitted} type="password" autoCorrect="off" autoCapitalize='off' value={passwordRepeat} onChange={onPasswordRepeatChange} required/>
+                            <Form.Control isInvalid={(!passwordRepeat || passwordRepeat !== password) && formSubmitted} type="password" autoCorrect="off" autoCapitalize='off' value={passwordRepeat} onChange={onPasswordRepeatChange} required />
                             <Form.Control.Feedback type="invalid">
-                                    Password and Repeat password fields mismatch. Please repeat the password.
+                                Password and Repeat password fields mismatch. Please repeat the password.
                             </Form.Control.Feedback>
                         </Form.Group>
                         {captchaAvailable &&
                             <Form.Group>
-                                <Reaptcha ref={onSetCaptchaRef} sitekey={config?.captchaSiteKey} onVerify={onCaptchaChange}/>
-                                <Form.Control required isInvalid={(!captcha) && formSubmitted} value={captcha || ''} type="hidden"/>
+                                <Reaptcha ref={onSetCaptchaRef} sitekey={config?.captchaSiteKey} onVerify={onCaptchaChange} />
+                                <Form.Control required isInvalid={(!captcha) && formSubmitted} value={captcha || ''} type="hidden" />
                                 <Form.Control.Feedback type="invalid">
-                                        Please mark that you are <strong>not</strong> a robot
-                                </Form.Control.Feedback>                            
+                                    Please mark that you are <strong>not</strong> a robot
+                                </Form.Control.Feedback>
                             </Form.Group>
                         }
                         <ButtonWithSpinner variant="primary" type="submit" className='mt-3' waiting={waitingOnSignup}>
                             Create Account
-                        </ButtonWithSpinner>                         
+                        </ButtonWithSpinner>
                     </Form>
                 </div>
             </Container>

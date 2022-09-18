@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { LIGHT_BACKGROUND_COLOR, LIGHT_BORDER_COLOR } from 'lib/styles/colors'
+import { LIGHT_BACKGROUND_COLOR, LIGHT_BORDER_COLOR } from '@lib/styles/colors'
 
 export const Wrapper = styled.div`
     min-height: 100%;

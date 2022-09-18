@@ -14,9 +14,9 @@ import {
     ConfigResponse
 } from './types'
 import axios, { AxiosResponse } from 'axios'
-import combine from 'lib/api-helpers/combine'
-import { dataFetch, notAuthRefresh, notAuthToLogout, verboseError } from 'lib/api-helpers/api-mws'
-import { sleep } from 'lib/async'
+import combine from '@lib/api-helpers/combine'
+import { dataFetch, notAuthRefresh, notAuthToLogout, verboseError } from '@lib/api-helpers/api-mws'
+import { sleep } from '@lib/async'
 
 const HEADERS = {
     'Access-Control-Allow-Origin': '*',

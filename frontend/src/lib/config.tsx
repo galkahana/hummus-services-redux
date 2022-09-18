@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from 'react'
-import hummusClientService from 'lib/hummus-client/service'
-import { ConfigResponse } from 'lib/hummus-client/types'
+import React, { useState, useCallback, useEffect } from 'react'
+import hummusClientService from '@lib/hummus-client/service'
+import { ConfigResponse } from '@lib/hummus-client/types'
 
 
 export const ConfigContext = React.createContext<Nullable<ConfigResponse>>(null!)

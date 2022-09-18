@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { useRouter } from 'next/router'
 
-import Waiting from 'components/waiting/all-screen-waiting'
-import authService from 'lib/auth/service'
-import history from 'lib/history'
-import { usePrincipal } from 'lib/principal'
+import Waiting from '@components/waiting/all-screen-waiting'
+import authService from '@lib/auth/service'
+import { usePrincipal } from '@lib/principal'
 
 type ChildrenProps = {
     children: JSX.Element
@@ -12,29 +11,30 @@ type ChildrenProps = {
 
 
 const ProtectedPage = ({ children }: ChildrenProps) => {
-    const location = useLocation()
+    const router = useRouter()
     const principal = usePrincipal()
     const [ hasIdentity, setHasIdentity ] = useState<Boolean>(principal.hasIdentity())
 
     useEffect(() => {
+        if (!authService.isLoggedin()) {
+            router.replace('login', { query: { from: router.pathname } })
+            return
+        }
+
         principal.identity().then(
-            ()=> {
+            () => {
                 setHasIdentity(true)
             }
         ).catch(
-            ()=> {
-                history.push('/login') // if this failed...attempt to login again
+            () => {
+                router.replace('login', { query: { from: router.pathname } }) // if this failed...attempt to login again
             }
         )
-    }, [ principal, setHasIdentity ])
+    }, [ principal, setHasIdentity, router ])
 
-    if(!authService.isLoggedin())
-        return <Navigate to="/login" state={{ from: location }} replace />
-
-
-    if(hasIdentity)
+    if (hasIdentity)
         return children
-    else 
+    else
         return <Waiting />
 }
 

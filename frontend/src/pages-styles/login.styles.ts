@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { DefaultItemContainer } from 'components/common.styles'
+import { DefaultItemContainer } from '@components/common.styles'
 
 export const LoginFormContainer = styled.div`
     ${DefaultItemContainer}

@@ -1,17 +1,17 @@
 import React from 'react'
 
-import PublicBase from 'components/public-base'
-import { Link } from 'react-router-dom'
+import PublicBase from '@components/public-base'
+import Link from 'next/link'
 import Button from 'react-bootstrap/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faBolt, faGlobe, faClock } from '@fortawesome/free-solid-svg-icons'
-import { InlineList, InlineListItem, UnstyledList } from 'components/common.styles'
+import { InlineList, InlineListItem, UnstyledList } from '@components/common.styles'
 
 import {
     TitleSection,
     FeaturesSection,
     SignupSection,
-} from './welcome.styles'
+} from '@pages-styles/welcome.styles'
 
 
 
@@ -44,7 +44,7 @@ const Welcome = () => {
         <SignupSection>
             <UnstyledList>
                 <li>
-                    <Link to="/signup">
+                    <Link href="/signup/">
                         <Button variant="outline-dark">Sign Up</Button>
                     </Link>
                 </li>

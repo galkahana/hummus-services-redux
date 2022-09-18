@@ -8,13 +8,13 @@ import Form from 'react-bootstrap/Form'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRefresh, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-import hummusClientService from 'lib/hummus-client/service'
-import { useModalAlert } from 'components/modal-alert/context'
-import { createEnhancedError } from 'lib/api-helpers/EnhancedError'
+import hummusClientService from '@lib/hummus-client/service'
+import { useModalAlert } from '@components/modal-alert/context'
+import { createEnhancedError } from '@lib/api-helpers/EnhancedError'
 
 import { PlanPanelContainer } from './api-keys-panel.styles'
-import { UnstyledList } from 'components/common.styles'
-import { useToast } from 'components/toast'
+import { UnstyledList } from '@components/common.styles'
+import { useToast } from '@components/toast'
 
 const ApiKeysPanel = () => {
     const [ publicKey, setPublicKey ] = useState<string>()
@@ -29,7 +29,7 @@ const ApiKeysPanel = () => {
     const showModalAlert = useModalAlert()
     const showToast = useToast()
 
-    useEffect(()=> {
+    useEffect(() => {
         hummusClientService.getTokens().then((tokens) => {
             setPublicKey(tokens.public?.token)
             setPrivateKey(tokens.private?.token)
@@ -39,7 +39,7 @@ const ApiKeysPanel = () => {
         })
     }, [ showModalAlert ])
 
-    const onCreatePublicKeyClick = useCallback(()=>{
+    const onCreatePublicKeyClick = useCallback(() => {
         setCreatingPublicKey(true)
         hummusClientService.createPublicAPIToken(restrictedDomainsPublic).then(({ token }) => {
             setPublicKey(token)
@@ -50,7 +50,7 @@ const ApiKeysPanel = () => {
         })
     }, [ showModalAlert, restrictedDomainsPublic ])
 
-    const onDeletePublicKeyClick = useCallback(()=> {
+    const onDeletePublicKeyClick = useCallback(() => {
         setDeletingPublicKey(true)
         hummusClientService.deletePublicAPIToken().then(() => {
             setPublicKey('')
@@ -58,10 +58,10 @@ const ApiKeysPanel = () => {
         }).catch((ex: unknown) => {
             setDeletingPublicKey(false)
             showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error deleting public key but it won\'t tell us what it was.', 'Tokens Error')
-        })        
+        })
     }, [ showModalAlert ])
 
-    const onCreatePrivateKeyClick = useCallback(()=>{
+    const onCreatePrivateKeyClick = useCallback(() => {
         setCreatingPrivateKey(true)
         hummusClientService.createPrivateAPIToken().then(({ token }) => {
             setPrivateKey(token)
@@ -72,7 +72,7 @@ const ApiKeysPanel = () => {
         })
     }, [ showModalAlert ])
 
-    const onDeletePrivateKeyClick = useCallback(()=> {
+    const onDeletePrivateKeyClick = useCallback(() => {
         setDeletingPrivateKey(true)
         hummusClientService.deletePrivateAPIToken().then(() => {
             setPrivateKey('')
@@ -80,11 +80,11 @@ const ApiKeysPanel = () => {
         }).catch((ex: unknown) => {
             setDeletingPrivateKey(false)
             showModalAlert(createEnhancedError(ex).getErrorMessage() || 'The was an error deleting private key but it won\'t tell us what it was.', 'Tokens Error')
-        })        
-    }, [ showModalAlert ])   
-    
-    const updateRestrictedDomainsPublic = useCallback((restrictedDomains?: Nullable<string[]>)=> {
-        if(!publicKey)
+        })
+    }, [ showModalAlert ])
+
+    const updateRestrictedDomainsPublic = useCallback((restrictedDomains?: Nullable<string[]>) => {
+        if (!publicKey)
             return
 
         hummusClientService.patchPublicAPIToken(restrictedDomains).then(() => {
@@ -94,11 +94,11 @@ const ApiKeysPanel = () => {
         })
     }, [ showModalAlert, showToast, publicKey ])
 
-    const onDomainRestrictDeleteClick = useCallback( (i: number) => {
-        if(!restrictedDomainsPublic) // not technically possible but lets be nice to typescript
+    const onDomainRestrictDeleteClick = useCallback((i: number) => {
+        if (!restrictedDomainsPublic) // not technically possible but lets be nice to typescript
             return
 
-        const newDomains = [ ...restrictedDomainsPublic.slice(0, i), ...restrictedDomainsPublic.slice(i+1) ]
+        const newDomains = [ ...restrictedDomainsPublic.slice(0, i), ...restrictedDomainsPublic.slice(i + 1) ]
         setRestrictedDomainsPublic(newDomains)
         updateRestrictedDomainsPublic(newDomains)
     }, [ restrictedDomainsPublic, updateRestrictedDomainsPublic ])
@@ -112,28 +112,28 @@ const ApiKeysPanel = () => {
         updateRestrictedDomainsPublic(newDomains)
     }, [ restrictedDomainsPublic, domainRestrictAdd, updateRestrictedDomainsPublic ])
 
-    const onDomainRestrictAddChange = useCallback((event: React.ChangeEvent<HTMLInputElement>)=> {
+    const onDomainRestrictAddChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         setDomainRestrictAdd(event.target.value)
     }, [])
 
 
-    
+
     return <PlanPanelContainer>
         <Row>
             <Col md={12}>
                 <label className="name">
-                Public Key:
+                    Public Key:
                 </label>
             </Col>
         </Row>
         <Row>
-            <Col md={{ span:11, offset:1 }}>
+            <Col md={{ span: 11, offset: 1 }}>
                 <ButtonGroup>
                     <Button className="btn-create" variant="outline-dark" onClick={onCreatePublicKeyClick}>
-                        <FontAwesomeIcon icon={!publicKey && !creatingPublicKey ? faPlus: faRefresh} className={creatingPublicKey ? 'spinning':''}/>
+                        <FontAwesomeIcon icon={!publicKey && !creatingPublicKey ? faPlus : faRefresh} className={creatingPublicKey ? 'spinning' : ''} />
                     </Button>
                     <Button className="btn-delete" disabled={!publicKey} variant="outline-dark" onClick={onDeletePublicKeyClick}>
-                        <FontAwesomeIcon icon={deletingPublicKey ? faRefresh: faTrash} className={deletingPublicKey ? 'spinning':''}/>
+                        <FontAwesomeIcon icon={deletingPublicKey ? faRefresh : faTrash} className={deletingPublicKey ? 'spinning' : ''} />
                     </Button>
                 </ButtonGroup>
                 <div className="key-container">
@@ -142,17 +142,17 @@ const ApiKeysPanel = () => {
             </Col>
         </Row>
         <Row>
-            <Col md={{ span:11, offset:1 }}>
+            <Col md={{ span: 11, offset: 1 }}>
                 <label>
                     Restrict to the following domains:
                 </label>
                 <UnstyledList>
                     {
-                        (restrictedDomainsPublic || []).map((restrictedDomain, index) => 
+                        (restrictedDomainsPublic || []).map((restrictedDomain, index) =>
                             <li key={index}>
                                 <Row>
                                     <Col sm={1}>
-                                        <FontAwesomeIcon icon={faTrash} onClick={()=>{onDomainRestrictDeleteClick(index)}}/>
+                                        <FontAwesomeIcon icon={faTrash} onClick={() => { onDomainRestrictDeleteClick(index) }} />
                                     </Col>
                                     <Col sm={11}>
                                         {restrictedDomain}
@@ -163,40 +163,40 @@ const ApiKeysPanel = () => {
                     }
                     <li>
                         <Form.Group as={Row}>
-                            <Form.Label column sm={1}><FontAwesomeIcon icon={faPlus} onClick={()=>{onDomainRestrictAddClick()}}/></Form.Label>
+                            <Form.Label column sm={1}><FontAwesomeIcon icon={faPlus} onClick={() => { onDomainRestrictAddClick() }} /></Form.Label>
                             <Col sm={7}>
-                                <Form.Control type="text" autoCorrect="off" autoCapitalize='off' value={domainRestrictAdd} onChange={onDomainRestrictAddChange}/>
+                                <Form.Control type="text" autoCorrect="off" autoCapitalize='off' value={domainRestrictAdd} onChange={onDomainRestrictAddChange} />
                                 <Form.Text muted>
                                     <small>add a domain or subdomain here to restrict public key access to that particular source (www.example.com or example.com). For localhost add the port as well (e.g. localhost:5050)</small>
-                                </Form.Text>                                  
+                                </Form.Text>
                             </Col>
                         </Form.Group>
-                    </li>                        
+                    </li>
                 </UnstyledList>
             </Col>
         </Row>
         <Row>
             <Col md={12}>
                 <label className="name">
-                Private Key:
+                    Private Key:
                 </label>
             </Col>
         </Row>
         <Row>
-            <Col md={{ span:11, offset:1 }}>
+            <Col md={{ span: 11, offset: 1 }}>
                 <ButtonGroup>
                     <Button className="btn-create" variant="outline-dark" onClick={onCreatePrivateKeyClick}>
-                        <FontAwesomeIcon icon={!privateKey && !creatingPrivateKey ? faPlus: faRefresh} className={creatingPrivateKey ? 'spinning':''}/>
+                        <FontAwesomeIcon icon={!privateKey && !creatingPrivateKey ? faPlus : faRefresh} className={creatingPrivateKey ? 'spinning' : ''} />
                     </Button>
                     <Button className="btn-delete" disabled={!privateKey} variant="outline-dark" onClick={onDeletePrivateKeyClick}>
-                        <FontAwesomeIcon icon={deletingPrivateKey ? faRefresh: faTrash} className={deletingPrivateKey ? 'spinning':''}/>
+                        <FontAwesomeIcon icon={deletingPrivateKey ? faRefresh : faTrash} className={deletingPrivateKey ? 'spinning' : ''} />
                     </Button>
                 </ButtonGroup>
                 <div className="key-container">
                     {privateKey || 'N/A'}
                 </div>
             </Col>
-        </Row>        
+        </Row>
     </PlanPanelContainer>
 }
 

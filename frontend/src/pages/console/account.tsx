@@ -4,12 +4,12 @@ import Container from 'react-bootstrap/Container'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 
-import ConsoleBase from 'components/console-base'
-import GeneralPanel from 'components/general-panel'
-import APIKeysPanel from 'components/api-keys-panel'
-import PlanPanel from 'components/plan-panel'
+import ConsoleBase from '@components/console-base'
+import GeneralPanel from '@components/general-panel'
+import APIKeysPanel from '@components/api-keys-panel'
+import PlanPanel from '@components/plan-panel'
 
-import { AccountPage } from './account.styles'
+import { AccountPage } from '@pages-styles/account.styles'
 
 const Account = () => {
     return (
@@ -21,13 +21,13 @@ const Account = () => {
                         className="tab-pane"
                     >
                         <Tab eventKey="general" title="General">
-                            <GeneralPanel/>
+                            <GeneralPanel />
                         </Tab>
                         <Tab eventKey="apiKeys" title="API Keys">
-                            <APIKeysPanel/>
+                            <APIKeysPanel />
                         </Tab>
                         <Tab eventKey="plan" title="Plan Usage">
-                            <PlanPanel/>
+                            <PlanPanel />
                         </Tab>
                     </Tabs>
                 </Container>

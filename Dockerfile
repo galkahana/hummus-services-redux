@@ -14,7 +14,7 @@ RUN npm install
 ADD frontend .
 RUN npm run build
 RUN mkdir output
-RUN mv build output/frontend-build
+RUN mv out output/frontend-build
 
 FROM ${FRONTEND_BUILDER} as selected_frontend_builder
 

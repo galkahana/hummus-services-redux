@@ -6,20 +6,21 @@ import Tab from 'react-bootstrap/Tab'
 import CodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
 import Split from 'react-split'
+import Link from 'next/link'
 import moment from 'moment'
 
 
-import ConsoleBase from 'components/console-base'
-import hummusClientService from 'lib/hummus-client/service'
-import { TokensAPIResponse } from 'lib/hummus-client/types'
-import PDFPreview from 'components/pdf-preview'
-import { PrettyClickableLink } from 'components/common.styles'
-import ButtonWithSpinner from 'components/waiting/button-with-spinner'
-import { useModalAlert } from 'components/modal-alert/context'
-import { siteUrlRoot, apiUrl } from 'lib/urls'
+import ConsoleBase from '@components/console-base'
+import hummusClientService from '@lib/hummus-client/service'
+import { TokensAPIResponse } from '@lib/hummus-client/types'
+import PDFPreview from '@components/pdf-preview'
+import { PrettyClickableAnchor } from '@components/common.styles'
+import ButtonWithSpinner from '@components/waiting/button-with-spinner'
+import { useModalAlert } from '@components/modal-alert/context'
+import { siteUrlRoot, apiUrl } from '@lib/urls'
 
-import { PlaygroundPage } from './playground.styles'
-import { getDefaultDateDisplay } from 'lib/dates'
+import { PlaygroundPage } from '@pages-styles/playground.styles'
+import { getDefaultDateDisplay } from '@lib/dates'
 
 
 const SAMPLE_CODE = `{
@@ -220,7 +221,7 @@ const Playground = () => {
                                 <p>Create A PDF file directly in the client's browser by following these steps:</p>
                                 <ol>
                                     <li>
-                                        <p>Acquire a public api key. You can do this through users settings api keys tab - <PrettyClickableLink to="/console/account">here</PrettyClickableLink>.</p>
+                                        <p>Acquire a public api key. You can do this through users settings api keys tab - <Link href="/console/account/" passHref><PrettyClickableAnchor>here</PrettyClickableAnchor></Link>.</p>
                                     </li>
                                     <li>
                                         <p>In your web page include hummus client library by adding a script tag:</p>
@@ -242,7 +243,7 @@ const Playground = () => {
                                 <p>Create A PDF file by following these steps:</p>
                                 <ol>
                                     <li>
-                                        <p>Acquire a private api key. You can do this through users settings api keys tab - <PrettyClickableLink to="/console/account">here</PrettyClickableLink>.</p>
+                                        <p>Acquire a private api key. You can do this through users settings api keys tab - <Link href="/console/account/" passHref><PrettyClickableAnchor>here</PrettyClickableAnchor></Link>.</p>
                                     </li>
                                     <li>
                                         <p>Install <code>hummus-client</code> with:</p>
@@ -264,7 +265,7 @@ const Playground = () => {
                             <Tab eventKey="http" title="HTTP">
                                 <p>You can create a PDF file from either client or server using REST calls to Hummus Services:</p>
                                 <ol>
-                                    <li><p>First, acquire either a public or private API keys (public for client, private for server) You can do this through users settings api keys tab - <PrettyClickableLink to="/console/account">here</PrettyClickableLink>.</p></li>
+                                    <li><p>First, acquire either a public or private API keys (public for client, private for server) You can do this through users settings api keys tab - <Link href="/console/account/" passHref><PrettyClickableAnchor>here</PrettyClickableAnchor></Link>.</p></li>
                                     <li><p>Then, start a PDF creation job with the following REST call:</p>
                                         <ul>
                                             <li><strong>METHOD:</strong> POST</li>

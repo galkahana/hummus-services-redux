@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { PrettyClickable, NoUnderlineEver, DefaultItemContainer } from 'components/common.styles'
+import { PrettyClickable, NoUnderlineEver, DefaultItemContainer } from '@components/common.styles'
 
 export const Content = styled.div`
 
