@@ -7,10 +7,9 @@ export const TitleLinkContainer = styled(PrettyClickableAnchor)`
     ${PositionBase}
     vertical-alignment: center;
     
-    img {
+    .logo {
         float:left;
         margin-right:5px;
-        width: 60px;
     }
 
     h1 {

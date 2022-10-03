@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Image from 'next/image'
 
 import md5  from 'blueimp-md5'
 
@@ -39,7 +40,7 @@ const Avatar = ( { username }: AvatarProps) => {
     return (
         <AvatarContainer>
             <span className="avatar-letter">{avatarLetter(username)}</span>
-            <img className={isError ? 'agatar-image-error': 'avatar-image'} src={imageUrl(username)} onError={onImageError} onLoad={onImageLoad} alt="avatar"></img>
+            <Image width="50" height="50" className={isError ? 'agatar-image-error': 'avatar-image'} src={imageUrl(username)} onError={onImageError} onLoad={onImageLoad} alt="avatar"/>
         </AvatarContainer>
     )
 }

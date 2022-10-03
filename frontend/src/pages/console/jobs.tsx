@@ -8,6 +8,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faRefresh, faArrowLeft, faTrash, faCheckDouble } from '@fortawesome/free-solid-svg-icons'
 import DatePicker from 'react-datepicker'
+import Image from 'next/image'
 
 import hummusClientService from '@lib/hummus-client/service'
 import { GenerationJobsQuery, GenerationJobResponse, JobStatus } from '@lib/hummus-client/types'
@@ -375,7 +376,7 @@ const Jobs = () => {
                                         isDeletingJobsFiles ? (
                                             <FontAwesomeIcon className="refreshing" icon={faRefresh} />
                                         ) : (
-                                            <span><img src={deletePDFImage.src} alt="delete pdf" /></span>
+                                            <span><Image height="18" width="18" src={deletePDFImage.src} alt="delete pdf" /></span>
                                         )
                                     }
                                 </Button>
