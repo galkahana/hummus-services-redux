@@ -1,28 +1,27 @@
 import path from 'path'
 import fs from 'fs'
 
-import React, { useEffect, useState } from 'react'
-import PublicBase from '@components/public-base'
-import Container from 'react-bootstrap/Container'
-import Nav from 'react-bootstrap/Nav'
-import Navbar from 'react-bootstrap/Navbar'
-import NavDropdown from 'react-bootstrap/NavDropdown'
+import React, { useEffect, useState, ReactElement } from 'react'
 import { GetStaticProps, GetStaticPaths } from 'next'
-import { SSRProvider } from 'react-bootstrap'
-import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import rehypeSlug from 'rehype-slug'
 
 import mustache from '@lib/mustache'
 import { siteUrlRoot, apiUrl } from '@lib/urls'
 import { useConfig } from '@lib/config'
 
-import { Content } from '@pages-styles/documentation-page.styles'
-import MarkdownPage from '@components/markdown-page'
+import DocumentationLayout from '@components/documentation-layout'
+import { NextPageWithLayout } from '@components/layout-types'
 
 type DocumentationPageProps = {
     content: string
 }
 
-const DocumentationPage = ({ content }: DocumentationPageProps) => {
+// rehypeRaw is for allowing input markdown to contain inline html
+// rehypeSlug is to create slugs for titles (anchor links)
+
+const DocumentationPage: NextPageWithLayout<DocumentationPageProps> = ({ content }: DocumentationPageProps) => {
     const [ values, setValues ] = useState<any>({})
     const config = useConfig()
 
@@ -32,47 +31,15 @@ const DocumentationPage = ({ content }: DocumentationPageProps) => {
     }, [ config ])
 
     return (
-        <SSRProvider>
-            <PublicBase>
-                <Content>
-                    <Container>
-                        <Navbar expand="sm" className="documentation-nav-bar">
-                            <Navbar.Brand>Table Of Contents</Navbar.Brand>
-                            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <ReactMarkdown children={mustache.render(content, values)} rehypePlugins={[ rehypeRaw, rehypeSlug ]} />
+    )
+}
 
-                            <Navbar.Collapse id="responsive-navbar-nav">
-                                <Nav>
-                                    <Link href="/documentation/" passHref><Nav.Link>Introduction</Nav.Link></Link>
-                                    <Link href="/documentation/getting-started/" passHref><Nav.Link>Getting Started</Nav.Link></Link>
-                                    <Link href="/documentation/api/" passHref><Nav.Link>API Reference</Nav.Link></Link>
-                                    <NavDropdown title="" className="api-dropdown">
-                                        <Link href="/documentation/api/browser/" passHref><Nav.Link>Browser</Nav.Link></Link>
-                                        <Link href="/documentation/api/nodejs/" passHref><Nav.Link>NodeJS</Nav.Link></Link>
-                                        <Link href="/documentation/api/http/" passHref><Nav.Link>HTTP</Nav.Link></Link>
-                                    </NavDropdown>
-                                    <Link href="/documentation/job-ticket/" passHref><Nav.Link>Job Ticket Reference</Nav.Link></Link>
-                                    <NavDropdown title="" className="job-ticket-dropdown">
-                                        <Link href="/documentation/job-ticket/document/" passHref><Nav.Link>Document</Nav.Link></Link>
-                                        <Link href="/documentation/job-ticket/pages/" passHref><Nav.Link>Pages</Nav.Link></Link>
-                                        <Link href="/documentation/job-ticket/boxes/" passHref><Nav.Link>Boxes</Nav.Link></Link>
-                                        <Link href="/documentation/job-ticket/text/" passHref><Nav.Link>Text</Nav.Link></Link>
-                                        <Link href="/documentation/job-ticket/shapes/" passHref><Nav.Link>Shapes</Nav.Link></Link>
-                                        <Link href="/documentation/job-ticket/images/" passHref><Nav.Link>Images</Nav.Link></Link>
-                                        <Link href="/documentation/job-ticket/streams/" passHref><Nav.Link>Streams</Nav.Link></Link>
-                                        <Link href="/documentation/job-ticket/protection/" passHref><Nav.Link>Password Protection</Nav.Link></Link>
-                                        <Link href="/documentation/job-ticket/modification/" passHref><Nav.Link>Modify Existing PDFs</Nav.Link></Link>
-                                    </NavDropdown>
-                                </Nav>
-                            </Navbar.Collapse>
-
-                        </Navbar>
-                        <div className="documentation-content">
-                            <MarkdownPage content={mustache.render(content, values)} />
-                        </div>
-                    </Container>
-                </Content>
-            </PublicBase>
-        </SSRProvider>
+DocumentationPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <DocumentationLayout>
+            {page}
+        </DocumentationLayout>
     )
 }
 
