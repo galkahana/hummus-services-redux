@@ -6,6 +6,7 @@ import { GetStaticProps, GetStaticPaths } from 'next'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import rehypeSlug from 'rehype-slug'
+import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 
 import mustache from '@lib/mustache'
 import { siteUrlRoot, apiUrl } from '@lib/urls'
@@ -31,7 +32,7 @@ const DocumentationPage: NextPageWithLayout<DocumentationPageProps> = ({ content
     }, [ config ])
 
     return (
-        <ReactMarkdown children={mustache.render(content, values)} rehypePlugins={[ rehypeRaw, rehypeSlug ]} />
+        <ReactMarkdown children={mustache.render(content, values)} rehypePlugins={[ rehypeRaw, rehypeSlug, [ rehypeAutolinkHeadings, { behavior: 'wrap' } ] ]} />
     )
 }
 
