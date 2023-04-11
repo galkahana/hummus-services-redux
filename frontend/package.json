@@ -27,7 +27,6 @@
     "moment": "^2.29.4",
     "mustache": "^4.2.0",
     "next": "^12.3.0",
-    "npm": "^8.16.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-datepicker": "^4.8.0",

@@ -48,7 +48,7 @@ The `backend` folder has the hummus server backend code, as well as several scri
 
 # Installing
 
-make sure you got [nvm](https://github.com/nvm-sh/nvm) installed with node `16.15`.
+make sure you got [nvm](https://github.com/nvm-sh/nvm) installed with node `16.20`.
 
 ## Installing the backend
 
