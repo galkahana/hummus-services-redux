@@ -1,4 +1,4 @@
-import { CallbackError, model, Schema } from 'mongoose'
+import { CallbackError, model, Schema, HydratedDocument } from 'mongoose'
 import { v1 } from 'uuid'
 
 import generationJobsModel from '@models/generation-jobs'
@@ -38,7 +38,7 @@ const generatedFileSchema = new Schema<IGeneratedFile>({
 })
 
 
-generatedFileSchema.pre('remove', async function(next) {
+generatedFileSchema.pre<HydratedDocument<IGeneratedFile>>('remove', async function(next) {
     const thisID = this.id
 
     // When removing, automatically remove reference from generation job

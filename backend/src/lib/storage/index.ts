@@ -4,6 +4,7 @@ import { v1 } from 'uuid'
 import { S3Client, PutObjectCommand, DeleteObjectsCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3'
 import fs from 'fs'
 import { StorageSource, UploadedFileData } from '@models/generated-files/types'
+import { Readable } from 'stream'
 import { Response } from 'express'
 
 
@@ -75,7 +76,11 @@ export async function downloadFileToStream(file: UploadedFileData, res: Response
             Key: file.data.remoteKey
         })
         const s3Item = await s3Client.send(command)
-        s3Item.Body.pipe(res)
+        const body = s3Item.Body
+        if (!body) {
+            return 0
+        }
+        (body as Readable).pipe(res)
         return s3Item.ContentLength
 
     } catch (ex) {
