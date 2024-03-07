@@ -117,7 +117,7 @@ To run the service for dev purposes use `npm run dev`. You can also use the VSCo
 
 # Making API calls
 
-There's an available postman collection that you can use to familiarize yourself with the server api and run calls to the server [here](https://www.postman.com/collections/6e41a7902cad96913af2).
+There's an available postman collection that you can use to familiarize yourself with the server api and run calls to the server [here](./etc/postman/backend-api.postman_collection.json).
 
 The collection relies on some variables that you can define in your local postman env to get it going:
 - `hummus_server_url` - the server url. if running locally that's be `http://localhost:8080`. When running the below minikube setup and using its ingress, `http://hummus` is the right way to go.
