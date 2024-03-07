@@ -1,0 +1,1323 @@
+{
+	"info": {
+		"_postman_id": "204e1f30-f941-43b3-8a9e-4316ceb2d8c3",
+		"name": "backend-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/health",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ready",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/ready",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"ready"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "config",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/config",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sign in (probably requires captcha)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"access_token\", jsonData.accessToken);",
+							"pm.environment.set(\"refresh_token\", jsonData.refreshToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{hummus_username}}\",\n    \"password\": \"{{hummus_password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/authenticate/sign-in",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"authenticate",
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sign up (probably requires capcha)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"access_token\", jsonData.accessToken);",
+							"pm.environment.set(\"refresh_token\", jsonData.refreshToken);",
+							"pm.environment.set(\"hummus_password\", reqBody.password);",
+							"pm.environment.set(\"hummus_username\", reqBody.username)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "hmscpa",
+						"value": "nevermind",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{$randomEmail}}\",\n    \"username\": \"{{$randomUserName}}\",\n    \"name\": \"{{$randomFirstName}}\",\n    \"password\": \"{{$randomPassword}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/authenticate/sign-up",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"authenticate",
+						"sign-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "refresh token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"access_token\", jsonData.accessToken);",
+							"pm.environment.set(\"refresh_token\", jsonData.refreshToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{refresh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/tokens/refresh",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"tokens",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sign out",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"refreshToken\": \"{{refresh_token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/authenticate/sign-out",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"authenticate",
+						"sign-out"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate job",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(201)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"generated_job_uid\", jsonData.uid);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Sample.pdf\",\n    \"meta\": {\n        \"label\": \"Sample Job\",\n        \"deleteFileAfter\": \"1000000\",\n        \"public\": true\n\n    },\n    \"externals\": {\n        \"fbLogo\": \"https://github.com/galkahana/hummus-services/blob/master/src/public/images/profileImage.jpg?raw=true\"\n    },\n    \"document\" : {\n            \"embedded\" : {\n                \"pages\": [\n                    {\n                        \"width\": 595,\n                        \"height\": 842,\n                        \"boxes\": [\n                            {\n                                \"bottom\": 500,\n                                \"left\": 10,\n                                \"text\": {\n                                    \"text\": \"hello {{$randomFirstName}}!\",\n                                    \"options\": {\n                                        \"fontSource\": \"arial\",\n                                        \"size\": 40,\n                                        \"color\": \"pink\"\n                                    }\n                                }\n                            },\n                            {\n                                \"bottom\": 600,\n                                \"left\": 10,\n                                \"image\": {\"source\":\"fbLogo\"}\n                            }\n                        ]\n                    }\n                ]\n            }\n        }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generation-jobs",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generation-jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get job",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"generated_file_uid\", jsonData && jsonData.generatedFileObject ? jsonData.generatedFileObject.uid: null);",
+							"pm.environment.set(\"public_download_id\", jsonData && jsonData.generatedFileObject ? jsonData.generatedFileObject.publicDownloadId: null);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generation-jobs/{{generated_job_uid}}?full=true",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generation-jobs",
+						"{{generated_job_uid}}"
+					],
+					"query": [
+						{
+							"key": "full",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list user jobs",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generation-jobs?full=true",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generation-jobs"
+					],
+					"query": [
+						{
+							"key": "full",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete job with file",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"items\": [\"{{generated_job_uid}}\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generation-jobs/delete-jobs",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generation-jobs",
+						"delete-jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete file for job",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"items\": [\"{{generated_job_uid}}\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generation-jobs/delete-files",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generation-jobs",
+						"delete-files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete all user jobs",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generation-jobs/delete-jobs",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generation-jobs",
+						"delete-jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list user files",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generated-files",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generated-files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get \"get job\" file",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generated-files/{{generated_file_uid}}",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generated-files",
+						"{{generated_file_uid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete \"get job\" file",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generated-files/{{generated_file_uid}}",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generated-files",
+						"{{generated_file_uid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "download \"get job\" file",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generated-files/{{generated_file_uid}}/download",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generated-files",
+						"{{generated_file_uid}}",
+						"download"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "embed \"get job\" file",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generated-files/{{generated_file_uid}}/embed",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generated-files",
+						"{{generated_file_uid}}",
+						"embed"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/users/me",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user name",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{$randomFirstName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/users/me",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get plan usage",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/users/me/plan-usage",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"me",
+						"plan-usage"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "change (login) usrename",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200)",
+							"",
+							"var reqBody = JSON.parse(request.data)",
+							"pm.environment.set(\"hummus_username\", reqBody.username)",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{$randomUserName}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/users/me/change-username",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"me",
+						"change-username"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "change (login) password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200)",
+							"",
+							"var reqBody = JSON.parse(request.data)",
+							"pm.environment.set(\"hummus_password\", reqBody.newPassword)",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"oldPassword\": \"{{hummus_password}}\",\n    \"newPassword\": \"{{$randomPassword}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/users/me/change-password",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"me",
+						"change-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get api tokens",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/tokens",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create private api token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(201)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"private_api_token\", jsonData.token);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"role\": \"JobManager\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/tokens",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate job with private api token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(201)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"generated_job_uid\", jsonData.uid);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{private_api_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Sample.pdf\",\n    \"meta\": {\n        \"label\": \"Sample Job\",\n        \"deleteFileAfter\": \"1000000\"\n    },\n    \"externals\": {\n        \"fbLogo\": \"https://github.com/galkahana/hummus-services/blob/master/src/public/images/profileImage.jpg?raw=true\"\n    },\n    \"document\" : {\n            \"embedded\" : {\n                \"pages\": [\n                    {\n                        \"width\": 595,\n                        \"height\": 842,\n                        \"boxes\": [\n                            {\n                                \"bottom\": 500,\n                                \"left\": 10,\n                                \"text\": {\n                                    \"text\": \"hello {{$randomFirstName}}!\",\n                                    \"options\": {\n                                        \"fontSource\": \"arial\",\n                                        \"size\": 40,\n                                        \"color\": \"pink\"\n                                    }\n                                }\n                            },\n                            {\n                                \"bottom\": 600,\n                                \"left\": 10,\n                                \"image\": {\"source\":\"fbLogo\"}\n                            }\n                        ]\n                    }\n                ]\n            }\n        }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generation-jobs",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generation-jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "revoke private api token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"role\": \"JobManager\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/tokens/revoke",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"tokens",
+						"revoke"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create public api token with restriction",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(201)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"public_api_token\", jsonData.token);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"role\": \"JobCreator\",\n    \"restrictedDomains\": [\n        \"www.pdfhummus.com\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/tokens",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "generate job with public api token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(201)",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"generated_job_uid\", jsonData.uid);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{public_api_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Sample.pdf\",\n    \"meta\": {\n        \"label\": \"Sample Job\",\n        \"deleteFileAfter\": \"1000000\"\n    },\n    \"externals\": {\n        \"fbLogo\": \"https://github.com/galkahana/hummus-services/blob/master/src/public/images/profileImage.jpg?raw=true\"\n    },\n    \"document\" : {\n            \"embedded\" : {\n                \"pages\": [\n                    {\n                        \"width\": 595,\n                        \"height\": 842,\n                        \"boxes\": [\n                            {\n                                \"bottom\": 500,\n                                \"left\": 10,\n                                \"text\": {\n                                    \"text\": \"hello {{$randomFirstName}}!\",\n                                    \"options\": {\n                                        \"fontSource\": \"arial\",\n                                        \"size\": 40,\n                                        \"color\": \"pink\"\n                                    }\n                                }\n                            },\n                            {\n                                \"bottom\": 600,\n                                \"left\": 10,\n                                \"image\": {\"source\":\"fbLogo\"}\n                            }\n                        ]\n                    }\n                ]\n            }\n        }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/generation-jobs",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"generation-jobs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patch public api token to remove restriction",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"role\": \"JobCreator\",\n    \"restrictedDomains\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/tokens/patch",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"tokens",
+						"patch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "revoke public api token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"role\": \"JobCreator\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hummus_server_url}}/api/tokens/revoke",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"tokens",
+						"revoke"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "download \"get job\" file with public ID",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/public/{{public_download_id}}/download",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"public",
+						"{{public_download_id}}",
+						"download"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "embed \"get job\" file with public ID",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/public/{{public_download_id}}/embed",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"public",
+						"{{public_download_id}}",
+						"embed"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get overall ran jobs count",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/api/public/accounting/ran",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"api",
+						"public",
+						"accounting",
+						"ran"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "metrics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hummus_server_url}}/metrics",
+					"host": [
+						"{{hummus_server_url}}"
+					],
+					"path": [
+						"metrics"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
