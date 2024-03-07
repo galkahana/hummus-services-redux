@@ -114,8 +114,6 @@ To run the service for dev purposes use `npm run dev`. You can also use the VSCo
 - `npm run delete-timedout-files`: delete files for which their timeout setup expired. This is to be used as a cron job on the final service.
 - `npm start`: run the site built in dist. so build it first with `npm run build`.
 
-_you will notice that testing is missing. cause i don't. cause i don't have to. that's why. i got secret ways to make sure things work. very secret._
-
 
 # Making API calls
 
